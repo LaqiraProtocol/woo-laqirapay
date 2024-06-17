@@ -1,0 +1,29 @@
+sudo: required
+
+language: php
+
+php:
+  - 7.1
+  - 7.2
+  - 7.3
+  - 7.4
+
+before_install:
+  - nvm install 8
+
+install:
+  - npm install -g ganache-cli
+  - composer install
+
+notifications:
+  email:
+    recipients:
+      - alk03073135@gmail.com
+    on_success: always
+    on_failure: always
+
+script:
+  - scripts/test.sh
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash) -t 76a0abaf-bbc4-4829-b5b8-474f10a6b9e9

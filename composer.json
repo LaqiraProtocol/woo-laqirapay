@@ -1,0 +1,5 @@
+{
+    "require": {
+        "web3p/web3.php": "v0.3.0"
+    }
+}

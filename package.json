@@ -1,0 +1,59 @@
+{
+  "name": "woo-laqirapay",
+  "version": "v0.3.3",
+  "private": true,
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.1.0",
+    "@tanstack/react-query": "^5.28.4",
+    "antd": "^5.16.5",
+    "axios": "^1.6.8",
+    "flat-color-icons": "^1.1.0",
+    "process": "^0.11.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.2.1",
+    "react-quill": "^2.0.0",
+    "react-redux": "^8.1.0",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "^5.0.1",
+    "react-tooltip": "^5.26.4",
+    "viem": "2.9.31",
+    "wagmi": "^2.9.2",
+    "web3": "^4.2.2"
+  },
+  "scripts": {
+    "format": "wp-scripts format",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "start": "wp-scripts  start",
+    "build": "wp-scripts build"
+  },
+  "overrides": {
+    "react-scripts": {
+      "typescript": "^5"
+    }
+  },
+  "browserslist": {
+    "production": [
+      "chrome >= 67",
+      "edge >= 79",
+      "firefox >= 68",
+      "opera >= 54",
+      "safari >= 14"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "*",
+    "@babel/traverse": "^7.23.2",
+    "@wordpress/scripts": "^27.7.0",
+    "dotenv": "^16.3.1",
+    "dotenv-webpack": "^8.1.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.2"
+  }
+}

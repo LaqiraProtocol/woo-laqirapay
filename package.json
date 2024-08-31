@@ -6,7 +6,7 @@
     "@rainbow-me/rainbowkit": "^2.1.0",
     "@tanstack/react-query": "^5.28.4",
     "antd": "^5.16.5",
-    "axios": "^1.6.8",
+    "axios": "^1.7.6",
     "flat-color-icons": "^1.1.0",
     "process": "^0.11.10",
     "react": "^18.2.0",

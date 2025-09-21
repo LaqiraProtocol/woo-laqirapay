@@ -1,1 +1,0 @@
-(self.webpackChunkwoo_laqirapay=self.webpackChunkwoo_laqirapay||[]).push([[9432],{9432:()=>{}}]);

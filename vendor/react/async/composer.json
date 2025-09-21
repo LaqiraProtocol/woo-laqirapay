@@ -1,6 +1,6 @@
 {
     "name": "react/async",
-    "description": "Async utilities for ReactPHP",
+    "description": "Async utilities and fibers for ReactPHP",
     "keywords": ["async", "ReactPHP"],
     "license": "MIT",
     "authors": [
@@ -26,15 +26,18 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": ">=8.1",
         "react/event-loop": "^1.2",
-        "react/promise": "^3.0 || ^2.8 || ^1.2.1"
+        "react/promise": "^3.2 || ^2.8 || ^1.2.1"
     },
     "require-dev": {
-        "phpstan/phpstan": "1.10.39 || 1.4.10",
-        "phpunit/phpunit": "^9.6 || ^7.5"
+        "phpstan/phpstan": "1.10.39",
+        "phpunit/phpunit": "^9.6"
     },
     "autoload": {
+        "psr-4": {
+            "React\\Async\\": "src/"
+        },
         "files": [
             "src/functions_include.php"
         ]

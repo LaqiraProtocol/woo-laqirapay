@@ -3,6 +3,7 @@
 namespace React\Async;
 
 use React\EventLoop\Loop;
+use React\EventLoop\TimerInterface;
 use React\Promise\Deferred;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
@@ -10,21 +11,248 @@ use function React\Promise\reject;
 use function React\Promise\resolve;
 
 /**
+ * Return an async function for a function that uses [`await()`](#await) internally.
+ *
+ * This function is specifically designed to complement the [`await()` function](#await).
+ * The [`await()` function](#await) can be considered *blocking* from the
+ * perspective of the calling code. You can avoid this blocking behavior by
+ * wrapping it in an `async()` function call. Everything inside this function
+ * will still be blocked, but everything outside this function can be executed
+ * asynchronously without blocking:
+ *
+ * ```php
+ * Loop::addTimer(0.5, React\Async\async(function () {
+ *     echo 'a';
+ *     React\Async\await(React\Promise\Timer\sleep(1.0));
+ *     echo 'c';
+ * }));
+ *
+ * Loop::addTimer(1.0, function () {
+ *     echo 'b';
+ * });
+ *
+ * // prints "a" at t=0.5s
+ * // prints "b" at t=1.0s
+ * // prints "c" at t=1.5s
+ * ```
+ *
+ * See also the [`await()` function](#await) for more details.
+ *
+ * Note that this function only works in tandem with the [`await()` function](#await).
+ * In particular, this function does not "magically" make any blocking function
+ * non-blocking:
+ *
+ * ```php
+ * Loop::addTimer(0.5, React\Async\async(function () {
+ *     echo 'a';
+ *     sleep(1); // broken: using PHP's blocking sleep() for demonstration purposes
+ *     echo 'c';
+ * }));
+ *
+ * Loop::addTimer(1.0, function () {
+ *     echo 'b';
+ * });
+ *
+ * // prints "a" at t=0.5s
+ * // prints "c" at t=1.5s: Correct timing, but wrong order
+ * // prints "b" at t=1.5s: Triggered too late because it was blocked
+ * ```
+ *
+ * As an alternative, you should always make sure to use this function in tandem
+ * with the [`await()` function](#await) and an async API returning a promise
+ * as shown in the previous example.
+ *
+ * The `async()` function is specifically designed for cases where it is used
+ * as a callback (such as an event loop timer, event listener, or promise
+ * callback). For this reason, it returns a new function wrapping the given
+ * `$function` instead of directly invoking it and returning its value.
+ *
+ * ```php
+ * use function React\Async\async;
+ *
+ * Loop::addTimer(1.0, async(function () { … }));
+ * $connection->on('close', async(function () { … }));
+ * $stream->on('data', async(function ($data) { … }));
+ * $promise->then(async(function (int $result) { … }));
+ * ```
+ *
+ * You can invoke this wrapping function to invoke the given `$function` with
+ * any arguments given as-is. The function will always return a Promise which
+ * will be fulfilled with whatever your `$function` returns. Likewise, it will
+ * return a promise that will be rejected if you throw an `Exception` or
+ * `Throwable` from your `$function`. This allows you to easily create
+ * Promise-based functions:
+ *
+ * ```php
+ * $promise = React\Async\async(function (): int {
+ *     $browser = new React\Http\Browser();
+ *     $urls = [
+ *         'https://example.com/alice',
+ *         'https://example.com/bob'
+ *     ];
+ *
+ *     $bytes = 0;
+ *     foreach ($urls as $url) {
+ *         $response = React\Async\await($browser->get($url));
+ *         assert($response instanceof Psr\Http\Message\ResponseInterface);
+ *         $bytes += $response->getBody()->getSize();
+ *     }
+ *     return $bytes;
+ * })();
+ *
+ * $promise->then(function (int $bytes) {
+ *     echo 'Total size: ' . $bytes . PHP_EOL;
+ * }, function (Exception $e) {
+ *     echo 'Error: ' . $e->getMessage() . PHP_EOL;
+ * });
+ * ```
+ *
+ * The previous example uses [`await()`](#await) inside a loop to highlight how
+ * this vastly simplifies consuming asynchronous operations. At the same time,
+ * this naive example does not leverage concurrent execution, as it will
+ * essentially "await" between each operation. In order to take advantage of
+ * concurrent execution within the given `$function`, you can "await" multiple
+ * promises by using a single [`await()`](#await) together with Promise-based
+ * primitives like this:
+ *
+ * ```php
+ * $promise = React\Async\async(function (): int {
+ *     $browser = new React\Http\Browser();
+ *     $urls = [
+ *         'https://example.com/alice',
+ *         'https://example.com/bob'
+ *     ];
+ *
+ *     $promises = [];
+ *     foreach ($urls as $url) {
+ *         $promises[] = $browser->get($url);
+ *     }
+ *
+ *     try {
+ *         $responses = React\Async\await(React\Promise\all($promises));
+ *     } catch (Exception $e) {
+ *         foreach ($promises as $promise) {
+ *             $promise->cancel();
+ *         }
+ *         throw $e;
+ *     }
+ *
+ *     $bytes = 0;
+ *     foreach ($responses as $response) {
+ *         assert($response instanceof Psr\Http\Message\ResponseInterface);
+ *         $bytes += $response->getBody()->getSize();
+ *     }
+ *     return $bytes;
+ * })();
+ *
+ * $promise->then(function (int $bytes) {
+ *     echo 'Total size: ' . $bytes . PHP_EOL;
+ * }, function (Exception $e) {
+ *     echo 'Error: ' . $e->getMessage() . PHP_EOL;
+ * });
+ * ```
+ *
+ * The returned promise is implemented in such a way that it can be cancelled
+ * when it is still pending. Cancelling a pending promise will cancel any awaited
+ * promises inside that fiber or any nested fibers. As such, the following example
+ * will only output `ab` and cancel the pending [`delay()`](#delay).
+ * The [`await()`](#await) calls in this example would throw a `RuntimeException`
+ * from the cancelled [`delay()`](#delay) call that bubbles up through the fibers.
+ *
+ * ```php
+ * $promise = async(static function (): int {
+ *     echo 'a';
+ *     await(async(static function (): void {
+ *         echo 'b';
+ *         delay(2);
+ *         echo 'c';
+ *     })());
+ *     echo 'd';
+ *
+ *     return time();
+ * })();
+ *
+ * $promise->cancel();
+ * await($promise);
+ * ```
+ *
+ * @template T
+ * @template A1 (any number of function arguments, see https://github.com/phpstan/phpstan/issues/8214)
+ * @template A2
+ * @template A3
+ * @template A4
+ * @template A5
+ * @param callable(A1,A2,A3,A4,A5): (PromiseInterface<T>|T) $function
+ * @return callable(A1=,A2=,A3=,A4=,A5=): PromiseInterface<T>
+ * @since 4.0.0
+ * @see coroutine()
+ */
+function async(callable $function): callable
+{
+    return static function (mixed ...$args) use ($function): PromiseInterface {
+        $fiber = null;
+        /** @var PromiseInterface<T> $promise*/
+        $promise = new Promise(function (callable $resolve, callable $reject) use ($function, $args, &$fiber): void {
+            $fiber = new \Fiber(function () use ($resolve, $reject, $function, $args, &$fiber): void {
+                try {
+                    $resolve($function(...$args));
+                } catch (\Throwable $exception) {
+                    $reject($exception);
+                } finally {
+                    assert($fiber instanceof \Fiber);
+                    FiberMap::unsetPromise($fiber);
+                }
+            });
+
+            $fiber->start();
+        }, function () use (&$fiber): void {
+            assert($fiber instanceof \Fiber);
+            $promise = FiberMap::getPromise($fiber);
+            if ($promise instanceof PromiseInterface && \method_exists($promise, 'cancel')) {
+                $promise->cancel();
+            }
+        });
+
+        $lowLevelFiber = \Fiber::getCurrent();
+        if ($lowLevelFiber !== null) {
+            FiberMap::setPromise($lowLevelFiber, $promise);
+        }
+
+        return $promise;
+    };
+}
+
+/**
  * Block waiting for the given `$promise` to be fulfilled.
  *
  * ```php
- * $result = React\Async\await($promise, $loop);
+ * $result = React\Async\await($promise);
  * ```
  *
  * This function will only return after the given `$promise` has settled, i.e.
- * either fulfilled or rejected.
+ * either fulfilled or rejected. While the promise is pending, this function
+ * can be considered *blocking* from the perspective of the calling code.
+ * You can avoid this blocking behavior by wrapping it in an [`async()` function](#async)
+ * call. Everything inside this function will still be blocked, but everything
+ * outside this function can be executed asynchronously without blocking:
  *
- * While the promise is pending, this function will assume control over the event
- * loop. Internally, it will `run()` the [default loop](https://github.com/reactphp/event-loop#loop)
- * until the promise settles and then calls `stop()` to terminate execution of the
- * loop. This means this function is more suited for short-lived promise executions
- * when using promise-based APIs is not feasible. For long-running applications,
- * using promise-based APIs by leveraging chained `then()` calls is usually preferable.
+ * ```php
+ * Loop::addTimer(0.5, React\Async\async(function () {
+ *     echo 'a';
+ *     React\Async\await(React\Promise\Timer\sleep(1.0));
+ *     echo 'c';
+ * }));
+ *
+ * Loop::addTimer(1.0, function () {
+ *     echo 'b';
+ * });
+ *
+ * // prints "a" at t=0.5s
+ * // prints "b" at t=1.0s
+ * // prints "c" at t=1.5s
+ * ```
+ *
+ * See also the [`async()` function](#async) for more details.
  *
  * Once the promise is fulfilled, this function will return whatever the promise
  * resolved to.
@@ -35,7 +263,7 @@ use function React\Promise\resolve;
  *
  * ```php
  * try {
- *     $result = React\Async\await($promise, $loop);
+ *     $result = React\Async\await($promise);
  *     // promise successfully fulfilled with $result
  *     echo 'Result: ' . $result;
  * } catch (Throwable $e) {
@@ -51,60 +279,91 @@ use function React\Promise\resolve;
  * @throws \Throwable when the promise is rejected with a `Throwable`
  * @throws \UnexpectedValueException when the promise is rejected with an unexpected value (Promise API v1 or v2 only)
  */
-function await(PromiseInterface $promise)
+function await(PromiseInterface $promise): mixed
 {
-    $wait = true;
-    $resolved = null;
-    $exception = null;
+    $fiber = null;
+    $resolved = false;
     $rejected = false;
 
-    /** @var bool $loopStarted */
-    $loopStarted = false;
+    /** @var T $resolvedValue */
+    $resolvedValue = null;
+    $rejectedThrowable = null;
+    $lowLevelFiber = \Fiber::getCurrent();
 
     $promise->then(
-        function ($c) use (&$resolved, &$wait, &$loopStarted) {
-            $resolved = $c;
-            $wait = false;
-
-            if ($loopStarted) {
-                Loop::stop();
+        function (mixed $value) use (&$resolved, &$resolvedValue, &$fiber, $lowLevelFiber): void {
+            if ($lowLevelFiber !== null) {
+                FiberMap::unsetPromise($lowLevelFiber);
             }
+
+            /** @var ?\Fiber<mixed,mixed,mixed,mixed> $fiber */
+            if ($fiber === null) {
+                $resolved = true;
+                /** @var T $resolvedValue */
+                $resolvedValue = $value;
+                return;
+            }
+
+            $fiber->resume($value);
         },
-        function ($error) use (&$exception, &$rejected, &$wait, &$loopStarted) {
-            $exception = $error;
-            $rejected = true;
-            $wait = false;
-
-            if ($loopStarted) {
-                Loop::stop();
+        function (mixed $throwable) use (&$rejected, &$rejectedThrowable, &$fiber, $lowLevelFiber): void {
+            if ($lowLevelFiber !== null) {
+                FiberMap::unsetPromise($lowLevelFiber);
             }
+
+            if (!$throwable instanceof \Throwable) {
+                $throwable = new \UnexpectedValueException(
+                    'Promise rejected with unexpected value of type ' . (is_object($throwable) ? get_class($throwable) : gettype($throwable)) /** @phpstan-ignore-line */
+                );
+
+                // avoid garbage references by replacing all closures in call stack.
+                // what a lovely piece of code!
+                $r = new \ReflectionProperty('Exception', 'trace');
+                $trace = $r->getValue($throwable);
+                assert(\is_array($trace));
+
+                // Exception trace arguments only available when zend.exception_ignore_args is not set
+                // @codeCoverageIgnoreStart
+                foreach ($trace as $ti => $one) {
+                    if (isset($one['args'])) {
+                        foreach ($one['args'] as $ai => $arg) {
+                            if ($arg instanceof \Closure) {
+                                $trace[$ti]['args'][$ai] = 'Object(' . \get_class($arg) . ')';
+                            }
+                        }
+                    }
+                }
+                // @codeCoverageIgnoreEnd
+                $r->setValue($throwable, $trace);
+            }
+
+            if ($fiber === null) {
+                $rejected = true;
+                $rejectedThrowable = $throwable;
+                return;
+            }
+
+            $fiber->throw($throwable);
         }
     );
 
-    // Explicitly overwrite argument with null value. This ensure that this
-    // argument does not show up in the stack trace in PHP 7+ only.
-    $promise = null;
-
-    while ($wait) {
-        $loopStarted = true;
-        Loop::run();
+    if ($resolved) {
+        return $resolvedValue;
     }
 
     if ($rejected) {
-        // promise is rejected with an unexpected value (Promise API v1 or v2 only)
-        if (!$exception instanceof \Throwable) {
-            $exception = new \UnexpectedValueException(
-                'Promise rejected with unexpected value of type ' . (is_object($exception) ? get_class($exception) : gettype($exception)) // @phpstan-ignore-line
-            );
-        }
-
-        throw $exception;
+        assert($rejectedThrowable instanceof \Throwable);
+        throw $rejectedThrowable;
     }
 
-    /** @var T $resolved */
-    return $resolved;
-}
+    if ($lowLevelFiber !== null) {
+        FiberMap::setPromise($lowLevelFiber, $promise);
+    }
 
+    $fiber = FiberFactory::create();
+
+    return $fiber->suspend();
+}
 
 /**
  * Delay program execution for duration given in `$seconds`.
@@ -133,7 +392,7 @@ function await(PromiseInterface $promise)
  *
  * ```php
  * echo 'a';
- * Loop::addTimer(1.0, function () {
+ * Loop::addTimer(1.0, function (): void {
  *     echo 'b';
  * });
  * React\Async\delay(3.0);
@@ -151,7 +410,7 @@ function await(PromiseInterface $promise)
  * ```php
  * try {
  *     something();
- * } catch (Throwable $e) {
+ * } catch (Throwable) {
  *     // in case of error, retry after a short delay
  *     React\Async\delay(1.0);
  *     something();
@@ -159,29 +418,71 @@ function await(PromiseInterface $promise)
  * ```
  *
  * Because this function only returns after some time has passed, it can be
- * considered *blocking* from the perspective of the calling code. While the
- * delay is running, this function will assume control over the event loop.
- * Internally, it will `run()` the [default loop](https://github.com/reactphp/event-loop#loop)
- * until the delay returns and then calls `stop()` to terminate execution of the
- * loop. This means this function is more suited for short-lived promise executions
- * when using promise-based APIs is not feasible. For long-running applications,
- * using promise-based APIs by leveraging chained `then()` calls is usually preferable.
+ * considered *blocking* from the perspective of the calling code. You can avoid
+ * this blocking behavior by wrapping it in an [`async()` function](#async) call.
+ * Everything inside this function will still be blocked, but everything outside
+ * this function can be executed asynchronously without blocking:
+ *
+ * ```php
+ * Loop::addTimer(0.5, React\Async\async(function (): void {
+ *     echo 'a';
+ *     React\Async\delay(1.0);
+ *     echo 'c';
+ * }));
+ *
+ * Loop::addTimer(1.0, function (): void {
+ *     echo 'b';
+ * });
+ *
+ * // prints "a" at t=0.5s
+ * // prints "b" at t=1.0s
+ * // prints "c" at t=1.5s
+ * ```
+ *
+ * See also the [`async()` function](#async) for more details.
  *
  * Internally, the `$seconds` argument will be used as a timer for the loop so that
  * it keeps running until this timer triggers. This implies that if you pass a
  * really small (or negative) value, it will still start a timer and will thus
  * trigger at the earliest possible time in the future.
  *
- * @param float $seconds
+ * The function is implemented in such a way that it can be cancelled when it is
+ * running inside an [`async()` function](#async). Cancelling the resulting
+ * promise will clean up any pending timers and throw a `RuntimeException` from
+ * the pending delay which in turn would reject the resulting promise.
+ *
+ * ```php
+ * $promise = async(function (): void {
+ *     echo 'a';
+ *     delay(3.0);
+ *     echo 'b';
+ * })();
+ *
+ * Loop::addTimer(2.0, function () use ($promise): void {
+ *     $promise->cancel();
+ * });
+ *
+ * // prints "a" at t=0.0s
+ * // rejects $promise at t=2.0
+ * // never prints "b"
+ * ```
+ *
  * @return void
+ * @throws \RuntimeException when the function is cancelled inside an `async()` function
+ * @see async()
  * @uses await()
  */
 function delay(float $seconds): void
 {
-    await(new Promise(function (callable $resolve) use ($seconds): void {
-        Loop::addTimer($seconds, function () use ($resolve): void {
-            $resolve(null);
-        });
+    /** @var ?TimerInterface $timer */
+    $timer = null;
+
+    await(new Promise(function (callable $resolve) use ($seconds, &$timer): void {
+        $timer = Loop::addTimer($seconds, fn() => $resolve(null));
+    }, function () use (&$timer): void {
+        assert($timer instanceof TimerInterface);
+        Loop::cancelTimer($timer);
+        throw new \RuntimeException('Delay cancelled');
     }));
 }
 
@@ -224,10 +525,11 @@ function delay(float $seconds): void
  * promise is fulfilled with. If the promise is rejected, it will throw an
  * `Exception` or `Throwable`.
  *
- * The `coroutine()` function will always return a Proimise which will be
+ * The `coroutine()` function will always return a Promise which will be
  * fulfilled with whatever your `$function` returns. Likewise, it will return
  * a promise that will be rejected if you throw an `Exception` or `Throwable`
- * from your `$function`. This allows you easily create Promise-based functions:
+ * from your `$function`. This allows you to easily create Promise-based
+ * functions:
  *
  * ```php
  * $promise = React\Async\coroutine(function () {
@@ -310,7 +612,7 @@ function delay(float $seconds): void
  * @return PromiseInterface<T>
  * @since 3.0.0
  */
-function coroutine(callable $function, ...$args): PromiseInterface
+function coroutine(callable $function, mixed ...$args): PromiseInterface
 {
     try {
         $generator = $function(...$args);
@@ -323,6 +625,7 @@ function coroutine(callable $function, ...$args): PromiseInterface
     }
 
     $promise = null;
+    /** @var Deferred<T> $deferred*/
     $deferred = new Deferred(function () use (&$promise) {
         /** @var ?PromiseInterface<T> $promise */
         if ($promise instanceof PromiseInterface && \method_exists($promise, 'cancel')) {
@@ -381,6 +684,7 @@ function parallel(iterable $tasks): PromiseInterface
 {
     /** @var array<int,PromiseInterface<T>> $pending */
     $pending = [];
+    /** @var Deferred<array<T>> $deferred */
     $deferred = new Deferred(function () use (&$pending) {
         foreach ($pending as $promise) {
             if ($promise instanceof PromiseInterface && \method_exists($promise, 'cancel')) {
@@ -430,6 +734,7 @@ function parallel(iterable $tasks): PromiseInterface
         $deferred->resolve($results);
     }
 
+    /** @var PromiseInterface<array<T>> Remove once defining `Deferred()` above is supported by PHPStan, see https://github.com/phpstan/phpstan/issues/11032 */
     return $deferred->promise();
 }
 
@@ -441,6 +746,7 @@ function parallel(iterable $tasks): PromiseInterface
 function series(iterable $tasks): PromiseInterface
 {
     $pending = null;
+    /** @var Deferred<array<T>> $deferred */
     $deferred = new Deferred(function () use (&$pending) {
         /** @var ?PromiseInterface<T> $pending */
         if ($pending instanceof PromiseInterface && \method_exists($pending, 'cancel')) {
@@ -485,6 +791,7 @@ function series(iterable $tasks): PromiseInterface
 
     $next();
 
+    /** @var PromiseInterface<array<T>> Remove once defining `Deferred()` above is supported by PHPStan, see https://github.com/phpstan/phpstan/issues/11032 */
     return $deferred->promise();
 }
 
@@ -496,6 +803,7 @@ function series(iterable $tasks): PromiseInterface
 function waterfall(iterable $tasks): PromiseInterface
 {
     $pending = null;
+    /** @var Deferred<T> $deferred*/
     $deferred = new Deferred(function () use (&$pending) {
         /** @var ?PromiseInterface<T> $pending */
         if ($pending instanceof PromiseInterface && \method_exists($pending, 'cancel')) {

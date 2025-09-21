@@ -1,0 +1,107 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+#user-confirmation-tx-section{
+    border: 2px solid #ffc900;
+    border-radius: 5px;
+    padding: 15px;
+}
+.lqr-hide{
+    display: none;
+}
+.wp-menu-image img {
+    width: 18px;
+}
+
+.info-box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    
+}
+
+.info-box h3 {
+    margin-top: 0;
+}
+
+.info-box p {
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.info-box-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.info-box-center h3 {
+    margin-top: 0;
+}
+
+.info-box-center p {
+    font-size: 1rem;
+    font-weight: 300;
+}
+.laqirapay-table {
+    overflow: auto;
+    width: 100%;
+}
+
+.laqirapay-table table {
+    border: 1px solid #dededf;
+    height: 100%;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse!important;
+    border-spacing: 1px;
+    text-align: left;
+    
+}
+
+.laqirapay-table caption {
+    caption-side: top;
+    text-align: left;
+}
+
+.laqirapay-table th {
+    border: 1px solid #dededf;
+    background-color: #eceff1;
+    color: #000000;
+    padding: 5px;
+}
+
+.laqirapay-table td {
+    border: 1px solid #dededf;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 5px;
+}
+
+#woolaqirapay-tx-confirm-form {
+    text-align: center;
+}
+
+#verify-button {
+    display: inline-block;
+}
+
+#loading-indicator {
+    display: none;
+}
+
+#loading-indicator-bottom {
+    display: none;
+}
+
+
+

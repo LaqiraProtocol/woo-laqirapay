@@ -1,0 +1,1034 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Woo LaqiraPay\n"
+"Report-Msgid-Bugs-To: https://laqirahub.com \n"
+"POT-Creation-Date: 2025-08-25 08:40+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Laqira Protocol <info@laqira.io>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.7; wp-6.5.2\n"
+"X-Domain: laqirapay"
+
+#: app/Http/Controllers/Admin/AdminController.php:412
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:72
+msgid "Access Denied..."
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:59
+msgid "API Key"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:90
+msgid "Approve"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:78
+msgid "Approve successfully Done!"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:60
+msgid "Approximate Amount"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:43
+msgid "Asset"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:101
+msgid "Assets"
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:31
+msgid "Assets data not loaded."
+msgstr ""
+
+#: app/Http/Controllers/Frontend/PaymentController.php:59
+msgid "Awaiting payment"
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:54
+msgid "Back to site"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:54
+msgid "Balance"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:199
+msgid "Chain ID"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:42
+msgid "Chain/TxHash"
+msgstr ""
+
+#: app/Http/Views/admin/field-api-key.php:6
+msgid "Clear Web3 Cache"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:34
+msgid "Close"
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:24
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:39
+msgid "Configure LaqiraPay"
+msgstr ""
+
+#: app/Http/Views/admin/section-logging.php:1
+msgid "Configure logging behaviour for LaqiraPay."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:95
+msgid "Congratulation"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:46
+msgid "Context"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:115
+msgid "Contract error, please contact to administrator."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:98
+msgid "Copy to clipboard"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:47
+msgid "COPYRIGHT © 2024 Laqira Protocol, All rights Reserved"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:209
+msgid "create or update order not successful. please try again..."
+msgstr ""
+
+#: app/Admin/TransactionsListTable.php:103
+msgid "Currency"
+msgstr ""
+
+#: app/Http/Views/admin/admin-currency-rates.php:14
+msgid "Currency Exchange Rate"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:161
+msgid ""
+"Customer has chosen LaqiraPay Wallet payment method, payment is pending."
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:291
+msgid "Debug"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:83
+msgid "Delete All plugin Data on uninstallation"
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:56
+msgid "Description"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:146
+msgid "Disable Cache (Debug Mode)"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:138
+msgid "Enable Front Logging"
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:45
+msgid "Enable Laqira Pay Payments"
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:43
+msgid "Enable/Disable"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:193
+msgid "End"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:59
+msgid "Enter Amount In USDT"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:56
+msgid "Enter your order destails"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:40
+#: app/Http/Controllers/Admin/SettingsController.php:288
+msgid "Error"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:86
+msgid "Error checking transaction status. Please try again ..."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:76
+msgid "Error loading Assets"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:73
+msgid "Error loading networks"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:79
+msgid "Error on Approve"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1178
+msgid "Error on Confirmatin Process"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1002
+msgid "Error on security Process"
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:43
+msgid "Error while initializing payment."
+msgstr ""
+
+#: app/Admin/LogsListTable.php:39
+msgid "Event"
+msgstr ""
+
+#: app/Admin/TransactionsListTable.php:104 app/Hooks/ExtrasService.php:157
+#: app/Hooks/ExtrasService.php:204 app/Support/LaqiraPayTranslations.php:108
+msgid "Exchange Rate"
+msgstr ""
+
+#: app/Http/Controllers/Admin/AdminController.php:380
+msgid "Exchange rate saved!"
+msgstr ""
+
+#: app/Http/Views/admin/admin-currency-rates.php:26
+msgid "Exchange rate to USD:"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:67
+msgid "External"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:102
+msgid "External Pay"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:24
+msgid "External Payment"
+msgstr ""
+
+#: app/Admin/TransactionsListTable.php:108
+msgid "From"
+msgstr ""
+
+#: app/Http/Views/admin/section-general.php:1
+msgid "Get API-KEY"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:130
+msgid "Hash IP"
+msgstr ""
+
+#: app/Hooks/ExtrasService.php:173 app/Hooks/ExtrasService.php:189
+msgid "here"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:37
+msgid "Home Page"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://laqira.io"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://laqirahub.com"
+msgstr ""
+
+#: app/Http/Views/admin/admin-order-recovery.php:15
+msgid ""
+"In this section, you can view detailed information by entering a transaction "
+"hash. If a customer's order corresponds to this hash, the order details will "
+"be displayed along with the transaction information retrieved from the "
+"blockchain. If the transaction is marked as incomplete on the website, you "
+"can use the blockchain data to finalize the customer's order."
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:290
+msgid "Info"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:120
+msgid "insufficient funds for gas"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:119
+msgid "Insufficient gas"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:68
+msgid "Internal"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:103
+msgid "Internal Pay"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:25
+msgid "Internal Payment"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/AjaxController.php:25
+#: app/Http/Controllers/Ajax/AjaxController.php:44
+msgid "Invalid nonce"
+msgstr ""
+
+#: app/Services/BlockchainService.php:138
+msgid "is Active"
+msgstr ""
+
+#: app/Services/BlockchainService.php:138
+msgid "is Not Active"
+msgstr ""
+
+#: app/Helpers/JwtHelper.php:86
+msgid "JWT token format is invalid"
+msgstr ""
+
+#: app/Helpers/JwtHelper.php:103
+msgid "JWT token has expired"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:43
+msgid "Laqira Contract Address"
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:52
+msgid "Laqira Pay"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:39
+msgid "Laqira Pay Gateway"
+msgstr ""
+
+#. Author of the plugin
+msgid "Laqira Protocol"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:51
+msgid "Laqira RPC Url"
+msgstr ""
+
+#. Name of the plugin
+#: app/WooCommerce/Gateway.php:23
+msgid "LaqiraPay"
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-logs.php:12
+msgid "LaqiraPay Logs"
+msgstr ""
+
+#: app/Http/Views/admin/admin-order-recovery.php:13
+msgid "LaqiraPay Order Recovery by Transaction Hash"
+msgstr ""
+
+#: laqirapay.php:103
+msgid "LaqiraPay requires PHP version 7.4 or higher."
+msgstr ""
+
+#: laqirapay.php:108
+msgid "LaqiraPay requires WooCommerce version 8.2 or higher."
+msgstr ""
+
+#: laqirapay.php:99
+msgid "LaqiraPay requires WordPress version 6.3 or higher."
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:9
+msgid "LaqiraPay Settings"
+msgstr ""
+
+#: app/Hooks/ExtrasService.php:154
+msgid "LaqiraPay Transaction Details:"
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-transactions.php:12
+msgid "LaqiraPay Transactions"
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:24
+msgid "LaqiraPay Woocommerce payment gateway"
+msgstr ""
+
+#: laqirapay.php:71
+msgid ""
+"LaqiraPay: Composer autoload file is missing. Please run `composer install`."
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"LaqiraPay: Fully Decentralized Asset-Agnostic MultiNetwork Payment Gateway "
+"for WooCommerce"
+msgstr ""
+
+#: laqirapay.php:169
+msgid "LaqiraPay: Main plugin class is missing."
+msgstr ""
+
+#: laqirapay.php:112
+msgid "LaqiraPay: Missing Composer dependencies."
+msgstr ""
+
+#: app/Admin/LogsListTable.php:37 app/Admin/LogsListTable.php:194
+msgid "Level"
+msgstr ""
+
+#: app/Support/TxRepairForm.php:110
+msgid "loading"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:71
+msgid "Loading ..."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:75
+msgid "Loading Assets ..."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:72
+msgid "Loading Networks ..."
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:17 app/Http/Views/public/checkout.php:18
+msgid "Loading…"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:99
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:28
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:52
+msgid "Logging"
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:29
+msgid "Logging options"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:36
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:23
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:38
+msgid "Main Settings"
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:53
+msgid "Manage logs for LaqiraPay"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:45
+msgid "Message"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:106
+msgid "Minimum Level"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:107
+msgid "More"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:35
+msgid "My Account Page"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:42
+msgid "Network"
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:28
+msgid "Network data not loaded."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:116
+msgid "Network error, please contact to administrator."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:74
+msgid "No networks available"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1152
+msgid "No order found with this Transaction hash"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:28
+#: app/Http/Controllers/Ajax/LegacyAjax.php:87
+#: app/Http/Controllers/Ajax/LegacyAjax.php:307
+#: app/Http/Controllers/Ajax/LegacyAjax.php:479
+#: app/Http/Controllers/Ajax/LegacyAjax.php:582
+#: app/Http/Controllers/Ajax/LegacyAjax.php:601
+#: app/Http/Controllers/Ajax/LegacyAjax.php:804
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1385
+msgid "nonce Error!!!"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:75
+msgid "Only logged in users can pay"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:88
+msgid "Or Enter Slippage"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:89
+msgid "Or Enter Slippage (only 0.6% to 2%)"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:41
+msgid "Order"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:29
+msgid "Order Amount"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1248
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1448
+msgid "Order and Transaction not confirmed."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:51
+msgid "Order Details"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:197 app/Admin/TransactionsListTable.php:101
+msgid "Order ID"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:444
+msgid "Order not verified by blockchain."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:111
+msgid "Order Processing"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:91
+msgid "Order Status after order complete/recovery by TX hash"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1099
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1200
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1399
+msgid "Order updated by TX hash confirmation method"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1100
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1201
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1400
+msgid "Order updated by TX hash confirmation method "
+msgstr ""
+
+#: app/Admin/TransactionsListTable.php:105
+msgid "Paid By"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:69
+msgid "Pay"
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:59
+msgid "Pay with Crypto"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:44
+msgid "Payment"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:160
+msgid "Payment is awaited."
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:58
+msgid "Payment method description that the customer will see on your checkout."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:41
+msgid "Payment Processing"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:105
+msgid "Payment through a connected wallet"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:106
+msgid "Payment Utilize your Internal account"
+msgstr ""
+
+#: app/Http/Controllers/Admin/AdminController.php:420
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:69
+msgid "Please check PHP >= 7.4 ,wordpress >= 6.3, Woocommerce >= 8.2 "
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:32
+msgid "Please check your Internet connection (VPN or ...)"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:110
+msgid "Please connect your wallet to continue"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:109
+msgid "Please Enter correct email address"
+msgstr ""
+
+#: app/Http/Views/admin/section-general.php:1
+msgid "Please Enter your Laqira API from"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:61
+msgid "Please Enter Your Order Note"
+msgstr ""
+
+#: app/Support/TxRepairForm.php:102
+msgid "Please enter your Transaction hash:"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:38
+msgid "Please fill all required address fields."
+msgstr ""
+
+#: app/Http/Controllers/Frontend/PaymentController.php:81
+msgid "Please login to make a payment!"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:50
+msgid "Please select asset first"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:48
+msgid "Please select asset for"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:46
+msgid "Please select network"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:49
+msgid "Please select network first"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:77
+msgid "Please use at most 20 characters"
+msgstr ""
+
+#: app/Http/Controllers/Admin/AdminController.php:419
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:68
+msgid "Plugin Requirements Not Met"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:30
+msgid "Price Feed"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:87
+msgid "Product Name"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:55
+msgid "Provider Address is invalid"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1166
+msgid "Provider Address not Confirmed"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:52
+msgid "Provider Address not found. please contact your provider..."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:63
+msgid "Remaining"
+msgstr ""
+
+#: app/Support/TxRepairForm.php:63
+msgid "Repair Order"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:200
+msgid "Request ID"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:114
+msgid ""
+"Requested resource not available.Please try again and wait to load data."
+msgstr ""
+
+#: app/Admin/LogsListTable.php:44 app/Support/LaqiraPayTranslations.php:45
+msgid "Result"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:114
+msgid "Retention (days)"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:122
+msgid "Sampling (0-1)"
+msgstr ""
+
+#: app/Http/Views/admin/admin-currency-rates.php:28
+msgid "Save"
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:64
+msgid "Save Settings"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:28
+msgid "Search Asset"
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-logs.php:16
+msgid "Search Logs"
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-transactions.php:16
+msgid "Search Transactions"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:33
+msgid "See Invoice"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:32
+msgid "Select Asset"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:31
+msgid "Select Network"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:66
+msgid "Select Payment Method"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:58
+msgid "Selected Asset"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:57
+msgid "Selected Network"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:65
+msgid ""
+"Setting a high slippage tolerance can help transactions succeed, Increase "
+"Slippage the value to enhance the acceptance rate of seamless alignment."
+msgstr ""
+
+#: laqirapay.php:45
+msgid "Settings"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:99
+msgid "Share"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:100
+msgid "Share your order"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:93
+msgid "Sharing error"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:92
+msgid "Sharing was successful"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:36
+msgid "Shop Page"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:97
+msgid "Show Order"
+msgstr ""
+
+#: app/Helpers/JwtHelper.php:97
+msgid "Signature mismatch"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:64
+msgid "Slippage Tolerance"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:43
+msgid "Source"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:192
+msgid "Start"
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:14
+msgid "Starting LaqiraPay…"
+msgstr ""
+
+#: laqirapay.php:50
+msgid "Support"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:62
+msgid ""
+"The approximate payment based on chosen Asset and Decentralized price feeds."
+msgstr ""
+
+#: app/Http/Views/admin/admin-currency-rates.php:31
+msgid "The current store currency is USD and no exchange rate is needed."
+msgstr ""
+
+#: app/Http/Views/admin/admin-currency-rates.php:21
+#, php-format
+msgid "The current store currency is: %s"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1145
+msgid "The order is already stable and does not require further confirmation"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1159
+msgid "The transaction status is not Completed on Blockchain"
+msgstr ""
+
+#: app/Http/Controllers/Admin/AdminController.php:478
+msgid ""
+"There was an error adding this setting. Please try again.  If this persists, "
+"shoot us an email."
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:51
+msgid "This controls the title which the user sees during checkout."
+msgstr ""
+
+#: app/Support/TxRepairForm.php:64
+msgid ""
+"This order was created with the LaqiraPay payment gateway and its status is "
+"currently incomplete.If your transaction has been completed on the "
+"blockchain and you have the successful transaction hash,please enter the "
+"transaction hash and click the Repair Order button to repair and rebuild "
+"your order."
+msgstr ""
+
+#: app/Admin/LogsListTable.php:36
+msgid "Time"
+msgstr ""
+
+#: app/WooCommerce/Gateway.php:49
+msgid "Title"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:123
+msgid ""
+"To proceed with your payment, you must first obtain a payment authorization. "
+"Please initiate the transaction by clicking on \"Approve\" Once the "
+"authorization is successfully issued, kindly return to this section to "
+"complete your payment.\n"
+msgstr ""
+
+#: app/Admin/TransactionsListTable.php:106 app/Hooks/ExtrasService.php:158
+#: app/Hooks/ExtrasService.php:208
+msgid "Token Amount"
+msgstr ""
+
+#: app/Hooks/ExtrasService.php:156 app/Hooks/ExtrasService.php:200
+msgid "Token Name"
+msgstr ""
+
+#: app/Admin/TransactionsListTable.php:102
+msgid "Total Price"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:26
+msgid "Transaction Amount"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:82
+msgid "Transaction Done but not Confirmed. use recovery mode"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:81
+msgid "Transaction Done Successfully"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:84
+msgid "Transaction Failed. Please try again ..."
+msgstr ""
+
+#: app/Admin/TransactionsListTable.php:107 app/Hooks/ExtrasService.php:159
+#: app/Hooks/ExtrasService.php:212
+msgid "Transaction Hash"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:85
+msgid "Transaction not found on Blockchain"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:83
+msgid "Transaction Reverted. Please try again ..."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:118
+msgid "Transaction took too long"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/AjaxController.php:29
+msgid "Transaction verified"
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:51
+msgid "Try again"
+msgstr ""
+
+#: app/Support/TxRepairForm.php:61
+msgid "Try Again ..."
+msgstr ""
+
+#: app/Admin/LogsListTable.php:198
+msgid "Tx Hash"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:38 app/Admin/LogsListTable.php:195
+msgid "Type"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:266
+msgid "Unauthorized"
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:35
+msgid "Unexpected error occurred."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:80
+msgid ""
+"Unfortunately, we encountered an error. Please try again or contact the "
+"administrator"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:117
+msgid "Unknown error, please contact to administrator."
+msgstr ""
+
+#: app/Admin/LogsListTable.php:40
+msgid "User"
+msgstr ""
+
+#: app/Admin/LogsListTable.php:196
+msgid "User or Email"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:113
+msgid "User rejected the transaction."
+msgstr ""
+
+#: app/Admin/LogsListTable.php:179
+msgid "View"
+msgstr ""
+
+#: app/Support/TxRepairForm.php:75 app/Support/TxRepairForm.php:85
+msgid "View Transaction Detail"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:67
+msgid "WalletConnect Project ID"
+msgstr ""
+
+#: app/Http/Controllers/Admin/SettingsController.php:289
+msgid "Warn"
+msgstr ""
+
+#: app/Http/Views/public/checkout.php:25
+msgid "We encountered an error. Please contact the administrator."
+msgstr ""
+
+#: app/Http/Views/admin/laqirapay-admin-display.php:6
+msgid "Welcome to LaqiraPay!"
+msgstr ""
+
+#: app/Hooks/ExtrasService.php:189
+msgid ""
+"WooCommerce currency changed. Please set your exchange rate for LaqiraPay "
+"from "
+msgstr ""
+
+#: app/Hooks/ExtrasService.php:173
+#, php-format
+msgid ""
+"WooCommerce currency changed. You set currency exchange rate for %s to %s. "
+"If you need to change it, please click "
+msgstr ""
+
+#: app/Http/Controllers/Admin/AdminController.php:413
+#: app/Http/Views/admin/laqirapay-admin-settings-display.php:73
+msgid "You don't have right permission to this setting page"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:104
+msgid ""
+"You have the option to make payment through a connected wallet on the "
+"Website or Utilize your Internal account for transactions"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:112
+msgid "You must accept the Terms & Conditions before proceeding."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:91
+msgid "You need Charge to pay ..."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:27
+msgid "You need Charge to pay..."
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:70
+msgid "Your Balance"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:94
+msgid "Your browser does not support native sharing"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:296
+#: app/Http/Controllers/Ajax/LegacyAjax.php:468
+msgid "Your Data is invalide"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:1138
+msgid "Your data not confirmed"
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:463
+msgid "Your Data not Verified by Blockchain"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:96
+msgid "Your order received successfully"
+msgstr ""
+
+#: app/Support/LaqiraPayTranslations.php:53
+msgid "Your request is invalid. please contact your provider..."
+msgstr ""
+
+#: app/Http/Controllers/Ajax/LegacyAjax.php:95
+#: app/Http/Controllers/Ajax/LegacyAjax.php:302
+#: app/Http/Controllers/Ajax/LegacyAjax.php:474
+#: app/Http/Controllers/Ajax/LegacyAjax.php:577
+msgid "Your request was not Authorized. Please refresh the checkout page again"
+msgstr ""

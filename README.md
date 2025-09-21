@@ -1,4 +1,4 @@
-## WooLaqiraPay 
+## LaqiraPay 
 
 Tags: wordpress, woocommerce, web3, woocommerce-plugin, woocommerce-payment, metamask, woocommerce-payment-gateway, crypto-payment, cryptopayments, cryptocurrency-payments, wordpress-payments, crypto-payments, blockchain-payments, crypto-payment-gateway, metamask-payment, web3-payments, wordpress-crypto-payments
 Requires at least: 6.2
@@ -73,7 +73,7 @@ Automatic exact amount detection for customer payment and automatic stable coin 
 
 ## Installation
 
-1. Upload the entire `woo-laqirapay` folder to the `/wp-content/plugins/` directory.
+1. Upload the entire `laqirapay` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the `Plugins` menu in WordPress.
 3. Configure the plugin settings via the `woo LaqiraPay Settings` menu.
 4. Get your `LaqiraPay API-KEY` from [LaqiraPay website](https://laqirahub.com) and add it to the plugin settings.
@@ -117,6 +117,14 @@ LaqiraPay has been tested and confirmed to be compatible with the following plug
 ## Upgrade Notice
 
 Include any important upgrade information here.
+
+## Translations
+- English (en_US)
+- Chinese (zh_CN)
+- Hindi (hi_IN)
+- Spanish (es_ES)
+- Italian (it_IT)
+- Turkish (tr_TR)
 
 ## Support
 

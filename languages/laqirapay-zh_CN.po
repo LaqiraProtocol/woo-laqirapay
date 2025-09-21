@@ -1,0 +1,532 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Woo LaqiraPay\n"
+"Report-Msgid-Bugs-To: https://laqirahub.com \n"
+"POT-Creation-Date: 2024-07-11 14:06+0000\n"
+"PO-Revision-Date: 2024-07-11 14:50+0000\n"
+"Last-Translator: \n"
+"Language-Team: Chinese (China)\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.10; wp-6.5.5\n"
+"X-Domain: laqirapay"
+
+#: app/Admin/partials/laqirapay-admin-order-recovery.php:24
+#: app/Admin/partials/laqirapay-admin-settings-display.php:25
+msgid "Access Denied..."
+msgstr "访问被拒绝..."
+
+#: app/Admin/class-laqirapay-admin.php:196
+msgid "API Key"
+msgstr "API 密钥"
+
+#: includes/class-laqirapay-translations.php:85
+msgid "Approve"
+msgstr "批准"
+
+#: includes/class-laqirapay-translations.php:75
+msgid "Approve successfully Done!"
+msgstr "批准成功完成!"
+
+#: includes/class-laqirapay-translations.php:57
+msgid "Approximate Amount"
+msgstr "大约金额"
+
+#: includes/class-laqirapay-translations.php:40
+msgid "Asset"
+msgstr "资产"
+
+#: includes/class-laqirapay-translations.php:96
+msgid "Assets"
+msgstr "资产"
+
+#: includes/class-laqirapay-translations.php:51
+msgid "Balance"
+msgstr "余额"
+
+#: includes/class-laqirapay-translations.php:31
+msgid "Close"
+msgstr "关闭"
+
+#: includes/class-laqirapay-translations.php:90
+msgid "Congratulation"
+msgstr "祝贺"
+
+#: includes/class-laqirapay-translations.php:93
+msgid "Copy to clipboard"
+msgstr "复制到剪贴板"
+
+#: includes/class-laqirapay-translations.php:44
+msgid "COPYRIGHT © 2024 Laqira Protocol, All rights Reserved"
+msgstr "版权所有 © 2024 Laqira Protocol，保留所有权利"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:91
+msgid "Currency"
+msgstr "货币"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:137
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:163
+msgid "Customer has chosen LaqiraPay payment method, payment is pending."
+msgstr "客户选择了 LaqiraPay 支付方式，支付待处理。"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:111
+msgid ""
+"Customer has chosen LaqiraPay Wallet payment method, payment is pending."
+msgstr "客户选择了 LaqiraPay 钱包支付方式，支付待处理。"
+
+#: app/Admin/class-laqirapay-admin.php:199
+msgid "Delete All plugin Data on uninstallation"
+msgstr "卸载时删除所有插件数据"
+
+#: includes/class-laqirapay-translations.php:56
+msgid "Enter Amount In USDT"
+msgstr "以 USDT 输入金额"
+
+#: includes/class-laqirapay-translations.php:53
+msgid "Enter your order destails"
+msgstr "输入您的订单详情"
+
+#: includes/class-laqirapay-translations.php:37
+msgid "Error"
+msgstr "错误"
+
+#: includes/class-laqirapay-translations.php:82
+msgid "Error checking transaction status. Please try again ..."
+msgstr "检查交易状态时出错。请重试..."
+
+#: includes/class-laqirapay-translations.php:73
+msgid "Error loading Assets"
+msgstr "加载资产时出错"
+
+#: includes/class-laqirapay-translations.php:70
+msgid "Error loading networks"
+msgstr "加载网络时出错"
+
+#: includes/class-laqirapay-translations.php:76
+msgid "Error on Approve"
+msgstr "批准时出错"
+
+#: includes/class-laqirapay-translations.php:64
+msgid "External"
+msgstr "外部"
+
+#: includes/class-laqirapay-translations.php:97
+msgid "External Pay"
+msgstr "外部支付"
+
+#: includes/class-laqirapay-translations.php:21
+msgid "External Payment"
+msgstr "外部支付"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:95
+msgid "From"
+msgstr "从"
+
+#: app/Admin/class-laqirapay-admin.php:241
+msgid "Get API-KEY"
+msgstr "获取 API 密钥"
+
+#: includes/class-laqirapay-translations.php:34
+msgid "Home Page"
+msgstr "主页"
+
+#. Author URI of the plugin
+msgid "https://laqira.io"
+msgstr "https://laqira.io"
+
+#. URI of the plugin
+msgid "https://Laqirahub.com"
+msgstr "https://Laqirahub.com"
+
+#: app/Admin/partials/laqirapay-admin-order-recovery.php:10
+msgid ""
+"In this section, you can view detailed information by entering a transaction "
+"hash.\n"
+"         If a customer's order corresponds to this hash, the order details "
+"will be displayed along with the\n"
+"          transaction information retrieved from the blockchain. If the "
+"transaction is marked as incomplete \n"
+"          on the website, you can use the blockchain data to finalize the "
+"customer's order."
+msgstr ""
+"在本节中，您可以通过输入交易哈希查看详细信息。\n"
+"         如果客户的订单对应于此哈希，则将显示订单详细信息，以及从区块链检索的交易信息。如果交易标记为不完整\n"
+"          在网站上，您可以使用区块链数据完成客户订单。"
+
+#: includes/class-laqirapay-translations.php:65
+msgid "Internal"
+msgstr "内部"
+
+#: includes/class-laqirapay-translations.php:98
+msgid "Internal Pay"
+msgstr "内部支付"
+
+#: includes/class-laqirapay-translations.php:22
+msgid "Internal Payment"
+msgstr "内部支付"
+
+#: includes/class-laqirapay-translations.php:36
+msgid "Laqira Pay Gateway"
+msgstr "Laqira Pay 网关"
+
+#. Author of the plugin
+msgid "Laqira Protocol"
+msgstr "Laqira Protocol"
+
+#. Description of the plugin
+msgid ""
+"LaqiraPay : The First Ever Fully Decentralized Asset-Agnostic MultiNetwork "
+"Payment Gateway for woocommerce"
+msgstr ""
+"LaqiraPay：Woocommerce 的首个完全去中心化、资产不可知的多网络支付网关"
+
+#: includes/functions.php:575
+msgid "LaqiraPay Transaction Details:"
+msgstr "LaqiraPay 交易详情："
+
+#: includes/class-laqirapay-translations.php:68
+msgid "Loading ..."
+msgstr "加载中..."
+
+#: includes/class-laqirapay-translations.php:72
+msgid "Loading Assets ..."
+msgstr "加载资产中..."
+
+#: includes/class-laqirapay-translations.php:69
+msgid "Loading Networks ..."
+msgstr "加载网络中..."
+
+#: app/Admin/class-laqirapay-admin.php:195
+msgid "Main Settings"
+msgstr "主要设置"
+
+#: includes/class-laqirapay-translations.php:102
+msgid "More"
+msgstr "更多"
+
+#: includes/class-laqirapay-translations.php:32
+msgid "My Account Page"
+msgstr "我的账户页面"
+
+#: includes/class-laqirapay-translations.php:39
+msgid "Network"
+msgstr "网络"
+
+#: includes/class-laqirapay-translations.php:71
+msgid "No networks available"
+msgstr "无可用网络"
+
+#: app/Admin/class-laqirapay-admin.php:198
+msgid "Only logged in users can pay"
+msgstr "只有已登录用户才能支付"
+
+#: includes/class-laqirapay-translations.php:84
+msgid "Or Enter Slippage"
+msgstr "或输入滑点"
+
+#: includes/class-laqirapay-translations.php:26
+msgid "Order Amount"
+msgstr "订单金额"
+
+#: includes/class-laqirapay-translations.php:48
+msgid "Order Details"
+msgstr "订单详情"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:89
+msgid "Order ID"
+msgstr "订单 ID"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:405
+msgid "Order not verified by blockchain."
+msgstr "订单未通过区块链验证。"
+
+#: app/Admin/class-laqirapay-admin.php:200
+msgid "Order Status after order recovery by TX hash"
+msgstr "通过 TX 哈希恢复订单后的订单状态"
+
+#: includes/functions.php:1205
+msgid "Order updated by TX hash confirmation method"
+msgstr "通过 TX 哈希确认方法更新订单"
+
+#: includes/functions.php:1206
+msgid "Order updated by TX hash confirmation method "
+msgstr "通过 TX 哈希确认方法更新订单 "
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:92
+msgid "Paid By"
+msgstr "支付者"
+
+#: includes/class-laqirapay-translations.php:66
+msgid "Pay"
+msgstr "支付"
+
+#: includes/class-laqirapay-translations.php:41
+msgid "Payment"
+msgstr "支付"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:110
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:136
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:162
+msgid "Payment is awaited."
+msgstr "等待支付中。"
+
+#: includes/class-laqirapay-translations.php:38
+msgid "Payment Processing"
+msgstr "支付处理中"
+
+#: includes/class-laqirapay-translations.php:100
+msgid "Payment through a connected wallet"
+msgstr "通过连接的钱包支付"
+
+#: includes/class-laqirapay-translations.php:101
+msgid "Payment Utilize your Internal account"
+msgstr "利用您的内部账户进行支付"
+
+#: app/Admin/class-laqirapay-admin.php:241
+msgid "Please Enter your Laqira API from"
+msgstr "请输入您的 Laqira API 来源"
+
+#: includes/class-laqirapay-translations.php:58
+msgid "Please Enter Your Order Note"
+msgstr "请输入您的订单备注"
+
+#: includes/class-laqirapay-translations.php:35
+msgid "please fill all required address fields."
+msgstr "请填写所有必填地址字段。"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:529
+msgid "please fill your required fields."
+msgstr "请填写您的必填字段。"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:601
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:708
+msgid "Please login to make a payment!"
+msgstr "请登录以进行支付！"
+
+#: includes/class-laqirapay-translations.php:47
+msgid "Please select asset first"
+msgstr "请先选择资产"
+
+#: includes/class-laqirapay-translations.php:45
+msgid "Please select asset for"
+msgstr "请选择资产"
+
+#: includes/class-laqirapay-translations.php:43
+msgid "Please select network"
+msgstr "请选择网络"
+
+#: includes/class-laqirapay-translations.php:46
+msgid "Please select network first"
+msgstr "请先选择网络"
+
+#: includes/class-laqirapay-translations.php:74
+msgid "Please use at most 20 characters"
+msgstr "请最多使用 20 个字符"
+
+#: includes/class-laqirapay-translations.php:27
+msgid "Price Feed"
+msgstr "价格信息源"
+
+#: includes/class-laqirapay-translations.php:83
+msgid "Product Name"
+msgstr "产品名称"
+
+#: includes/class-laqirapay-translations.php:52
+msgid "Provider Address is invalid"
+msgstr "提供者地址无效"
+
+#: includes/class-laqirapay-translations.php:49
+msgid "Provider Address not found. please contact your provider..."
+msgstr "未找到提供者地址，请联系您的提供者..."
+
+#: includes/class-laqirapay-translations.php:60
+msgid "Remaining"
+msgstr "剩余"
+
+#: includes/class-laqirapay-translations.php:42
+msgid "Result"
+msgstr "结果"
+
+#: includes/class-laqirapay-translations.php:25
+msgid "Search Asset"
+msgstr "搜索资产"
+
+#: includes/class-laqirapay-translations.php:30
+msgid "See Invoice"
+msgstr "查看发票"
+
+#: includes/class-laqirapay-translations.php:29
+msgid "Select Asset"
+msgstr "选择资产"
+
+#: includes/class-laqirapay-translations.php:28
+msgid "Select Network"
+msgstr "选择网络"
+
+#: includes/class-laqirapay-translations.php:63
+msgid "Select Payment Method"
+msgstr "选择支付方式"
+
+#: includes/class-laqirapay-translations.php:55
+msgid "Selected Asset"
+msgstr "已选择的资产"
+
+#: includes/class-laqirapay-translations.php:54
+msgid "Selected Network"
+msgstr "已选择的网络"
+
+#: includes/class-laqirapay-translations.php:62
+msgid ""
+"Setting a high slippage tolerance can help transactions succeed, Increase "
+"Slippage the value to enhance the acceptance rate of seamless alignment."
+msgstr ""
+"设置高滑点容忍度可以帮助交易成功，增加滑点值以提高无缝对接的接受率。"
+
+#: laqirapay.php:29
+msgid "Settings"
+msgstr "设置"
+
+#: includes/class-laqirapay-translations.php:94
+msgid "Share"
+msgstr "分享"
+
+#: includes/class-laqirapay-translations.php:95
+msgid "Share your order"
+msgstr "分享您的订单"
+
+#: includes/class-laqirapay-translations.php:88
+msgid "Sharing error"
+msgstr "分享错误"
+
+#: includes/class-laqirapay-translations.php:87
+msgid "Sharing was successful"
+msgstr "分享成功"
+
+#: includes/class-laqirapay-translations.php:33
+msgid "Shop Page"
+msgstr "商店页面"
+
+#: includes/class-laqirapay-translations.php:92
+msgid "Show Order"
+msgstr "显示订单"
+
+#: includes/class-laqirapay-translations.php:61
+msgid "Slippage Tolerance"
+msgstr "滑点容忍度"
+
+#: laqirapay.php:30
+msgid "Support"
+msgstr "支持"
+
+#: includes/class-laqirapay-translations.php:59
+msgid ""
+"The approximate payment based on chosen Asset and Decentralized price feeds."
+msgstr "基于所选资产和去中心化价格源的大致支付金额。"
+
+#: app/Admin/class-laqirapay-admin.php:175
+msgid ""
+"There was an error adding this setting. Please try again.  If this persists, "
+"shoot us an email."
+msgstr ""
+"添加此设置时出现错误。请重试。如果问题仍然存在，请发送电子邮件给我们。"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:93
+msgid "Token Amount"
+msgstr "代币金额"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:90
+msgid "Total Price"
+msgstr "总价"
+
+#: includes/class-laqirapay-translations.php:23
+msgid "Transaction Amount"
+msgstr "交易金额"
+
+#: includes/class-laqirapay-translations.php:78
+msgid "Transaction Done Successfully"
+msgstr "交易成功完成"
+
+#: includes/class-laqirapay-translations.php:80
+msgid "Transaction Failed. Please try again ..."
+msgstr "交易失败。请重试..."
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:94
+msgid "Transaction Hash"
+msgstr "交易哈希"
+
+#: includes/class-laqirapay-translations.php:81
+msgid "Transaction not found on Blockchain"
+msgstr "区块链上未找到交易"
+
+#: includes/class-laqirapay-translations.php:79
+msgid "Transaction Reverted. Please try again ..."
+msgstr "交易已撤销。请重试..."
+
+#: includes/class-laqirapay-translations.php:77
+msgid ""
+"Unfortunately, we encountered an error. Please try again or contact the "
+"administrator"
+msgstr "很遗憾，我们遇到了一个错误。请重试或联系管理员"
+
+#. Name of the plugin
+msgid "Woo LaqiraPay"
+msgstr "Woo LaqiraPay"
+
+#: app/Admin/partials/laqirapay-admin-order-recovery.php:7
+msgid "LaqiraPay Order Recovery by Transaction Hash"
+msgstr "通过交易哈希恢复 LaqiraPay 订单"
+
+#: laqirapay.php:116
+msgid "LaqiraPay requires PHP version 7.4 or higher."
+msgstr "LaqiraPay 需要 PHP 版本 7.4 或更高版本。"
+
+#: laqirapay.php:125
+msgid "LaqiraPay requires WooCommerce version 8.2 or higher."
+msgstr "LaqiraPay 需要 WooCommerce 版本 8.2 或更高版本。"
+
+#: laqirapay.php:107
+msgid "LaqiraPay requires WordPress version 6.2 or higher."
+msgstr "LaqiraPay 需要 WordPress 版本 6.2 或更高版本。"
+
+#: app/Admin/partials/laqirapay-admin-order-recovery.php:25
+#: app/Admin/partials/laqirapay-admin-settings-display.php:26
+msgid "You don't have right permission to this setting page"
+msgstr "您没有访问此设置页面的权限"
+
+#: includes/class-laqirapay-translations.php:99
+msgid ""
+"You have the option to make payment through a connected wallet on the "
+"Website or Utilize your Internal account for transactions"
+msgstr "您可以选择通过网站上的连接钱包进行支付或利用您的内部账户进行交易"
+
+#: includes/class-laqirapay-translations.php:86
+msgid "You need Charge to pay ..."
+msgstr "您需要充值以支付..."
+
+#: includes/class-laqirapay-translations.php:24
+msgid "You need Charge to pay..."
+msgstr "您需要充值以支付..."
+
+#: includes/class-laqirapay-translations.php:67
+msgid "Your Balance"
+msgstr "您的余额"
+
+#: includes/class-laqirapay-translations.php:89
+msgid "Your browser does not support native sharing"
+msgstr "您的浏览器不支持本地分享"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:420
+msgid "Your Data not Verified by Blockchain"
+msgstr "您的数据未通过区块链验证"
+
+#: includes/class-laqirapay-translations.php:91
+msgid "Your order received successfully"
+msgstr "您的订单已成功接收"
+
+#: includes/class-laqirapay-translations.php:50
+msgid "Your request is invalid. please contact your provider..."
+msgstr "您的请求无效。请联系您的提供者..."

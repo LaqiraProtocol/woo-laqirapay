@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.11.0 (2024-11-20)
+
+*   Feature: Improve PHP 8.4+ support by avoiding implicitly nullable types.
+    (#537 by @clue)
+
+*   Feature: Allow underscore character in Uri host.
+    (#524 by @lulhum)
+
+*   Improve test suite to fix expected error code when ext-sockets is not enabled.
+    (#539 by @WyriHaximus)
+
 ## 1.10.0 (2024-03-27)
 
 *   Feature: Add new PSR-7 implementation and remove dated RingCentral PSR-7 dependency.

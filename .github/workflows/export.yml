@@ -15,8 +15,8 @@ jobs:
       - name: Derive version and artifact name
         id: vars
         run: |
-          TAG="${{ github.ref_name }}"     
-          VERSION="${TAG#release-}"    
+          TAG="${{ github.ref_name }}" 
+          VERSION="${TAG#release-}"     
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "artifact=laqirapay-$VERSION" >> "$GITHUB_OUTPUT"
 
@@ -29,9 +29,9 @@ jobs:
             --exclude '.gitignore' \
             --exclude '.gitattributes' || true
 
-      - name: Upload artifact (single zip containing laqirapay/)
+      - name: Upload artifact (keep laqirapay directory at root)
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.vars.outputs.artifact }}
-          path: laqirapay/
+          path: laqirapay
           if-no-files-found: error

@@ -12,21 +12,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prepare folder
+      - name: Derive version and artifact name
+        id: vars
+        run: |
+          TAG="${{ github.ref_name }}"     
+          VERSION="${TAG#release-}"    
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "artifact=laqirapay-$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare folder (copy sources into laqirapay/)
         run: |
           mkdir -p laqirapay
-          cp -r ./* laqirapay/ || true
-          cp -r ./.??* laqirapay/ || true
-          rm -rf laqirapay/.git
+          rsync -a ./ laqirapay/ \
+            --exclude '.git' \
+            --exclude '.github/workflows' \
+            --exclude '.gitignore' \
+            --exclude '.gitattributes' || true
 
-      - name: Create zip
-        run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/release-}
-          ZIP_NAME="laqirapay-${TAG_NAME}.zip"
-          zip -r "$ZIP_NAME" laqirapay
-
-      - name: Upload artifact
+      - name: Upload artifact (single zip containing laqirapay/)
         uses: actions/upload-artifact@v4
         with:
-          name: release-zip
-          path: laqirapay-*.zip
+          name: ${{ steps.vars.outputs.artifact }}
+          path: laqirapay/
+          if-no-files-found: error

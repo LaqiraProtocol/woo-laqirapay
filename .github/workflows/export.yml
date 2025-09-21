@@ -1,27 +1,32 @@
-name: Build Release Zip
+name: Release ZIP (single final zip)
 
 on:
   push:
     tags:
       - "release-v*"
 
+permissions:
+  contents: write
+
 jobs:
-  build-zip:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Derive version and artifact name
+      - name: Derive version and names
         id: vars
         run: |
-          TAG="${{ github.ref_name }}" 
-          VERSION="${TAG#release-}"     
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "artifact=laqirapay-$VERSION" >> "$GITHUB_OUTPUT"
+          TAG="${{ github.ref_name }}"  
+          VERSION="${TAG#release-}"       
+          ZIP="laqirapay-${VERSION}.zip"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "zip=${ZIP}" >> "$GITHUB_OUTPUT"
 
-      - name: Prepare folder (copy sources into laqirapay/)
+      - name: Prepare folder (copy sources into ./laqirapay)
         run: |
+          rm -rf laqirapay
           mkdir -p laqirapay
           rsync -a ./ laqirapay/ \
             --exclude '.git' \
@@ -29,9 +34,14 @@ jobs:
             --exclude '.gitignore' \
             --exclude '.gitattributes' || true
 
-      - name: Upload artifact (keep laqirapay directory at root)
-        uses: actions/upload-artifact@v4
+      - name: Create final zip (root folder = laqirapay)
+        run: |
+          zip -r "${{ steps.vars.outputs.zip }}" laqirapay
+
+      - name: Publish GitHub Release with final ZIP
+        uses: softprops/action-gh-release@v2
         with:
-          name: ${{ steps.vars.outputs.artifact }}
-          path: laqirapay
-          if-no-files-found: error
+          tag_name: ${{ github.ref_name }}
+          name: laqirapay ${{ steps.vars.outputs.version }}
+          generate_release_notes: true
+          files: ${{ steps.vars.outputs.zip }}

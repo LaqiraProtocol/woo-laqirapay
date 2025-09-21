@@ -1,0 +1,309 @@
+/**
+*
+* CSS File that styles the Admin Settings Panel of the Plugin
+* 
+* TABLE OF CONTENTS:
+* 1. WordPress Admin Dashboard Background
+* 2. Menu items
+* 3. Swing animation for icons
+* 4. Tools
+* 5. Media Queries
+*
+* 
+*/
+
+/* 1. WordPress Admin Dashboard Background (CSS file enqueued only in this plugin's specific admin slug) */
+#wpcontent{
+	background-color: #a7a7a7;
+	padding:0px 35px 0px 35px;
+}
+
+#wpfooter{
+	background-color: #313437;
+	position:unset;
+}
+#wpbody-content {
+    padding-bottom: 5px;
+}
+.form-table th{
+	padding: 20px 10px 20px 10px;
+}
+#laqirapay_admin_form .checkbox input{
+	margin:0;
+}
+
+.toplevel_page_laqirapay #wpwrap, body.toplevel_page_laqirapay {
+    background: #313437;
+}
+
+
+/* 2. Menu Items */
+#laqirapay_different_commission_price_increase_number_setting{
+  min-width: 240px;
+}
+/* !important needed to override Semantic UI Library */
+.laqirapay_othersettings_margin{
+  margin-bottom: 50px;
+}
+.ui.menu .item.green.active{
+	color: #f0efec !important;
+	transition: all 0s;
+}
+.ui.menu .item.green:hover{
+	color: #eeedf2;
+}
+#laqirapay_admin_menu .active .icon{
+    color: #dea320;
+}
+#laqirapay_admin_menu .item{
+	transition: 0.2s all;
+}
+#laqirapay_admin_menu .item::before{
+	background: rgba(119, 122, 125, 0.1);
+}
+.item .laqirapay_menu_description{
+	color: #686573;
+	font-size: 12px;
+}
+.item.active .laqirapay_menu_description{
+	color:#b8b6c3;
+}
+#laqirapay_menu_logo{
+	width: 215px;
+	margin: 30px auto;
+	display: block;
+}
+#laqirapay_admin_wrapper{
+	display:flex;
+	min-height: 610px;
+  margin-top: 30px;
+}
+#laqirapay_admin_wrapper_import{
+  display:flex;
+  min-height: 450px;
+  margin-top: 30px;
+}
+a.laqirapay_costofgoods_plugin_label {
+    margin-top: 7px !important;
+    display: block;
+}
+.laqirapay_registration_settings_section tr th {
+    min-width: 250px;
+}
+#laqirapay_download_products_button{
+  min-height: 36px;
+}
+#laqirapay_tabs_wrapper{
+	display: inline-block;
+    width: 100%;
+}
+#laqirapay_admin_menu{
+	display:inline-block;
+	vertical-align: top;
+	height:auto;
+	min-width: 225px;
+	width:21%;
+	border: 0;
+	border-radius: 5px 0px 0px 5px;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.17);
+	background: linear-gradient(172deg, #15141b, #201e2e, #15141b)
+}
+#laqirapay_admin_menu .active{
+	/* !important needed to override Semantic UI Library */
+	border-color: #d4d4d5 !important; 
+	box-shadow: 0 3px 6px rgba(0,0,0,.07);
+	border-top-width:0px;
+	background: #6c667d;
+}
+.ui.menu .item{
+	transition: all .1s ease-out;
+	color:#bcc0c7;
+	padding:20px;
+}
+.ui.menu .item>i.icon{
+	font-size: 22px;
+	display:inline-table;
+	position: relative;
+	top: 5px;
+	transition: 0.3s all;
+}
+#laqirapay_admin_menu .item:hover .icon{
+
+	animation: swing 1s ease;
+	animation-iteration-count: 1;
+}
+#laqirapay_admin_menu .item.active:hover .icon{
+	animation: none;
+	animation-iteration-count: 1;
+}
+#laqirapay_admin_menu.ui.menu .item:hover{
+	background: rgba(108, 102, 125, 0.18);
+}
+#laqirapay_admin_menu.ui.menu .item.active:hover{
+	background: #6c667d;
+}
+a.item:after {
+    content: "";
+    width: 0;
+    left:0;
+    top: 0;
+    position: absolute;
+    transition: 0.2s ease;
+    height: 3px;
+}
+a.item.active:after {
+    content: "";
+    width: 100%;
+    height: 3px;
+    background: #dea320;
+}
+.ui.menu .item.teal:hover{
+	color: #00b5ad;
+}
+.ui.menu .item.pink:hover{
+	color: #e03997;
+}
+.ui.menu .item.red:hover{
+	color: #db2828;
+}
+.ui.menu .item.blue:hover{
+	color: #2185d0;
+}
+
+.ui.tab.segment{
+	border:0;
+	box-shadow: 0 3px 6px rgba(0,0,0,.07);
+	border-top: 1px;
+	border-radius: 0 5px 5px 0;
+	height:100%;
+}
+.laqirapay_attached_content_wrapper{
+	transition: all .15s ease;
+}
+.laqirapay_plugin_status_container{
+  padding: 10px;
+}
+.laqirapay_settings_explained{
+  font-size: 12px;
+  font-style: italic;
+}
+label.laqirapay_access_restriction_label {
+    font-weight: 600;
+    border-bottom: 1px solid #eeeeee;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    display: block;
+}
+
+/* 3. Swing Animation for Icons */
+@-webkit-keyframes swing {
+  20% {
+    -webkit-transform: rotate3d(0, 0, 1, 15deg);
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+
+  40% {
+    -webkit-transform: rotate3d(0, 0, 1, -10deg);
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+
+  60% {
+    -webkit-transform: rotate3d(0, 0, 1, 5deg);
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+
+  80% {
+    -webkit-transform: rotate3d(0, 0, 1, -5deg);
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+
+  to {
+    -webkit-transform: rotate3d(0, 0, 1, 0deg);
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+}
+
+@keyframes swing {
+  20% {
+    -webkit-transform: rotate3d(0, 0, 1, 15deg);
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+
+  40% {
+    -webkit-transform: rotate3d(0, 0, 1, -10deg);
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+
+  60% {
+    -webkit-transform: rotate3d(0, 0, 1, 5deg);
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+
+  80% {
+    -webkit-transform: rotate3d(0, 0, 1, -5deg);
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+
+  to {
+    -webkit-transform: rotate3d(0, 0, 1, 0deg);
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+}
+
+.swing {
+  -webkit-transform-origin: top center;
+  transform-origin: top center;
+  -webkit-animation-name: swing;
+  animation-name: swing;
+}
+/* 4. Tools */
+div#laqirapay_tools_setusergroup {
+    font-size: 16px;
+    padding: 10px;
+}
+div#laqirapay_tools_setcategoryvisibility{
+  font-size: 16px;
+  padding: 10px;
+  margin-top: 20px;
+}
+div#laqirapay_tools_setusersubaccounts{
+  font-size: 16px;
+  padding: 10px;
+  margin-top: 20px;
+}
+div#laqirapay_set_users_in_group, div#laqirapay_set_category_in_bulk {
+    margin-top: 15px;
+}
+.laqirapay_subaccountplusicon{
+    font-size: 1.4em !important;
+    color: #C4C4C4;
+    display: inline-block !important;
+    margin-right: 5px !important;
+}
+input.laqirapay_set_user_subaccounts_input {
+    background-color: #ECECEC;
+    border-radius: 3px;
+    height: 40px;
+    border: none;
+    padding: 0px 15px;
+    width: 97.5%;
+    max-width: 100%;
+    font-family: "Roboto Medium", Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 21px;
+    color: #252525;
+    margin-bottom: 5px;
+}
+
+/* 5. Media Queries */
+@media screen and (max-width: 767px) { 
+  div#laqirapay_admin_wrapper{
+    display: block;
+  }
+  div#laqirapay_admin_menu{
+    width: 100%;
+  }
+}
+

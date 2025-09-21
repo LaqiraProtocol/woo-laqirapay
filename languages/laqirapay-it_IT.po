@@ -1,0 +1,529 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Woo LaqiraPay\n"
+"Report-Msgid-Bugs-To: https://laqirahub.com \n"
+"POT-Creation-Date: 2024-07-11 14:06+0000\n"
+"PO-Revision-Date: 2024-07-11 14:51+0000\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.10; wp-6.5.5\n"
+"X-Domain: laqirapay"
+
+#: app/Admin/partials/laqirapay-admin-order-recovery.php:24
+#: app/Admin/partials/laqirapay-admin-settings-display.php:25
+msgid "Access Denied..."
+msgstr "Accesso Negato..."
+
+#: app/Admin/class-laqirapay-admin.php:196
+msgid "API Key"
+msgstr "Chiave API"
+
+#: includes/class-laqirapay-translations.php:85
+msgid "Approve"
+msgstr "Approvare"
+
+#: includes/class-laqirapay-translations.php:75
+msgid "Approve successfully Done!"
+msgstr "Approvazione completata con successo!"
+
+#: includes/class-laqirapay-translations.php:57
+msgid "Approximate Amount"
+msgstr "Importo Approssimativo"
+
+#: includes/class-laqirapay-translations.php:40
+msgid "Asset"
+msgstr "Risorsa"
+
+#: includes/class-laqirapay-translations.php:96
+msgid "Assets"
+msgstr "Risorse"
+
+#: includes/class-laqirapay-translations.php:51
+msgid "Balance"
+msgstr "Saldo"
+
+#: includes/class-laqirapay-translations.php:31
+msgid "Close"
+msgstr "Chiudi"
+
+#: includes/class-laqirapay-translations.php:90
+msgid "Congratulation"
+msgstr "Congratulazioni"
+
+#: includes/class-laqirapay-translations.php:93
+msgid "Copy to clipboard"
+msgstr "Copia negli appunti"
+
+#: includes/class-laqirapay-translations.php:44
+msgid "COPYRIGHT © 2024 Laqira Protocol, All rights Reserved"
+msgstr "COPYRIGHT © 2024 Laqira Protocol, Tutti i diritti riservati"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:91
+msgid "Currency"
+msgstr "Valuta"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:137
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:163
+msgid "Customer has chosen LaqiraPay payment method, payment is pending."
+msgstr "Il cliente ha scelto il metodo di pagamento LaqiraPay, il pagamento è in sospeso."
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:111
+msgid "Customer has chosen LaqiraPay Wallet payment method, payment is pending."
+msgstr "Il cliente ha scelto il metodo di pagamento LaqiraPay Wallet, il pagamento è in sospeso."
+
+#: app/Admin/class-laqirapay-admin.php:199
+msgid "Delete All plugin Data on uninstallation"
+msgstr "Elimina tutti i dati del plugin durante la disinstallazione"
+
+#: includes/class-laqirapay-translations.php:56
+msgid "Enter Amount In USDT"
+msgstr "Inserisci l'Importo in USDT"
+
+#: includes/class-laqirapay-translations.php:53
+msgid "Enter your order destails"
+msgstr "Inserisci i dettagli del tuo ordine"
+
+#: includes/class-laqirapay-translations.php:37
+msgid "Error"
+msgstr "Errore"
+
+#: includes/class-laqirapay-translations.php:82
+msgid "Error checking transaction status. Please try again ..."
+msgstr "Errore durante il controllo dello stato della transazione. Per favore riprova ..."
+
+#: includes/class-laqirapay-translations.php:73
+msgid "Error loading Assets"
+msgstr "Errore nel caricamento delle risorse"
+
+#: includes/class-laqirapay-translations.php:70
+msgid "Error loading networks"
+msgstr "Errore nel caricamento delle reti"
+
+#: includes/class-laqirapay-translations.php:76
+msgid "Error on Approve"
+msgstr "Errore durante l'approvazione"
+
+#: includes/class-laqirapay-translations.php:64
+msgid "External"
+msgstr "Esterno"
+
+#: includes/class-laqirapay-translations.php:97
+msgid "External Pay"
+msgstr "Pagamento Esterno"
+
+#: includes/class-laqirapay-translations.php:21
+msgid "External Payment"
+msgstr "Pagamento Esterno"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:95
+msgid "From"
+msgstr "Da"
+
+#: app/Admin/class-laqirapay-admin.php:241
+msgid "Get API-KEY"
+msgstr "Ottieni Chiave API"
+
+#: includes/class-laqirapay-translations.php:34
+msgid "Home Page"
+msgstr "Pagina Principale"
+
+#. Author URI of the plugin
+msgid "https://laqira.io"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://Laqirahub.com"
+msgstr ""
+
+#: app/Admin/partials/laqirapay-admin-order-recovery.php:10
+msgid ""
+"In this section, you can view detailed information by entering a transaction "
+"hash.\n"
+"         If a customer's order corresponds to this hash, the order details "
+"will be displayed along with the\n"
+"          transaction information retrieved from the blockchain. If the "
+"transaction is marked as incomplete \n"
+"          on the website, you can use the blockchain data to finalize the "
+"customer's order."
+msgstr ""
+"In questa sezione, puoi visualizzare informazioni dettagliate inserendo un hash di transazione.\n"
+"         Se un ordine del cliente corrisponde a questo hash, i dettagli dell'ordine saranno visualizzati insieme alle\n"
+"          informazioni sulla transazione recuperate dalla blockchain. Se la transazione è contrassegnata come incompleta \n"
+"          sul sito web, puoi utilizzare i dati della blockchain per finalizzare l'ordine del cliente."
+
+#: includes/class-laqirapay-translations.php:65
+msgid "Internal"
+msgstr "Interno"
+
+#: includes/class-laqirapay-translations.php:98
+msgid "Internal Pay"
+msgstr "Pagamento Interno"
+
+#: includes/class-laqirapay-translations.php:22
+msgid "Internal Payment"
+msgstr "Pagamento Interno"
+
+#: includes/class-laqirapay-translations.php:36
+msgid "Laqira Pay Gateway"
+msgstr "Gateway Laqira Pay"
+
+#. Author of the plugin
+msgid "Laqira Protocol"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"LaqiraPay : The First Ever Fully Decentralized Asset-Agnostic MultiNetwork "
+"Payment Gateway for woocommerce"
+msgstr ""
+"LaqiraPay : Il primo gateway di pagamento multinetwork completamente decentralizzato e asset-agnostic per woocommerce"
+
+#: includes/functions.php:575
+msgid "LaqiraPay Transaction Details:"
+msgstr "Dettagli Transazione LaqiraPay:"
+
+#: includes/class-laqirapay-translations.php:68
+msgid "Loading ..."
+msgstr "Caricamento ..."
+
+#: includes/class-laqirapay-translations.php:72
+msgid "Loading Assets ..."
+msgstr "Caricamento Risorse ..."
+
+#: includes/class-laqirapay-translations.php:69
+msgid "Loading Networks ..."
+msgstr "Caricamento Reti ..."
+
+#: app/Admin/class-laqirapay-admin.php:195
+msgid "Main Settings"
+msgstr "Impostazioni Principali"
+
+#: includes/class-laqirapay-translations.php:102
+msgid "More"
+msgstr "Altro"
+
+#: includes/class-laqirapay-translations.php:32
+msgid "My Account Page"
+msgstr "Pagina del Mio Account"
+
+#: includes/class-laqirapay-translations.php:39
+msgid "Network"
+msgstr "Rete"
+
+#: includes/class-laqirapay-translations.php:71
+msgid "No networks available"
+msgstr "Nessuna rete disponibile"
+
+#: app/Admin/class-laqirapay-admin.php:198
+msgid "Only logged in users can pay"
+msgstr "Solo gli utenti registrati possono pagare"
+
+#: includes/class-laqirapay-translations.php:84
+msgid "Or Enter Slippage"
+msgstr "O Inserisci Slippage"
+
+#: includes/class-laqirapay-translations.php:26
+msgid "Order Amount"
+msgstr "Importo Ordine"
+
+#: includes/class-laqirapay-translations.php:48
+msgid "Order Details"
+msgstr "Dettagli Ordine"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:89
+msgid "Order ID"
+msgstr "ID Ordine"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:405
+msgid "Order not verified by blockchain."
+msgstr "Ordine non verificato dalla blockchain."
+
+#: app/Admin/class-laqirapay-admin.php:200
+msgid "Order Status after order recovery by TX hash"
+msgstr "Stato dell'ordine dopo il recupero tramite hash TX"
+
+#: includes/functions.php:1205
+msgid "Order updated by TX hash confirmation method"
+msgstr "Ordine aggiornato tramite metodo di conferma hash TX"
+
+#: includes/functions.php:1206
+msgid "Order updated by TX hash confirmation method "
+msgstr "Ordine aggiornato tramite metodo di conferma hash TX"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:92
+msgid "Paid By"
+msgstr "Pagato Da"
+
+#: includes/class-laqirapay-translations.php:66
+msgid "Pay"
+msgstr "Paga"
+
+#: includes/class-laqirapay-translations.php:41
+msgid "Payment"
+msgstr "Pagamento"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:110
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:136
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:162
+msgid "Payment is awaited."
+msgstr "Pagamento in attesa."
+
+#: includes/class-laqirapay-translations.php:38
+msgid "Payment Processing"
+msgstr "Elaborazione del pagamento"
+
+#: includes/class-laqirapay-translations.php:100
+msgid "Payment through a connected wallet"
+msgstr "Pagamento tramite un wallet connesso"
+
+#: includes/class-laqirapay-translations.php:101
+msgid "Payment Utilize your Internal account"
+msgstr "Utilizza il tuo account interno per il pagamento"
+
+#: app/Admin/class-laqirapay-admin.php:241
+msgid "Please Enter your Laqira API from"
+msgstr "Per favore, inserisci la tua API di Laqira da"
+
+#: includes/class-laqirapay-translations.php:58
+msgid "Please Enter Your Order Note"
+msgstr "Per favore, inserisci la nota dell'ordine"
+
+#: includes/class-laqirapay-translations.php:35
+msgid "please fill all required address fields."
+msgstr "per favore, compila tutti i campi obbligatori dell'indirizzo."
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:529
+msgid "please fill your required fields."
+msgstr "per favore, compila i campi obbligatori."
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:601
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:708
+msgid "Please login to make a payment!"
+msgstr "Per favore, accedi per effettuare un pagamento!"
+
+#: includes/class-laqirapay-translations.php:47
+msgid "Please select asset first"
+msgstr "Per favore, seleziona prima la risorsa"
+
+#: includes/class-laqirapay-translations.php:45
+msgid "Please select asset for"
+msgstr "Per favore, seleziona la risorsa per"
+
+#: includes/class-laqirapay-translations.php:43
+msgid "Please select network"
+msgstr "Per favore, seleziona la rete"
+
+#: includes/class-laqirapay-translations.php:46
+msgid "Please select network first"
+msgstr "Per favore, seleziona prima la rete"
+
+#: includes/class-laqirapay-translations.php:74
+msgid "Please use at most 20 characters"
+msgstr "Per favore, usa al massimo 20 caratteri"
+
+#: includes/class-laqirapay-translations.php:27
+msgid "Price Feed"
+msgstr "Feed dei Prezzi"
+
+#: includes/class-laqirapay-translations.php:83
+msgid "Product Name"
+msgstr "Nome del Prodotto"
+
+#: includes/class-laqirapay-translations.php:52
+msgid "Provider Address is invalid"
+msgstr "L'indirizzo del fornitore non è valido"
+
+#: includes/class-laqirapay-translations.php:49
+msgid "Provider Address not found. please contact your provider..."
+msgstr "Indirizzo del fornitore non trovato. per favore contatta il tuo fornitore..."
+
+#: includes/class-laqirapay-translations.php:60
+msgid "Remaining"
+msgstr "Rimanente"
+
+#: includes/class-laqirapay-translations.php:42
+msgid "Result"
+msgstr "Risultato"
+
+#: includes/class-laqirapay-translations.php:25
+msgid "Search Asset"
+msgstr "Cerca Risorsa"
+
+#: includes/class-laqirapay-translations.php:30
+msgid "See Invoice"
+msgstr "Vedi Fattura"
+
+#: includes/class-laqirapay-translations.php:29
+msgid "Select Asset"
+msgstr "Seleziona Risorsa"
+
+#: includes/class-laqirapay-translations.php:28
+msgid "Select Network"
+msgstr "Seleziona Rete"
+
+#: includes/class-laqirapay-translations.php:63
+msgid "Select Payment Method"
+msgstr "Seleziona Metodo di Pagamento"
+
+#: includes/class-laqirapay-translations.php:55
+msgid "Selected Asset"
+msgstr "Risorsa Selezionata"
+
+#: includes/class-laqirapay-translations.php:54
+msgid "Selected Network"
+msgstr "Rete Selezionata"
+
+#: includes/class-laqirapay-translations.php:62
+msgid "Setting a high slippage tolerance can help transactions succeed, Increase "
+"Slippage the value to enhance the acceptance rate of seamless alignment."
+msgstr "Impostare una tolleranza alta dello slippage può aiutare le transazioni a riuscire. Aumenta il valore dello slippage per migliorare il tasso di accettazione dell'allineamento senza soluzione di continuità."
+
+#: laqirapay.php:29
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: includes/class-laqirapay-translations.php:94
+msgid "Share"
+msgstr "Condividi"
+
+#: includes/class-laqirapay-translations.php:95
+msgid "Share your order"
+msgstr "Condividi il tuo ordine"
+
+#: includes/class-laqirapay-translations.php:88
+msgid "Sharing error"
+msgstr "Errore di condivisione"
+
+#: includes/class-laqirapay-translations.php:87
+msgid "Sharing was successful"
+msgstr "Condivisione riuscita"
+
+#: includes/class-laqirapay-translations.php:33
+msgid "Shop Page"
+msgstr "Pagina del Negozio"
+
+#: includes/class-laqirapay-translations.php:92
+msgid "Show Order"
+msgstr "Mostra Ordine"
+
+#: includes/class-laqirapay-translations.php:61
+msgid "Slippage Tolerance"
+msgstr "Tolleranza Slippage"
+
+#: laqirapay.php:30
+msgid "Support"
+msgstr "Supporto"
+
+#: includes/class-laqirapay-translations.php:59
+msgid "The approximate payment based on chosen Asset and Decentralized price feeds."
+msgstr "Il pagamento approssimativo basato sulla risorsa scelta e sui feed di prezzo decentralizzati."
+
+#: app/Admin/class-laqirapay-admin.php:175
+msgid ""
+"There was an error adding this setting. Please try again.  If this persists, "
+"shoot us an email."
+msgstr "Si è verificato un errore durante l'aggiunta di questa impostazione. Per favore riprova. Se il problema persiste, inviaci una email."
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:93
+msgid "Token Amount"
+msgstr "Importo del Token"
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:90
+msgid "Total Price"
+msgstr "Prezzo Totale"
+
+#: includes/class-laqirapay-translations.php:23
+msgid "Transaction Amount"
+msgstr "Importo della Transazione"
+
+#: includes/class-laqirapay-translations.php:78
+msgid "Transaction Done Successfully"
+msgstr "Transazione completata con successo"
+
+#: includes/class-laqirapay-translations.php:80
+msgid "Transaction Failed. Please try again ..."
+msgstr "Transazione fallita. Per favore riprova ..."
+
+#: app/Admin/partials/laqirapay-admin-transactions.php:94
+msgid "Transaction Hash"
+msgstr "Hash della Transazione"
+
+#: includes/class-laqirapay-translations.php:81
+msgid "Transaction not found on Blockchain"
+msgstr "Transazione non trovata sulla Blockchain"
+
+#: includes/class-laqirapay-translations.php:79
+msgid "Transaction Reverted. Please try again ..."
+msgstr "Transazione annullata. Per favore riprova ..."
+
+#: includes/class-laqirapay-translations.php:77
+msgid ""
+"Unfortunately, we encountered an error. Please try again or contact the "
+"administrator"
+msgstr ""
+"Sfortunatamente, abbiamo riscontrato un errore. Per favore riprova o contatta l'amministratore"
+
+#. Name of the plugin
+msgid "Woo LaqiraPay"
+msgstr ""
+
+#: app/Admin/partials/laqirapay-admin-order-recovery.php:7
+msgid "LaqiraPay Order Recovery by Transaction Hash"
+msgstr "Recupero Ordine LaqiraPay tramite Hash di Transazione"
+
+#: laqirapay.php:116
+msgid "LaqiraPay requires PHP version 7.4 or higher."
+msgstr "LaqiraPay richiede PHP versione 7.4 o superiore."
+
+#: laqirapay.php:125
+msgid "LaqiraPay requires WooCommerce version 8.2 or higher."
+msgstr "LaqiraPay richiede WooCommerce versione 8.2 o superiore."
+
+#: laqirapay.php:107
+msgid "LaqiraPay requires WordPress version 6.2 or higher."
+msgstr "LaqiraPay richiede WordPress versione 6.2 o superiore."
+
+#: app/Admin/partials/laqirapay-admin-order-recovery.php:25
+#: app/Admin/partials/laqirapay-admin-settings-display.php:26
+msgid "You don't have right permission to this setting page"
+msgstr "Non hai i permessi per questa pagina delle impostazioni"
+
+#: includes/class-laqirapay-translations.php:99
+msgid ""
+"You have the option to make payment through a connected wallet on the "
+"Website or Utilize your Internal account for transactions"
+msgstr "Hai l'opzione di effettuare pagamenti tramite un wallet connesso sul sito web o utilizzare il tuo account interno per le transazioni"
+
+#: includes/class-laqirapay-translations.php:86
+msgid "You need Charge to pay ..."
+msgstr "Hai bisogno di un Addebito per pagare ..."
+
+#: includes/class-laqirapay-translations.php:24
+msgid "You need Charge to pay..."
+msgstr "Hai bisogno di un Addebito per pagare..."
+
+#: includes/class-laqirapay-translations.php:67
+msgid "Your Balance"
+msgstr "Il Tuo Saldo"
+
+#: includes/class-laqirapay-translations.php:89
+msgid "Your browser does not support native sharing"
+msgstr "Il tuo browser non supporta la condivisione nativa"
+
+#: includes/woocommerce/class-wc-gateway-laqirapay.php:420
+msgid "Your Data not Verified by Blockchain"
+msgstr "I tuoi dati non sono stati verificati dalla Blockchain"
+
+#: includes/class-laqirapay-translations.php:91
+msgid "Your order received successfully"
+msgstr "Il tuo ordine è stato ricevuto con successo"
+
+#: includes/class-laqirapay-translations.php:50
+msgid "Your request is invalid. please contact your provider..."
+msgstr "La tua richiesta non è valida. per favore contatta il tuo fornitore..."

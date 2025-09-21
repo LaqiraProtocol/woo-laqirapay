@@ -6,7 +6,7 @@ use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\ConnectorInterface;
 use React\Promise\Deferred;
-use React\Promise\RejectedPromise;
+use function React\Promise\reject;
 use Psr\Http\Message\RequestInterface;
 use GuzzleHttp\Psr7 as gPsr;
 
@@ -15,7 +15,7 @@ class Connector {
     protected $_connector;
     protected $_negotiator;
 
-    public function __construct(LoopInterface $loop = null, ConnectorInterface $connector = null) {
+    public function __construct(?LoopInterface $loop = null, ?ConnectorInterface $connector = null) {
         $this->_loop = $loop ?: Loop::get();
 
         if (null === $connector) {
@@ -25,7 +25,7 @@ class Connector {
         }
 
         $this->_connector  = $connector;
-        $this->_negotiator = new ClientNegotiator;
+        $this->_negotiator = new ClientNegotiator(new gPsr\HttpFactory());
     }
 
     /**
@@ -39,7 +39,7 @@ class Connector {
             $request = $this->generateRequest($url, $subProtocols, $headers);
             $uri = $request->getUri();
         } catch (\Exception $e) {
-            return new RejectedPromise($e);
+            return  reject($e);
         }
         $secure = 'wss' === substr($url, 0, 3);
         $connector = $this->_connector;
@@ -74,6 +74,8 @@ class Connector {
             $stream->on('close', $earlyClose);
             $futureWsConn->promise()->then(function() use ($stream, $earlyClose) {
                 $stream->removeListener('close', $earlyClose);
+            }, function (\Exception $exception) use ($futureWsConn) {
+                $futureWsConn->reject($exception);
             });
 
             $buffer = '';
@@ -105,7 +107,7 @@ class Connector {
                 $futureWsConn->resolve(new WebSocket($stream, $response, $request));
 
                 $futureWsConn->promise()->then(function(WebSocket $conn) use ($stream) {
-                    $stream->emit('data', [$conn->response->getBody(), $stream]);
+                    $stream->emit('data', [$conn->response->getBody()->getContents(), $stream]);
                 });
             };
 

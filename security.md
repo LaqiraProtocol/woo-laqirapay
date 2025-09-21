@@ -4,7 +4,7 @@
 - solve some security problems ([#1](https://github.com/LaqiraProtocol/laqirapay-wordpress-plugin-production/issues/1))
 
 ### 0.1.0
-- double check ajax nounce verification in '/includes/woocommerce/class-wc-gateway-laqirapay.php'.
+- double check ajax nounce verification in '/app/WooCommerce/class-wc-gateway-laqirapay.php'.
 - create JWT token from PHP and send to client browser and confirm it in each Ajax call
 - Use 'array_key_exists' to check if a key exists in arrays instead 'isset'.
 - Use esc_html__() to translate strings and prevent XSS attacks.
@@ -29,7 +29,7 @@
 
 ## Description
 
-- This plugin is basically a WooCommerce extension (ًwoocommerce payment gateway) and it should not be able to work without installing the current version of WooCommerce. To fix this issue, version control considerations for PHP, WordPress and WooCommerce are included in the main plugin file.
+- This plugin is basically a WooCommerce extension (WooCommerce payment gateway) and it should not be able to work without installing the current version of WooCommerce. To fix this issue, version control considerations for PHP, WordPress and WooCommerce are included in the main plugin file.
 - Since this plugin must be compatible with the latest versions of WooCommerce, all its WooCommerce functions are written based on the 'WooCommerce CRUD class' to be active and usable in accordance with the 'High-Performance Order Storage (HPOS)' feature without any problems. According to the WooCommerce documentation, this will help optimize the database
 - Since the hooks used in the plugin are limited and all are written in a standard way, they will not conflict with other payment gateways and other WooCommerce extensions. So, it also helps to cover the existing security topics through the core WordPress JooCommerce
 - WooCommerce hooks used in this plugin are as follows:

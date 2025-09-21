@@ -1,0 +1,15 @@
+.required-error {
+    border-color: red !important;
+}
+ .laqirapay-alert{max-width:680px;margin:20px auto;padding:16px 18px;border-radius:12px;border:1px solid rgba(0,0,0,.08);box-shadow:0 2px 8px rgba(0,0,0,.05);font-family:inherit}
+      .laqirapay-alert-error{background:#fff5f5;border-color:#ffd6d6}
+      .laqirapay-alert-info{background:#f7faff;border-color:#cfe7ff}
+      .laqirapay-alert h3{margin:0 0 8px;font-size:16px;line-height:1.4}
+      .laqirapay-alert ul{margin:8px 0 0 18px;padding:0}
+      .laqirapay-alert li{margin:6px 0}
+      .laqirapay-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+      .laqirapay-btn{display:inline-block;padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,.12);background:#fff;cursor:pointer;text-decoration:none}
+      .laqirapay-btn-primary{background:#0073aa;color:#fff;border-color:#0073aa}
+      .laqirapay-loading{display:flex;gap:8px;align-items:center;justify-content:center;padding:16px}
+      .screen-reader-text{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;}
+   

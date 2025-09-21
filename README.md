@@ -15,6 +15,9 @@ Tested up to: `6.5.2`
 
 Requires PHP: `7.4`
 
+## Live Demo 
+
+https://tobtc.com
 
 ## ABSTRACT
 LaqiraPay is a decentralized asset-agnostic, multi-network payment gateway with enhanced flexibility and security through blockchain technology, offering transparent financial statements and in-app wallet features for users.

@@ -9,23 +9,23 @@ namespace LaqiraPay\Support;
  * so fall back to empty strings when they are missing.
  */
 
-if (function_exists('get_option')) {
-    define('CONTRACT_ADDRESS', get_option('laqirapay_main_contract'));
-    define('RPC_URL', get_option('laqirapay_main_rpc_url'));
+if ( function_exists( 'get_option' ) ) {
+	define( 'CONTRACT_ADDRESS', get_option( 'laqirapay_main_contract' ) );
+	define( 'RPC_URL', get_option( 'laqirapay_main_rpc_url' ) );
 } else {
-    define('CONTRACT_ADDRESS', '');
-    define('RPC_URL', '');
+	define( 'CONTRACT_ADDRESS', '' );
+	define( 'RPC_URL', '' );
 }
 
-if (function_exists('plugins_url')) {
-    define('LAQIRA_PLUGINS_URL', plugins_url('laqirapay/'));
+if ( function_exists( 'plugins_url' ) ) {
+	define( 'LAQIRA_PLUGINS_URL', plugins_url( LAQIRAPAY_PLUGIN_NAME.'/' ) );
 } else {
-    define('LAQIRA_PLUGINS_URL', '');
+	define( 'LAQIRA_PLUGINS_URL', '' );
 }
 
-define('LAQIRAPAY_TOKEN_BYTE_LENGTH', 32);
-define('LAQIRAPAY_JWT_ALG', 'HS256');
-define('LAQIRAPAY_JWT_ALG_SIGNATURE', 'sha256');
+define( 'LAQIRAPAY_TOKEN_BYTE_LENGTH', 32 );
+define( 'LAQIRAPAY_JWT_ALG', 'HS256' );
+define( 'LAQIRAPAY_JWT_ALG_SIGNATURE', 'sha256' );
 
 /**
  * Fetch remote JSON securely with timeout and SSL verification.
@@ -34,22 +34,71 @@ define('LAQIRAPAY_JWT_ALG_SIGNATURE', 'sha256');
  * @param int    $timeout Timeout in seconds.
  * @return array<string,mixed> Decoded JSON data or an empty array on failure.
  */
-function http_get_json(string $url, int $timeout = 10): array
-{
-    $response = wp_remote_get(
-        $url,
-        [
-            'timeout'     => $timeout,
-            'sslverify'   => true,
-            'redirection' => 3,
-        ]
-    );
-    if (is_wp_error($response)) {
-        return [];
-    }
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-    return is_array($data) ? $data : [];
+function http_get_json( string $url, int $timeout = 10 ): array {
+	$response = wp_remote_get(
+		$url,
+		array(
+			'timeout'     => $timeout,
+			'sslverify'   => true,
+			'redirection' => 3,
+		)
+	);
+	if ( is_wp_error( $response ) ) {
+		return array();
+	}
+	$body = wp_remote_retrieve_body( $response );
+	$data = json_decode( $body, true );
+	return is_array( $data ) ? $data : array();
+}
+
+/**
+ * Retrieve a sanitized value from the $_SERVER superglobal.
+ *
+ * @param string $key Server key to fetch.
+ * @return string
+ */
+function laqirapay_server_value( string $key ): string {
+	$allowed_keys = array(
+		'HTTPS'                  => FILTER_UNSAFE_RAW,
+		'REQUEST_SCHEME'         => FILTER_UNSAFE_RAW,
+		'HTTP_X_FORWARDED_PROTO' => FILTER_UNSAFE_RAW,
+		'SERVER_PORT'            => FILTER_UNSAFE_RAW,
+		'REMOTE_ADDR'            => FILTER_UNSAFE_RAW,
+	);
+
+	if ( ! isset( $allowed_keys[ $key ] ) ) {
+		return '';
+	}
+
+	$value = filter_input( INPUT_SERVER, $key, $allowed_keys[ $key ] );
+	if ( $value === null || $value === false ) {
+		return '';
+	}
+
+	if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
+		$value = (string) $value;
+	} elseif ( ! is_scalar( $value ) ) {
+		return '';
+	} else {
+		$value = (string) $value;
+	}
+
+	if ( \function_exists( 'wp_unslash' ) ) {
+		$value = \wp_unslash( $value );
+	}
+
+	if ( \function_exists( 'sanitize_text_field' ) && \function_exists( 'wp_check_invalid_utf8' ) ) {
+		$value = \sanitize_text_field( $value );
+	} else {
+		$value = trim( strip_tags( $value ) );
+		if ($value === null) {
+   			 $value = '';
+			}
+
+		$value = preg_replace( '/[\r\n\t\0\x0B]+/', '', $value );
+	}
+
+	return $value;
 }
 
 /**
@@ -59,71 +108,68 @@ function http_get_json(string $url, int $timeout = 10): array
  * available (such as in CLI contexts) fall back to common server variables so
  * the caller can still determine if a secure cookie should be required.
  */
-function laqirapay_is_secure_request(): bool
-{
-    if (function_exists('is_ssl')) {
-        return is_ssl();
-    }
+function laqirapay_is_secure_request(): bool {
+	if ( function_exists( 'is_ssl' ) ) {
+		return is_ssl();
+	}
 
-    $https = $_SERVER['HTTPS'] ?? '';
-    if ($https && strtolower((string) $https) !== 'off') {
-        return true;
-    }
+	$https = laqirapay_server_value( 'HTTPS' );
+	if ( $https !== '' && strtolower( $https ) !== 'off' ) {
+		return true;
+	}
 
-    $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
-    if (strtolower((string) $scheme) === 'https') {
-        return true;
-    }
+	$scheme = laqirapay_server_value( 'REQUEST_SCHEME' );
+	if ( $scheme !== '' && strtolower( $scheme ) === 'https' ) {
+		return true;
+	}
 
-    $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
-    if (strtolower((string) $forwardedProto) === 'https') {
-        return true;
-    }
+	$forwardedProto = laqirapay_server_value( 'HTTP_X_FORWARDED_PROTO' );
+	if ( $forwardedProto !== '' && strtolower( $forwardedProto ) === 'https' ) {
+		return true;
+	}
 
-    $port = $_SERVER['SERVER_PORT'] ?? '';
-    return (string) $port === '443';
+	$port = laqirapay_server_value( 'SERVER_PORT' );
+	return $port === '443';
 }
 
 /**
  * Build the options array for the LaqiraPay JWT cookie.
  */
-function laqirapay_cookie_options(int $expires): array
-{
-    return [
-        'expires'  => $expires,
-        'path'     => '/',
-        'secure'   => laqirapay_is_secure_request(),
-        'httponly' => true,
-        'samesite' => 'Strict',
-    ];
+function laqirapay_cookie_options( int $expires ): array {
+	return array(
+		'expires'  => $expires,
+		'path'     => '/',
+		'secure'   => laqirapay_is_secure_request(),
+		'httponly' => true,
+		'samesite' => 'Strict',
+	);
 }
 
 /**
  * Compare cart items with order items.
  *
- * @param array      $cart_items Current cart items.
+ * @param array     $cart_items Current cart items.
  * @param \WC_Order $order      Order instance.
  * @return bool True if equal, false otherwise.
  */
-function are_cart_and_order_items_equal(array $cart_items, \WC_Order $order): bool
-{
-    $order_items = $order->get_items();
-    if (count($cart_items) !== count($order_items)) {
-        return false;
-    }
-    $cart_products = [];
-    foreach ($cart_items as $item) {
-        $cart_products[$item['product_id']] = $item['quantity'];
-    }
-    foreach ($order_items as $item) {
-        $product_id = $item->get_product_id();
-        $quantity   = $item->get_quantity();
-        if (!isset($cart_products[$product_id]) || $cart_products[$product_id] != $quantity) {
-            return false;
-        }
-        unset($cart_products[$product_id]);
-    }
-    return empty($cart_products);
+function are_cart_and_order_items_equal( array $cart_items, \WC_Order $order ): bool {
+	$order_items = $order->get_items();
+	if ( count( $cart_items ) !== count( $order_items ) ) {
+		return false;
+	}
+	$cart_products = array();
+	foreach ( $cart_items as $item ) {
+		$cart_products[ $item['product_id'] ] = $item['quantity'];
+	}
+	foreach ( $order_items as $item ) {
+		$product_id = $item->get_product_id();
+		$quantity   = $item->get_quantity();
+		if ( ! isset( $cart_products[ $product_id ] ) || $cart_products[ $product_id ] != $quantity ) {
+			return false;
+		}
+		unset( $cart_products[ $product_id ] );
+	}
+	return empty( $cart_products );
 }
 
 /**
@@ -132,14 +178,15 @@ function are_cart_and_order_items_equal(array $cart_items, \WC_Order $order): bo
  * @param string $tx_hash Transaction hash to search.
  * @return int|null Order ID or null if not found.
  */
-function find_order_by_tx_hash(string $tx_hash): ?int
-{
-    $orders = wc_get_orders([
-        'meta_key'   => 'tx_hash',
-        'meta_value' => $tx_hash,
-        'return'     => 'ids',
-    ]);
-    return !empty($orders) ? (int) $orders[0] : null;
+function find_order_by_tx_hash( string $tx_hash ): ?int {
+	$orders = wc_get_orders(
+		array(
+			'meta_key'   => 'tx_hash',
+			'meta_value' => $tx_hash,
+			'return'     => 'ids',
+		)
+	);
+	return ! empty( $orders ) ? (int) $orders[0] : null;
 }
 
 /**
@@ -148,24 +195,23 @@ function find_order_by_tx_hash(string $tx_hash): ?int
  * @param string|\WC_DateTime $date_string Date string or object.
  * @return string
  */
-function format_date($date_string): string
-{
-    $date = $date_string instanceof \WC_DateTime ? $date_string->getTimestamp() : strtotime((string) $date_string);
-    if ($date === false) {
-        return '';
-    }
-    $dt  = new \DateTime('@' . $date);
-    $now = new \DateTime('now', $dt->getTimezone());
-    $interval = $now->diff($dt);
-    if ($interval->d > 0) {
-        $diff = $interval->d . ' days ago';
-    } elseif ($interval->h > 0) {
-        $diff = $interval->h . ' hrs ago';
-    } elseif ($interval->i > 0) {
-        $diff = $interval->i . ' mins ago';
-    } else {
-        $diff = $interval->s . ' secs ago';
-    }
-    $formatted = gmdate('M-d-Y h:i:s A', $date);
-    return $diff . ' (' . $formatted . ')';
+function format_date( $date_string ): string {
+	$date = $date_string instanceof \WC_DateTime ? $date_string->getTimestamp() : strtotime( (string) $date_string );
+	if ( $date === false ) {
+		return '';
+	}
+	$dt       = new \DateTime( '@' . $date );
+	$now      = new \DateTime( 'now', $dt->getTimezone() );
+	$interval = $now->diff( $dt );
+	if ( $interval->d > 0 ) {
+		$diff = $interval->d . ' days ago';
+	} elseif ( $interval->h > 0 ) {
+		$diff = $interval->h . ' hrs ago';
+	} elseif ( $interval->i > 0 ) {
+		$diff = $interval->i . ' mins ago';
+	} else {
+		$diff = $interval->s . ' secs ago';
+	}
+	$formatted = gmdate( 'M-d-Y h:i:s A', $date );
+	return $diff . ' (' . $formatted . ')';
 }

@@ -74,9 +74,11 @@
 	display: block;
 }
 #laqirapay_admin_wrapper{
-	display:flex;
-	min-height: 610px;
+        display:flex;
+        min-height: 610px;
   margin-top: 30px;
+  /* Provide breathing space so the three-column layout does not feel cramped. */
+  gap: 20px;
 }
 #laqirapay_admin_wrapper_import{
   display:flex;
@@ -94,19 +96,24 @@ a.laqirapay_costofgoods_plugin_label {
   min-height: 36px;
 }
 #laqirapay_tabs_wrapper{
-	display: inline-block;
+        display: block;
     width: 100%;
+    /* Allow the tab content wrapper to shrink naturally next to the wider menu. */
+    flex: 1 1 0%;
+    min-width: 0;
 }
 #laqirapay_admin_menu{
-	display:inline-block;
-	vertical-align: top;
-	height:auto;
-	min-width: 225px;
-	width:21%;
-	border: 0;
-	border-radius: 5px 0px 0px 5px;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.17);
-	background: linear-gradient(172deg, #15141b, #201e2e, #15141b)
+        /* Reserve a fixed sidebar width so adding a third tab button keeps the column stable. */
+        display:inline-block;
+        vertical-align: top;
+        height:auto;
+        min-width: 240px;
+        width:260px;
+        max-width: 100%;
+        border: 0;
+        border-radius: 5px 0px 0px 5px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.17);
+        background: linear-gradient(172deg, #15141b, #201e2e, #15141b)
 }
 #laqirapay_admin_menu .active{
 	/* !important needed to override Semantic UI Library */
@@ -116,9 +123,19 @@ a.laqirapay_costofgoods_plugin_label {
 	background: #6c667d;
 }
 .ui.menu .item{
-	transition: all .1s ease-out;
-	color:#bcc0c7;
-	padding:20px;
+        transition: all .1s ease-out;
+        color:#bcc0c7;
+        padding:20px;
+        /* Stack icon, title and description vertically for consistent three-tab layout. */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        row-gap: 6px;
+        white-space: normal;
+}
+.ui.menu .item .header{
+        /* Let longer tab labels wrap without forcing the button width to expand. */
+        white-space: normal;
 }
 .ui.menu .item>i.icon{
 	font-size: 22px;
@@ -298,12 +315,18 @@ input.laqirapay_set_user_subaccounts_input {
 }
 
 /* 5. Media Queries */
-@media screen and (max-width: 767px) { 
+@media screen and (max-width: 767px) {
   div#laqirapay_admin_wrapper{
     display: block;
   }
   div#laqirapay_admin_menu{
     width: 100%;
+    max-width: 100%;
+    /* Drop the fixed width on narrow screens so tabs stack above the content. */
+    margin-bottom: 20px;
+  }
+  #laqirapay_tabs_wrapper{
+    flex: 1 1 100%;
   }
 }
 

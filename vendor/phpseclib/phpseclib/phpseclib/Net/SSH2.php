@@ -1441,7 +1441,8 @@ class SSH2
             $this->_append_log('->', $this->identifier . "\r\n");
         }
 
-        $this->server_identifier = trim($data, "\r\n");
+        $data = explode("\r\n", trim($data, "\r\n"));
+        $this->server_identifier = $data[count($data) - 1];
 
         if (strlen($extra)) {
             $this->errors[] = $data;
@@ -1925,16 +1926,21 @@ class SSH2
                 $this->_updateLogHistory('UNKNOWN (32)', 'NET_SSH2_MSG_KEXDH_GEX_INIT');
         }
 
-        $response = $this->_get_binary_packet();
-        if ($response === false) {
-            $this->bitmap = 0;
-            user_error('Connection closed by server');
-            return false;
+        while (true) {
+            $response = $this->_get_binary_packet();
+            if ($response === false) {
+                $this->bitmap = 0;
+                user_error('Connection closed by server');
+                return false;
+            }
+            if (!strlen($response)) {
+                return false;
+            }
+            extract(unpack('Ctype', $this->_string_shift($response, 1)));
+            if ($type != NET_SSH2_MSG_IGNORE) {
+                break;
+            }
         }
-        if (!strlen($response)) {
-            return false;
-        }
-        extract(unpack('Ctype', $this->_string_shift($response, 1)));
 
         if ($type != constant($serverKexReplyMessage)) {
             user_error("Expected $serverKexReplyMessage");

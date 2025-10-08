@@ -337,7 +337,7 @@ msgstr ""
 #: app/Admin/partials/laqirapay-admin-order-recovery.php:37
 #: app/Admin/partials/laqirapay-admin-settings-display.php:27
 #: app/Admin/partials/laqirapay-admin-currency-rates.php:48
-msgid "Please check PHP >= 7.4 ,wordpress >= 6.3, Woocommerce >= 8.2 "
+msgid "Please check PHP >= 8.1 ,wordpress >= 6.3, Woocommerce >= 8.2 "
 msgstr ""
 
 #: includes/class-laqirapay-translations.php:105
@@ -581,7 +581,7 @@ msgid "LaqiraPay Order Recovery by Transaction Hash"
 msgstr ""
 
 #: laqirapay.php:118
-msgid "LaqiraPay requires PHP version 7.4 or higher."
+msgid "LaqiraPay requires PHP version 8.1 or higher."
 msgstr ""
 
 #: laqirapay.php:127

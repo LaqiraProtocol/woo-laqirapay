@@ -4,7 +4,7 @@ https://laqirapay.com
 
 
 
-![alt text](image.png)
+![alt text](assets/image.png)
 
 
 ## Requirements
@@ -13,7 +13,7 @@ Requires at least: `6.2`
 
 Tested up to: `6.5.2`
 
-Requires PHP: `7.4`
+Requires PHP: `8.1`
 
 ## Live Demo 
 
@@ -75,18 +75,63 @@ Automatic exact amount detection for customer payment and automatic stable coin 
 - use metamask,ConnectWallet,Trustwallet 
 
 
-## Installation
+## Installation ()
 
-1. Upload the entire `laqirapay` folder to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the `Plugins` menu in WordPress.
-3. Configure the plugin settings via the `woo LaqiraPay Settings` menu.
-4. Get your `LaqiraPay API-KEY` from [LaqiraPay website](https://laqirapay.com) and add it to the plugin settings.
-5. Edit the WooCommerce Checkout page on the Pages menu in WordPress and insert `[woocommerce-checkout]` shortcode in it and save.
-6. Enable and activate the `woo LaqiraPay` gateway in WooCommerce settings.
+
+
+#### 1. Prerequisite
+
+    Make sure WooCommerce is installed, configured, and ready to use on your WordPress site.
+
+#### 2. Install the Plugin
+
+    Go to Plugins → Add New → Upload Plugin in your WordPress dashboard.
+
+    Upload the LaqiraPay plugin .zip file.
+
+    After installation, click Activate.
+
+#### 3. Configure Settings
+
+- Once the plugin is activated, go to its settings and fill in the following fields:
+
+- Laqira Contract Address:
+
+    `0x52ab753dd301e4fb5bf00d9bfeb55e356a44064d`
+
+
+- Laqira RPC Url:
+
+    `https://bsc-dataseed.binance.org`
+
+
+- WalletConnect Project ID:
+
+    `57c157d7249ecf6e78dc45ede079eb07`
+
+
+- API Key: Obtain from laqirapay.com
+
+#### 4. How to Get Your API Key
+
+    Go to laqirapay.com and click Sign Up.
+
+    You will be redirected to laqirahub.com.
+
+    Connect your cryptocurrency wallet and click Register.
+
+    Create a new Provider and enable it on the networks you want to use.
+
+    Navigate to Manage Provider.
+
+    Copy the value from Laqira Pay Provider API Key.
+
+    This API Key serves as your unique provider address. Any payments made through your WooCommerce store will be directly deposited into this account.
+
 
 **Minimum Requirements:**
 
-- PHP version 7.4 or higher
+- PHP version 8.1 or higher
 
 - WordPress version 6.2 or higher
 
@@ -100,16 +145,15 @@ Automatic exact amount detection for customer payment and automatic stable coin 
 
 - API Key : Go to https://laqirapay.com
 
-    ![alt text](image-1.png)
+    ![alt text](assets/image-1.png)
 
 
 - WalletConnectProjectID : `57c157d7249ecf6e78dc45ede079eb07`
 
 
 
-
 #### Compatibility
-The plugin is compatible with WordPress version `6.2` and PHP versions `7.4` and `8.2`.
+The plugin is compatible with WordPress version `6.2` and PHP versions `8.1` and higher.
 
 #### Limitations
 The plugin may not be compatible with older versions of WordPress and PHP.
@@ -156,5 +200,18 @@ For support or bug reports, please visit the support forum.
 - https://laqirapay.com
 - https://laqirahub.com
 
-Tags: `wordpress`, `woocommerce`, `web3`, `woocommerce-plugin`, `woocommerce-payment`, `metamask`, `woocommerce-payment-gateway`, `crypto-payment`, `cryptopayments`, `cryptocurrency-payments`, `wordpress-payments`, `crypto-payments`, `blockchain-payments`, `crypto-payment-gateway`, `metamask-payment`, `web3-payments`, 
+## Development
+
+Install dependencies and run the quality toolchain with Composer scripts:
+
+```bash
+composer install
+composer rector
+composer phpcs -- --extensions=php
+composer phpunit
+```
+
+Use these commands locally or in CI to ensure Rector, PHP_CodeSniffer, and the test suite all pass before merging.
+
+Tags: `wordpress`, `woocommerce`, `web3`, `woocommerce-plugin`, `woocommerce-payment`, `metamask`, `woocommerce-payment-gateway`, `crypto-payment`, `cryptopayments`, `cryptocurrency-payments`, `wordpress-payments`, `crypto-payments`, `blockchain-payments`, `crypto-payment-gateway`, `metamask-payment`, `web3-payments`,
 `wordpress-crypto-payments`

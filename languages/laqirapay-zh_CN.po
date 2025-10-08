@@ -481,8 +481,8 @@ msgid "LaqiraPay Order Recovery by Transaction Hash"
 msgstr "通过交易哈希恢复 LaqiraPay 订单"
 
 #: laqirapay.php:116
-msgid "LaqiraPay requires PHP version 7.4 or higher."
-msgstr "LaqiraPay 需要 PHP 版本 7.4 或更高版本。"
+msgid "LaqiraPay requires PHP version 8.1 or higher."
+msgstr "LaqiraPay 需要 PHP 版本 8.1 或更高版本。"
 
 #: laqirapay.php:125
 msgid "LaqiraPay requires WooCommerce version 8.2 or higher."

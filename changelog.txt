@@ -1,0 +1,248 @@
+*** LaqiraPay Changelog ***
+
+2025-10-06 - version 0.9.26
+* Changed - change plugin slug
+* Security - rename and refactor the admin transactions list table to sanitize query parameters and replace debug output with escaped JSON.
+
+2025-10-06 - version 0.9.25
+* Changed - fix perg_replace #3 parameters to ensure not null (php 8.1+)
+
+2025-10-06 - version 0.9.24
+* Changed - update test environments
+
+2025-10-06 - version 0.9.23
+* Security - route all admin exchange-rate sanitization through `laqirapay_filter_input` to avoid null inputs and PHPCS/QA warnings.
+* Security - harden request-method, option-group, and nonce normalization before validation to prevent deprecated sanitize warnings.
+
+2025-10-06 - version 0.9.22
+* Changed - align plugin controllers and helpers with WordPress `class-*.php` conventions and refresh Composer autoload maps.
+* Security - harden admin settings sanitization by enforcing unslash/sanitize flows, capability checks, and nonce validation.
+* Fixed - document core bootstrapping, normalize asset enqueues, and satisfy WordPress Coding Standards across JWT utilities.
+
+2025-10-05 - version 0.9.21
+8 Fixed - fix JWT filter
+
+2025-10-05 - version 0.9.20
+* Fixed - fix some warning:
+                - remove FILTER_SANITIZE_STRING constant (deprecated since PHP 8.1)
+                - fix webpack.js to solve Potential Leaked Secrets
+* Added - Add README.TXT file based on woocommerce and wordpress structure
+
+2025-09-26 - version 0.9.19
+* Changed - Align exchange rate view config formatting:
+                - register the exchange rate option for the active currency during settings initialization and add a sanitize callback that enforces capability, nonce and numeric validation before saving
+                - update the exchange-rate form field to post using the dynamic option name so the value flows through the WordPress settings API
+                - replace the legacy persistence test with coverage for option registration, nonce handling and formatting requirements
+* Changed - Refine admin settings sections:
+                - add reusable section identifiers for the admin settings controller and register dedicated exchange rate and order recovery sections
+                - update the settings view to expose new tabs and render new section partials
+                - introduce nonce validation for exchange rate updates and add descriptive section templates for exchange rate and order recovery tabs
+* Changed - Refactor order recovery admin settings:
+                - redirect the legacy Order Recovery admin page to the main settings screen while persisting the desired tab
+                - surface order recovery shortcode output and notices alongside the other settings tabs
+                - clean up the settings view to validate the active tab before rendering and drop the unused dedicated template
+
+
+
+2025-09-25 - version 0.9.18
+* Security - fix PHPCS & semgrep issues
+
+2025-09-25 - version 0.9.17
+* Security - fix PHPCS & semgrep issues
+
+2025-09-25 - version 0.9.16
+* Fixed - fix INPUT_REQUEST
+
+2025-09-25 - version 0.9.15
+* Enhanced - run PHPCS tests
+
+2025-09-25 - version 0.9.14
+* Security - Harden input handling and escaping for LaqiraPay:
+                - sanitize nonce, cookie, and payload handling throughout the legacy AJAX controller and tighten SQL logging queries
+                - ensure helper utilities and logger routines sanitize server data, cookies, and drop-table logic
+                - escape checkout, admin notices, transaction meta output, and enforce a strict ORDER BY whitelist while wiring in the WordPress Coding Standards package
+* Fixed - Improve CLI input handling and sanitization fallbacks:
+                - add bootstrap fallbacks for wp_kses helpers to mimic WordPress sanitization during tests
+                - add a laqirapay_filter_input helper and use it across legacy AJAX handlers so superglobal data is read when filter_input is unavailable
+* Changed - Allow scripts in confirmation markup
+
+2025-09-24 - version 0.9.13
+* Fixed - Guard blockchain integrations until required settings are saved:
+            - skip fetching admin network data and show setup instructions until the API key, contract address, and RPC URL exist
+            - short-circuit contract CID lookups when configuration is incomplete to avoid unnecessary Web3 instantiation
+            - block checkout payment fields from hitting blockchain services until configuration is ready and surface a clearer storefront message
+            - exit the Web3 cache cron early when prerequisites are missing and cover the guarded flows with new tests
+
+2025-09-24 - version 0.9.12
+* Security - Lock down rendered templates and sanitize admin/front-end output:
+            - restrict admin, settings, asset, and payment controllers to whitelisted views and approved data keys before includes
+            - escape admin order recovery notices, checkout fallback markup, and AJAX-generated HTML before output
+* Security - Harden transaction confirmation flows and database access:
+            - derive order IDs from WooCommerce objects, reuse normalized identifiers, and escape diagnostics in AJAX confirmations
+            - replace raw SQL concatenation with prepared statements for transaction lookups and admin list search filters
+* Security - Fortify logging and request sanitization:
+            - normalize JWT headers and cookies and sanitize logger context values, order IDs, IPs, and request IDs before logging
+            - add resilient server-variable sanitizers for CLI contexts and strip slashes from server values safely
+* Security - Improve blockchain error handling and documentation hygiene:
+            - return WP_Error responses with sanitized RPC failure messages and scrub exception payloads before logging
+            - escape unauthorized admin responses and replace the documented WalletConnect project ID with a placeholder
+
+2025-09-24 - version 0.9.11
+* Fixed - Handle hex transaction statuses for PHP 8 compatibility:
+            - add a helper to normalize blockchain transaction status values before comparisons
+            - replace direct '0x1' string checks with the normalized helper to avoid removed hexadecimal numeric strings
+            - add a WordPress context guard and docblock to the public assets view placeholder
+
+2025-09-23 - version 0.9.10
+* Fixed - Guard WooCommerce cart reset when session unavailable:
+            - ensure cart resets only run for pending LaqiraPay orders and when a WooCommerce cart/session is available
+            - add defensive logging so skipped cart resets record their reason without throwing fatals
+
+2025-09-23 - version 0.9.9
+* Fixed - Remove leading newline before PHP tag:
+            - ensure LegacyAjax.php begins with the PHP opening tag at byte 0 to avoid premature output that triggers header warnings
+* Fixed - Handle null CID values in blockchain lookups:
+            - guard BlockchainService::getRemoteJsonCid so empty endpoints are logged and never reach wp_remote_get, and update downstream consumers to expect null
+            - return null when the stored CID option is missing in ContractService::getCid and keep the PHPDoc in sync
+            - extend unit coverage for the new null paths to ensure no HTTP calls occur when CIDs are unavailable
+* Fixed - Localize settings script data:
+            - expose the stored tables language option to the admin settings script via wp_localize_script
+            - guard the dropdown initialization in laqirapay-settings.js so it only runs when localized data is available
+
+2025-09-23 - version 0.9.8
+* Changed - raise the minimum supported PHP version to 8.1 and update project documentation
+
+2025-09-20 - version 0.9.7
+* Fixed - Prevent plugin bootstrap from triggering activation and handle missing composer autoloaders gracefully
+* Security - Enforce secure cookies, default SSL verification and sanitize transaction metadata rendering in admin area
+* Fixed - Handle unavailable checkout data, stop repeated cart refresh loops and restore Place order button behaviour
+* Fixed - Normalize stored transaction hashes, guard against missing ABI data and ensure confirmations persist to the database
+* Fixed - Add multi structure permalink support
+* Fixed - Fetch Web3 data automatically and clear its cache when any plugin settings option update
+* Fixed - Refactor some ajax methods
+* Fixed - Fix some warnings
+
+2025-09-16 - version 0.9.6
+* Fixed - Fix Place order button (hide/show) in checkout page (woocommerce classic/block support)
+* Fixed - Fix JWT header in checkout page on woocommerce block
+
+2025-09-16 - version 0.9.5
+* Added - Add check sufficient fund before user send transaction
+
+2025-09-15 - version 0.9.4
+* Added - Add estimate Gas in call contract function on react
+
+2025-09-14 - version 0.9.3
+* Changed - Remove Laqirapay logger class and add WC_Logger class support
+
+2025-09-14 - version 0.9.2
+* Fixed - Fix and add some log events
+
+2025-08-30 - version 0.9.1
+* Fixed - Fix semantic UI loader (replace vendor with semantic folder, gitignored)
+* Added - Add warning message on SSL failed
+* Added - Add warning message on ABI read failed
+* Added - Add new message on empty active network in frontend
+* Fixed - Fix Network icon UI on frontend after connect wallet
+
+2025-08-04 - version 0.8.6
+* Added - Add REST API log export and tail endpoints (Unreleased)
+* Changed - Remove and disable Gas Estimate on WriteContract methods (Released)
+* Changed - Remove some hardcode
+* Changed - Remove 2 defined constant and replace them in plugin admin setting panel
+* Changed - Dynamic JWT creation
+* Security - Replace a function to create and use JWT Key instead of static Key
+* Security - Use HttpOnly cookie for authorize JWT instead of JS inject method
+* Security - Refactor create access token/verify jwt & verify header methods
+* Security - Refactor Reactjs and remove Bearer header, use self browser cookie
+* Refactor - Modularized WooCommerce gateway registration via separate init file
+* Refactor - Moved WC_laqirapay class to dedicated file with no side effects
+* Refactor - Registered WooCommerce Blocks integration in isolated block init file
+* Internal - Improved plugin load order safety for WooCommerce compatibility
+* Internal - Ensured Composer and dependencies load only when needed
+
+2025-07-24 - version 0.8.5
+* Added - Arbitrum One Network
+
+2025-07-09 - version 0.8.4
+* Added - Polygon Network
+
+2025-06-29 - version 0.8.3
+* Added - Avalanche Network
+
+2025-06-05 - version 0.8.2
+* Added - Base Network
+
+2025-04-20 - version 0.8.1
+* Fixed - Fix network explorer link on transaction page in admin area (separate each network explorer)
+* Added - Add mainnet chain config on wagmi provider
+* Fixed - Fix handle network rpc for old transactions in admin recovery mode
+
+2025-04-16 - version 0.8.0
+* Fixed - Increase gas estimation by 10%
+
+2025-04-15 - version 0.7.9
+* Added - Add estimateGas for transactions on contract
+
+2025-03-26 - version 0.7.8
+* Fixed - Remove price feed link from step 3
+
+2025-03-20 - version 0.7.7
+* Fixed - Fix tx_status & network_rpc variable on automatic recovery mode
+
+2025-03-19 - version 0.7.6
+* Fixed - Fix rpc address handling in wagmi config
+
+2025-03-17 - version 0.7.5
+* Added - Add support MultiNetwork
+* Fixed - Fix some internal issues
+* Fixed - Update some npm packages
+
+2025-03-17 - version 0.7.4
+* Fixed - Fix empty_cart method with original woocommerce method
+
+2025-03-12 - version 0.7.3
+* Changed - Add the right Text for the Approve Button
+* Changed - Change the way of checking the shopping cart on the checkout page. Instead of using hash cards, the contents of the cart with items of the last order were used in Session Woocommerce
+* Enhanced - Review the latest prices and update the latest prices in order and transaction to Blockchain with the latest prices set on products
+* Added - Add the order repair section to the Woocommerce user panel
+* Added - Add order repair section by TXHash on Woocommerce Order Editing page
+* Added - Add new translation strings to po files (English & Persian)
+* Fixed - Add user request details to order after user call payment button on step 3
+
+2025-03-02 - version 0.7.2
+* Fixed - Fix getTransactionReceipt method to fetch valid TX Hash on blockchain on InApp Mode
+
+2025-02-02 - version 0.7.1
+* Added - Control Terms & condition checkbox on checkout page if admin set woocommerce terms
+* Fixed - Fix getTransactionReceipt method to fetch valid TX Hash on blockchain
+* Fixed - Fix customer fields form on checkout page if admin select none registered user capable to do payments
+* Added - Add some translation strings to handle new features
+* Added - Add condition to show/hide order amount & exchange rate values on step 3 if admin use USD currency in Woocommerce
+
+2025-02-02 - version 0.7.0
+* Fixed - Error handling on confirmation TX hash on js
+
+2025-01-26 - version 0.6.9
+* Fixed - Check float value of Slippage instead Int on order confirmation on recovery Method
+
+2025-01-26 - version 0.6.8
+* Fixed - Check float value of Slippage instead Int on order confirmation method after response on Blockchain
+
+2025-01-26 - version 0.6.7
+* Added - Enable slippage tolerance section for stable coins (such as USDT on BSC) to calculate amount with user selected Slippage (0.6% to 2% only)
+
+2025-01-26 - version 0.6.6
+* Changed - Change some ABI files
+
+2025-01-19 - version 0.6.5
+* Fixed - Fix link redirection on final step
+
+2025-01-15 - version 0.6.4
+* Added - Add capability to fetch CID stable coins and exclude them from available assets
+
+2024-11-17 - version 0.6.3
+* Changed - New repository
+
+2024-11-17 - version 0.6.2
+* Changed - Change plugin name to LaqiraPay from WooLaqiraPay

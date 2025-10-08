@@ -492,8 +492,8 @@ msgid "LaqiraPay Order Recovery by Transaction Hash"
 msgstr "LaqiraPay İşlem Karmaşı ile Sipariş Kurtarma"
 
 #: laqirapay.php:116
-msgid "LaqiraPay requires PHP version 7.4 or higher."
-msgstr "LaqiraPay PHP sürümü 7.4 veya üzeri gerektirir."
+msgid "LaqiraPay requires PHP version 8.1 or higher."
+msgstr "LaqiraPay PHP sürümü 8.1 veya üzeri gerektirir."
 
 #: laqirapay.php:125
 msgid "LaqiraPay requires WooCommerce version 8.2 or higher."

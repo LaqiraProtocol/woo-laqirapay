@@ -475,7 +475,7 @@ msgid "LaqiraPay Order Recovery by Transaction Hash"
 msgstr ""
 
 #: laqirapay.php:116
-msgid "LaqiraPay requires PHP version 7.4 or higher."
+msgid "LaqiraPay requires PHP version 8.1 or higher."
 msgstr ""
 
 #: laqirapay.php:125

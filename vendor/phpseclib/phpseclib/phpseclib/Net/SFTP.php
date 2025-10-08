@@ -915,6 +915,8 @@ class SFTP extends SSH2
      */
     function _realpath($path)
     {
+        $path = (string) $path;
+
         if (!$this->canonicalize_paths) {
             if ($this->pwd === true) {
                 return '.';
@@ -1008,6 +1010,8 @@ class SFTP extends SSH2
             return false;
         }
 
+        $dir = (string) $dir;
+
         // assume current dir if $dir is empty
         if ($dir === '') {
             $dir = './';
@@ -1017,6 +1021,9 @@ class SFTP extends SSH2
         }
 
         $dir = $this->_realpath($dir);
+        if ($dir === false) {
+            return false;
+        }
 
         // confirm that $dir is, in fact, a valid directory
         if ($this->use_stat_cache && is_array($this->_query_stat_cache($dir))) {

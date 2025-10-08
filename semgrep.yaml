@@ -1,0 +1,12 @@
+# .semgrep.yml
+rules:
+  - id: include-php-base
+    patterns: []
+    message: "base config anchor"
+    languages: [php]
+    severity: INFO
+    # placeholder anchor; actual configs added via 'configs' below
+configs:
+  - p/php
+  - p/security-audit
+

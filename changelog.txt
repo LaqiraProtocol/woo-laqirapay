@@ -1,5 +1,13 @@
 *** LaqiraPay Changelog ***
 
+2026-01-05 - version 0.9.28
+* Added support for additional blockchain networks: zkSync
+* Added support for additional blockchain networks: Optimism
+
+2025-12-23 - version 0.9.27
+* Security - Prevent duplicate on-chain payments by locking orders during processing and rejecting additional transaction hashes once recorded.
+* Fixed - Disable repeated payment submissions in the checkout modal while a payment request is processing.
+
 2025-10-06 - version 0.9.26
 * Changed - change plugin slug
 * Security - rename and refactor the admin transactions list table to sanitize query parameters and replace debug output with escaped JSON.

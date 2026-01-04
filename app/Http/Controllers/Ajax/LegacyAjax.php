@@ -32,7 +32,7 @@ if ( ! function_exists( 'laqirapay_sanitize_simple_text' ) ) {
 			}
 
 
-			return trim( preg_replace( '/[\r\n\t\0\x0B]+/', ' ', $value ) );
+			return trim( preg_replace( '/[\r\n\0\x0B]+/', ' ', $value ) );
 	}
 }
 
@@ -591,9 +591,9 @@ function laqirapay_update_cart_data(): void {
 	}
 
 		// Return the original and converted cart totals in a JSON response.
-		LaqiraLogger::log(
-			200,
-			'ajax',
+LaqiraLogger::log(
+200,
+'ajax',
 			'legacy_update_cart_data',
 			array(
 				'original'  => $cart_total,
@@ -958,29 +958,83 @@ function laqira_payment_create_tx_hash(): void {
 		$network_explorer          = $payload['network_explorer'] ?? '';
 
 		$order = wc_get_order( $order_id );
-
+		
 		if ( ! $order ) {
-				LaqiraLogger::log( 400, 'ajax', 'create_tx_hash_missing_order', array( 'order_id' => $order_id ) );
-				wp_send_json_error(
-					array(
-						'result' => 'error',
-						'error'  => esc_html__( 'Invalid order.', 'laqirapay' ),
-					)
-				);
-				return;
+		LaqiraLogger::log( 400, 'ajax', 'create_tx_hash_missing_order', array( 'order_id' => $order_id ) );
+		wp_send_json_error(
+		array(
+		'result' => 'error',
+		'error'  => esc_html__( 'Invalid order.', 'laqirapay' ),
+		)
+		);
+		return;
+		}
+		
+                        $order_status = $order->get_status();
+
+                        // Block already-paid orders before processing incoming tx hash.
+                        if ( in_array( $order_status, array( 'processing', 'completed' ), true ) ) {
+		wp_send_json_error(
+		array(
+		'result' => 'error',
+		'error'  => 'ALREADY_PAID',
+		)
+		);
+		return;
+		}
+		
+		$lock_set     = false;
+		$release_lock = static function () use ( $order, &$lock_set ): void {
+		if ( $lock_set ) {
+		$order->delete_meta_data( 'lqr_payment_lock' );
+		$order->save();
+		$lock_set = false;
+		}
+		};
+		
+		$existing_lock = $order->get_meta( 'lqr_payment_lock' );
+		
+		// Simple order-level lock to prevent concurrent payment processing.
+		if ( $existing_lock && ( time() - (int) $existing_lock ) < 60 ) {
+		wp_send_json_error(
+		array(
+		'result' => 'error',
+		'error'  => 'PAYMENT_IN_PROGRESS',
+		)
+		);
+		return;
+		}
+		
+		$order->update_meta_data( 'lqr_payment_lock', time() );
+		$order->save();
+		$lock_set = true;
+		
+		$existing_tx_hash = $order->get_meta( 'tx_hash' );
+		
+		if ( ! empty( $existing_tx_hash ) && strtolower( (string) $existing_tx_hash ) !== strtolower( (string) $tx_hash ) ) {
+		$release_lock();
+		wp_send_json_error(
+		array(
+		'result' => 'error',
+		'error'  => 'TX_ALREADY_REGISTERED',
+		)
+		);
+		return;
 		}
 
-		$order->add_order_note(
-			sprintf(
-				'Order was Updated by %s method with Log %s',
-				$payment_type,
-				$tx_log
-			)
-		);
-		$order->update_meta_data( 'tx_hash', $tx_hash );
-		$order->update_meta_data( 'tx_status', $tx_status );
-		$order->update_meta_data( 'AdminWalletAddress', $site_admin_address_wallet );
-		$order->update_meta_data( 'CustomerWalletAddress', $user_wallet );
+$order->add_order_note(
+sprintf(
+'Order was Updated by %s method with Log %s',
+$payment_type,
+$tx_log
+)
+);
+if ( empty( $existing_tx_hash ) ) {
+$order->update_meta_data( 'tx_hash', $tx_hash );
+}
+$order->update_meta_data( 'tx_status', $tx_status );
+$order->update_meta_data( 'AdminWalletAddress', $site_admin_address_wallet );
+$order->update_meta_data( 'CustomerWalletAddress', $user_wallet );
 		$order->update_meta_data( 'reqHash', $req_hash );
 		$order->update_meta_data( 'slippage', $slippage );
 		$order->update_meta_data( 'TokenAddress', $asset );
@@ -1009,7 +1063,9 @@ function laqira_payment_create_tx_hash(): void {
 		// Order total update.
 		$order->calculate_totals();
 
-		$order->save();
+$order->save();
+
+$release_lock();
 
 		LaqiraLogger::log(
 			200,
@@ -1158,8 +1214,58 @@ function laqira_payment_confirmation() {
 				return;
 		}
 
-		$stored_tx_hash_raw  = $order->get_meta( 'tx_hash' );
-		$stored_req_hash_raw = $order->get_meta( 'reqHash' );
+                $order_status = $order->get_status();
+
+                // Block already-paid orders before processing incoming tx hash.
+                if ( in_array( $order_status, array( 'processing', 'completed' ), true ) ) {
+			wp_send_json_error(
+			array(
+			'result' => 'error',
+			'error'  => 'ALREADY_PAID',
+			)
+			);
+			return;
+			}
+			
+			$lock_set     = false;
+			$release_lock = static function () use ( $order, &$lock_set ): void {
+			if ( $lock_set ) {
+			$order->delete_meta_data( 'lqr_payment_lock' );
+			$order->save();
+			$lock_set = false;
+			}
+			};
+			
+			$existing_lock = $order->get_meta( 'lqr_payment_lock' );
+			
+			// Simple order-level lock to prevent concurrent payment processing.
+			if ( $existing_lock && ( time() - (int) $existing_lock ) < 60 ) {
+			wp_send_json_error(
+			array(
+			'result' => 'error',
+			'error'  => 'PAYMENT_IN_PROGRESS',
+			)
+			);
+			return;
+			}
+			
+			$order->update_meta_data( 'lqr_payment_lock', time() );
+			$order->save();
+			$lock_set = true;
+			
+			$stored_tx_hash_raw  = $order->get_meta( 'tx_hash' );
+			$stored_req_hash_raw = $order->get_meta( 'reqHash' );
+			
+			if ( ! empty( $stored_tx_hash_raw ) && strtolower( (string) $stored_tx_hash_raw ) !== strtolower( (string) $tx_hash ) ) {
+			$release_lock();
+			wp_send_json_error(
+			array(
+			'result' => 'error',
+			'error'  => 'TX_ALREADY_REGISTERED',
+			)
+			);
+			return;
+}
 
 		$old_tx_hash  = $stored_tx_hash_raw;
 		$old_req_hash = $stored_req_hash_raw;
@@ -1193,14 +1299,15 @@ function laqira_payment_confirmation() {
 						'incoming_req_hash' => $req_hash,
 					)
 				);
-				wp_send_json_error(
-					array(
-						'result' => 'error',
-						'error'  => esc_html__( 'Submitted transaction data does not match the order.', 'laqirapay' ),
-					)
-				);
-				return;
-		}
+        $release_lock();
+        wp_send_json_error(
+        array(
+        'result' => 'error',
+        'error'  => esc_html__( 'Submitted transaction data does not match the order.', 'laqirapay' ),
+        )
+        );
+        return;
+        }
 
 		if ( $payment_type === 'Direct' ) {
 				$tx_results = ( new BlockchainService() )->getTransactionInfo(
@@ -1225,9 +1332,9 @@ function laqira_payment_confirmation() {
 			esc_html__( 'Unable to retrieve blockchain transaction details. Please try again later.', 'laqirapay' )
 		);
 
-	if ( $tx_error_message !== null ) {
-			LaqiraLogger::log(
-				400,
+if ( $tx_error_message !== null ) {
+LaqiraLogger::log(
+400,
 				'ajax',
 				'payment_confirmation_blockchain_unavailable',
 				array(
@@ -1236,14 +1343,15 @@ function laqira_payment_confirmation() {
 					'error'    => $tx_error_message,
 				)
 			);
-			wp_send_json_error(
-				array(
-					'result' => 'error',
-					'error'  => $tx_error_message,
-				)
-			);
-			return;
-	}
+  $release_lock();
+  wp_send_json_error(
+  array(
+  'result' => 'error',
+  'error'  => $tx_error_message,
+  )
+  );
+  return;
+  }
 
 	if (
 				empty( $tx_results ) ||
@@ -1254,9 +1362,9 @@ function laqira_payment_confirmation() {
 				strtolower( '0x' . $req_hash ) !== strtolower( $tx_results['_reqHash'] )
 		) {
 			$order->update_status( 'wc-failed', '' );
-			$order->add_order_note( esc_html__( 'Order not verified by blockchain.', 'laqirapay' ) );
-			$order->save();
-			LaqiraLogger::log(
+$order->add_order_note( esc_html__( 'Order not verified by blockchain.', 'laqirapay' ) );
+$order->save();
+LaqiraLogger::log(
 				400,
 				'ajax',
 				'payment_confirmation_blockchain_failed',
@@ -1265,14 +1373,15 @@ function laqira_payment_confirmation() {
 					'tx_hash'  => $tx_hash,
 				)
 			);
-			wp_send_json_error(
-				array(
-					'result' => 'error',
-					'error'  => esc_html__( 'Transaction verification failed.', 'laqirapay' ),
-				)
-			);
-			return;
-	}
+  $release_lock();
+  wp_send_json_error(
+  array(
+  'result' => 'error',
+  'error'  => esc_html__( 'Transaction verification failed.', 'laqirapay' ),
+  )
+  );
+  return;
+  }
 
 		$order->update_meta_data( 'tx_hash', $tx_hash );
 		$order->update_meta_data( 'tx_status', 'success' );
@@ -1355,10 +1464,11 @@ function laqira_payment_confirmation() {
 				'order_id' => $order_id_int,
 				'tx_hash'  => $tx_hash,
 			)
-		);
-		wp_send_json_success(
-			array(
-				'result'   => 'success',
+);
+$release_lock();
+wp_send_json_success(
+array(
+'result'   => 'success',
 				'data'     => $tx_results,
 				'redirect' => esc_url_raw( $order->get_checkout_order_received_url() ),
 			)

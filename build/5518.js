@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[5518],{3137:(a,l,r)=>{r.r(l),r.d(l,{cursorTransparentSvg:()=>s});const s=r(2618).JW`<svg fill="none" viewBox="0 0 14 6">
+"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[5518],{3137(a,l,r){r.r(l),r.d(l,{cursorTransparentSvg:()=>s});const s=r(2618).JW`<svg fill="none" viewBox="0 0 14 6">
   <path style="fill: var(--wui-color-bg-150);" d="M0 1h14L9.21 5.12a3.31 3.31 0 0 1-4.49 0L0 1Z" />
   <path
     style="stroke: var(--wui-color-inverse-100);"

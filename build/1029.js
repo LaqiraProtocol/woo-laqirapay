@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[1029],{1029:(C,e,l)=>{l.r(e),l.d(e,{cardSvg:()=>r});const r=l(2618).JW`<svg
+"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[1029],{1029(C,e,l){l.r(e),l.d(e,{cardSvg:()=>r});const r=l(2618).JW`<svg
   xmlns="http://www.w3.org/2000/svg"
   width="12"
   height="13"

@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[279],{279:(l,h,f)=>{f.r(h),f.d(h,{facebookSvg:()=>a});const a=f(2618).JW`<svg fill="none" viewBox="0 0 40 40">
+"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[279],{279(l,h,f){f.r(h),f.d(h,{facebookSvg:()=>a});const a=f(2618).JW`<svg fill="none" viewBox="0 0 40 40">
   <g clip-path="url(#a)">
     <g clip-path="url(#b)">
       <circle cx="20" cy="19.89" r="20" fill="#1877F2" />

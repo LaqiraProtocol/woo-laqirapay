@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[6530],{6530:(l,c,e)=>{e.r(c),e.d(c,{walletSvg:()=>a});const a=e(2618).JW`<svg fill="none" viewBox="0 0 20 20">
+"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[6530],{6530(l,c,e){e.r(c),e.d(c,{walletSvg:()=>a});const a=e(2618).JW`<svg fill="none" viewBox="0 0 20 20">
   <path
     fill="currentColor"
     fill-rule="evenodd"

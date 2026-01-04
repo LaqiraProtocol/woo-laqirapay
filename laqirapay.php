@@ -3,7 +3,7 @@
  * Plugin Name:       LaqiraPay
  * Plugin URI:        https://laqirahub.com
  * Description:       LaqiraPay: Fully Decentralized Asset-Agnostic MultiNetwork Payment Gateway for WooCommerce
- * Version:           0.9.26
+ * Version:           0.9.28
  * Author:            Laqira Protocol
  * Author URI:        https://laqira.io
  * License:           GPL-2.0+
@@ -27,7 +27,7 @@ use LaqiraPay\Core\Installer;
 use LaqiraPay\Support\LaqiraPayUninstaller;
 
 // Define plugin constants.
-const LAQIRAPAY_VERSION     = '0.9.26';
+const LAQIRAPAY_VERSION     = '0.9.28';
 const LAQIRAPAY_PLUGIN_NAME = 'laqirapay';
 if ( ! defined( 'LAQIRAPAY_PLUGIN_DIR' ) ) {
 		define( 'LAQIRAPAY_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

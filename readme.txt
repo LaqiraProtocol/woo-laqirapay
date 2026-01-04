@@ -4,7 +4,7 @@ Donate link:
 Tags: woocommerce, payment gateway, laqira, crypto, cryptocurrency, web3, metamask, blockchain, woocommerce-payment, crypto-payment-gateway
 Requires at least: 6.3
 Tested up to: 6.8.2
-Stable tag: 0.9.26
+Stable tag: 0.9.28
 Requires PHP: 8.1
 WC requires at least: 8.3
 WC tested up to: 10.2.2
@@ -54,6 +54,14 @@ LaqiraPay is a secure, efficient, and **Fully Decentralized Asset-Agnostic Multi
 3.  [Description of a third screenshot showing a specific feature, e.g., Wallet Connection UI]
 
 == Changelog ==
+
+= 0.9.28 =
+* Added support for additional blockchain networks: zkSync
+* Added support for additional blockchain networks: Optimism
+
+= 0.9.27 =
+* Security - Prevent duplicate on-chain payments by locking orders during processing and rejecting additional transaction hashes once recorded.
+* Fixed - Disable repeated payment submissions in the checkout modal while a payment request is processing.
 
 = 0.9.26 =
 * Changed - change plugin slug

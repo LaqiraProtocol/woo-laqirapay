@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[7243],{7243:(l,c,i)=>{i.r(c),i.d(c,{discordSvg:()=>a});const a=i(2618).JW`<svg fill="none" viewBox="0 0 40 40">
+"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[7243],{7243(l,c,i){i.r(c),i.d(c,{discordSvg:()=>a});const a=i(2618).JW`<svg fill="none" viewBox="0 0 40 40">
   <g clip-path="url(#a)">
     <g clip-path="url(#b)">
       <circle cx="20" cy="19.89" r="20" fill="#5865F2" />

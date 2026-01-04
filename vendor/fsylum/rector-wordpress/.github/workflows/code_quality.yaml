@@ -1,0 +1,58 @@
+name: Code Analysis
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  COMPOSER_ROOT_VERSION: "dev-main"
+
+jobs:
+  code_analysis:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php:
+          - 8.2
+          - 8.3
+        actions:
+          -
+            name: 'Composer Normalize'
+            run: composer normalize --dry-run
+
+          -
+            name: 'Composer Validate'
+            run: composer validate
+
+          -
+            name: 'Pint'
+            run: composer pint-test
+
+          -
+            name: 'Rector Dry Run'
+            run: composer rector-dry-run
+
+          -
+            name: 'PHPStan'
+            run: composer phpstan
+
+          -
+            name: 'PHPUnit'
+            run: composer phpunit
+
+    name: ${{ matrix.actions.name }} (PHP ${{ matrix.php }})
+
+    steps:
+      -   uses: actions/checkout@v4
+
+      -   uses: shivammathur/setup-php@v2
+          with:
+            php-version: ${{ matrix.php }}
+            coverage: none
+
+      -   uses: ramsey/composer-install@v2
+
+      -   run: ${{ matrix.actions.run }}

@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[9385],{9385:(l,e,r)=>{r.r(e),r.d(e,{mobileSvg:()=>a});const a=r(2618).JW`<svg fill="none" viewBox="0 0 20 20">
+"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[9385],{9385(l,e,r){r.r(e),r.d(e,{mobileSvg:()=>a});const a=r(2618).JW`<svg fill="none" viewBox="0 0 20 20">
   <path fill="currentColor" d="M10.81 5.81a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
   <path
     fill="currentColor"

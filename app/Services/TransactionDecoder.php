@@ -1,10 +1,16 @@
 <?php
 
-namespace LaqiraPay\Services;
+namespace LaqiraPayments\Services;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 use Web3\Contract;
-use LaqiraPay\Support\LaqiraPayAbiDecoder;
-use LaqiraPay\Domain\Services\LaqiraLogger;
+use LaqiraPayments\Support\LaqiraPaymentsAbiDecoder;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
 
 /**
  * Decode transaction input data.
@@ -68,7 +74,7 @@ class TransactionDecoder {
 		// Inline minimal ABI avoids network calls when decoding.
 		try {
 			$abiArray    = json_decode( $abi );
-			$decodeValue = new LaqiraPayAbiDecoder( $abiArray );
+			$decodeValue = new LaqiraPaymentsAbiDecoder( $abiArray );
 			$result      = $decodeValue->decode_input( $tx );
 			LaqiraLogger::log( 200, 'web3', 'decode_direct_success' );
 			return $result;
@@ -135,7 +141,7 @@ class TransactionDecoder {
 		// Use ABI fragment to decode parameters without needing a Web3 provider.
 		try {
 			$abiArray    = json_decode( $abi );
-			$decodeValue = new LaqiraPayAbiDecoder( $abiArray );
+			$decodeValue = new LaqiraPaymentsAbiDecoder( $abiArray );
 			$result      = $decodeValue->decode_input( $tx );
 			LaqiraLogger::log( 200, 'web3', 'decode_inapp_success' );
 			return $result;

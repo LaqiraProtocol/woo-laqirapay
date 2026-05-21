@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[2565],{2565(a,t,e){e.r(t),e.d(t,{chromeStoreSvg:()=>l});const l=e(2618).JW`<svg width="36" height="36" fill="none">
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[2565],{2565(a,t,e){e.r(t),e.d(t,{chromeStoreSvg:()=>l});const l=e(2618).JW`<svg width="36" height="36" fill="none">
   <path
     fill="#fff"
     fill-opacity=".05"

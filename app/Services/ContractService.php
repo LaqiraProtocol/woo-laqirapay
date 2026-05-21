@@ -1,11 +1,17 @@
 <?php
 
-namespace LaqiraPay\Services;
+namespace LaqiraPayments\Services;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 use Exception;
 use Web3\Contract;
-use LaqiraPay\Helpers\FileHelper;
-use LaqiraPay\Domain\Services\LaqiraLogger;
+use LaqiraPayments\Helpers\FileHelper;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
 
 /**
  * Handle smart contract interactions and ABI caching.
@@ -23,8 +29,8 @@ class ContractService {
 	 */
 	protected function getConfigurationStatus(): array {
 		return array(
-			'has_contract_address' => $this->isNonEmptyConstant( 'CONTRACT_ADDRESS' ),
-			'has_rpc_url'          => $this->isNonEmptyConstant( 'RPC_URL' ),
+			'has_contract_address' => $this->isNonEmptyConstant( 'LAQIRAPAYMENTS_MAIN_CONTRACT_ADDRESS' ),
+			'has_rpc_url'          => $this->isNonEmptyConstant( 'LAQIRAPAYMENTS_MAIN_RPC_URL' ),
 		);
 	}
 
@@ -71,8 +77,8 @@ class ContractService {
 			$abiJson = FileHelper::get_contents_secure( $remoteSource );
 		}
 
-		if ( trim( $abiJson ) === '' && defined( 'LAQIRAPAY_PLUGIN_DIR' ) ) {
-			$localPath = LAQIRAPAY_PLUGIN_DIR . 'assets/json/cidAbi.json';
+		if ( trim( $abiJson ) === '' && defined( 'LAQIRAPAYMENTS_PLUGIN_DIR' ) ) {
+			$localPath = LAQIRAPAYMENTS_PLUGIN_DIR . 'assets/json/cidAbi.json';
 			if ( is_readable( $localPath ) ) {
 				$localContents = file_get_contents( $localPath );
 				if ( $localContents !== false ) {
@@ -95,7 +101,7 @@ class ContractService {
 			}
 			LaqiraLogger::log( 400, 'web3', 'contract_abi_load_failed', $context );
 			$jsonError = isset( $context['json_error'] ) ? $this->sanitizeMessage( $context['json_error'] ) : 'unknown';
-			error_log( '[LaqiraPay] Unable to load contract ABI: ' . $jsonError );
+			LaqiraLogger::log( 400, 'web3', 'contract_abi_load_failed_message', array(), $jsonError );
 			throw new Exception( 'Unable to load contract ABI.' );
 		}
 
@@ -113,7 +119,7 @@ class ContractService {
 		if ( $this->contract instanceof Contract ) {
 			return $this->contract; // Reuse existing instance when available.
 		}
-		$web3           = new \Web3\Web3( RPC_URL, 10 );
+		$web3           = new \Web3\Web3( LAQIRAPAYMENTS_MAIN_RPC_URL, 10 );
 		$this->contract = new Contract( $web3->provider, $this->loadContractAbi() );
 		return $this->contract;
 	}
@@ -134,7 +140,7 @@ class ContractService {
 	 */
 	public function getCid(): ?string {
 		// Serve cached CID when available to avoid expensive network calls.
-		$cached = get_transient( 'laqirapay_cid_cached' );
+		$cached = get_transient( 'laqira_payments_cid_cached' );
 		if ( $cached !== false ) {
 			return $cached;
 		}
@@ -150,16 +156,15 @@ class ContractService {
 			$contract = $this->createContractInstance();
 			$cid      = $this->fetchCidFromContract( $contract );
 			if ( $cid !== '' ) {
-				update_option( 'laqirapay_cid', $cid ); // Persist latest CID value.
+				update_option( 'laqira_payments_cid', $cid ); // Persist latest CID value.
 				$ttl = defined( 'HOUR_IN_SECONDS' ) ? HOUR_IN_SECONDS : 3600;
-				set_transient( 'laqirapay_cid_cached', $cid, $ttl ); // Cache CID for subsequent requests.
+				set_transient( 'laqira_payments_cid_cached', $cid, $ttl ); // Cache CID for subsequent requests.
 				LaqiraLogger::log( 200, 'web3', 'cid_fetched', array( 'cid' => $cid ) );
 				return $cid;
 			}
 		} catch ( Exception $e ) {
 			$sanitizedMessage = $this->sanitizeMessage( $e );
 			LaqiraLogger::log( 400, 'web3', 'cid_fetch_failed', array(), $sanitizedMessage );
-			error_log( 'Error: ' . $sanitizedMessage );
 		}
 
 		// Fallback to stored option when remote call fails.
@@ -175,7 +180,7 @@ class ContractService {
 	public function fetchCidFromContract( Contract $contract ): string {
 		$cid   = '';
 		$error = null;
-		$contract->at( CONTRACT_ADDRESS )->call(
+		$contract->at( LAQIRAPAYMENTS_MAIN_CONTRACT_ADDRESS )->call(
 			'getCid',
 			function ( $err, $data ) use ( &$cid, &$error ) {
 				if ( $err !== null ) {
@@ -184,10 +189,10 @@ class ContractService {
 				}
 				$cid = implode( '-', $data );
 			}
-		);
-		if ( $error !== null ) {
-			throw new Exception( $error->getMessage() );
-		}
+			);
+			if ( $error !== null ) {
+				throw new Exception( esc_html( $this->sanitizeMessage( $error ) ) );
+			}
 		return $cid;
 	}
 
@@ -218,7 +223,7 @@ class ContractService {
 					);
 					LaqiraLogger::log( 400, 'web3', 'network_abi_load_failed', $context );
 					$jsonError = isset( $context['json_error'] ) ? $this->sanitizeMessage( $context['json_error'] ) : 'unknown';
-					error_log( '[LaqiraPay] Failed to decode network ABI: ' . $jsonError );
+					LaqiraLogger::log( 400, 'web3', 'network_abi_load_failed_message', array(), $jsonError );
 					return false;
 				}
 				$this->abiCache[ $abiPath ] = $decodedAbi;
@@ -240,7 +245,6 @@ class ContractService {
 		} catch ( Exception $e ) {
 			$sanitizedMessage = $this->sanitizeMessage( $e );
 			LaqiraLogger::log( 400, 'web3', 'network_check_error', array( 'network' => $network['laqiraPayContract'] ?? 'unknown' ), $sanitizedMessage );
-			error_log( 'Error: ' . $sanitizedMessage );
 			return false;
 		}
 	}
@@ -260,7 +264,7 @@ class ContractService {
 			return sanitize_text_field( $string );
 		}
 
-		$string = strip_tags( $string );
+		$string = wp_strip_all_tags( $string );
 
 		return trim( preg_replace( '/[\r\n\t\0\x0B]+/', ' ', $string ) );
 	}
@@ -271,7 +275,7 @@ class ContractService {
 	 * @return string|null
 	 */
 	private function getStoredCid(): ?string {
-		$storedCid = get_option( 'laqirapay_cid' );
+		$storedCid = get_option( 'laqira_payments_cid' );
 
 		return $storedCid === false ? null : $storedCid;
 	}

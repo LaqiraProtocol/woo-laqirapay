@@ -1,6 +1,12 @@
 <?php
 
-namespace LaqiraPay\Domain\Models;
+namespace LaqiraPayments\Domain\Models;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 /**
  * Value object representing a single log record.

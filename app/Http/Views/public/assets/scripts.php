@@ -1,11 +1,11 @@
 <?php
 /**
- * Placeholder container for LaqiraPay public assets.
+ * Placeholder container for LaqiraPayments public assets.
  *
- * @package LaqiraPay
+ * @package LaqiraPayments
  */
 
 defined( 'ABSPATH' ) || exit;
 
 ?>
-<div class="laqirapay-assets-script"></div>
+<div class="laqira-payments-assets-script"></div>

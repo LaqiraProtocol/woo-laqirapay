@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.10.1 - 2026-05-20
+
+### Fixed
+
+- Fix `Utils::modifyRequest()` with numeric header names
+
+## 2.10.0 - 2026-05-19
+
+### Changed
+
+- Harden `ServerRequest::fromGlobals()` against malformed `$_SERVER` values
+- Prevent custom stream metadata from affecting internal size handling
+- Throw when `StreamWrapper::getResource()` cannot create a resource
+- Preserve custom request implementations in `Utils::modifyRequest()`
+- Preserve custom URI implementations in `UriResolver::resolve()`
+- Make `Uri::__toString()` side-effect-free
+
+## 2.9.1 - 2026-05-19
+
+### Fixed
+
+- Fix parsing of relative path references containing a colon in a non-initial path segment
+- Fix `CachingStream::detach()` returning an incomplete resource before the decorated stream has been fully read
+- Fix `Message::bodySummary()` returning `null` when truncating printable UTF-8 bodies inside a multibyte character
+
+## 2.9.0 - 2026-03-10
+
+### Added
+
+- Added nested array expansion support to `MultipartStream`
+- Added `@return static` to `MessageTrait` methods
+
+### Changed
+
+- Updated MIME type mappings
+
+## 2.8.1 - 2026-03-10
+
+### Fixed
+
+- Encode `+` signs in `Uri::withQueryValue()` and `Uri::withQueryValues()` to prevent them being interpreted as spaces
+
 ## 2.8.0 - 2025-08-23
 
 ### Added

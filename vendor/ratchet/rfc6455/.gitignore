@@ -1,5 +1,0 @@
-.phpunit.result.cache
-composer.lock
-vendor
-tests/ab/reports
-reports

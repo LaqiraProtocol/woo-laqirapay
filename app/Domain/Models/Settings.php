@@ -1,8 +1,14 @@
 <?php
 
-namespace LaqiraPay\Domain\Models;
+namespace LaqiraPayments\Domain\Models;
 
-use LaqiraPay\Domain\Services\LaqiraLogger;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Domain\Services\LaqiraLogger;
 
 /**
  * Simple wrapper around WordPress options API.

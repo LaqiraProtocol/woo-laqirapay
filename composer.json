@@ -1,0 +1,50 @@
+{
+    "require": {
+        "php": ">=8.1",
+        "web3p/web3.php": "v0.3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaqiraPayments\\": "app/"
+        },
+        "files": [
+            "app/Support/Functions.php",
+            "app/Init/register-gateway.php",
+            "app/Init/register-wc-blocks.php"
+        ],
+        "classmap": [
+            "app/class-bootstrap.php",
+            "app/class-laqira-payments-main.php",
+            "app/Http/Controllers/Admin/class-admincontroller.php",
+            "app/Admin/class-transactionslisttable.php",
+            "app/Http/Controllers/Admin/class-settingscontroller.php",
+            "app/Support/class-laqira-payments-loader.php",
+            "app/WooCommerce/class-laqira-payments-block.php",
+            "app/Helpers/class-jwthelper.php"
+        ]
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.13",
+        "phpstan/phpstan": "^1",
+        "phpmd/phpmd": "^2",
+        "phpunit/phpunit": "^10",
+        "brain/monkey": "^2.6",
+        "wp-coding-standards/wpcs": "^3.2",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+        "rector/rector": "^1.0",
+        "fsylum/rector-wordpress": "^0.5.0"
+    },
+    "scripts": {
+        "qa:cs": "php -l laqira-payments.php && php -l app/class-bootstrap.php && vendor/bin/phpcs --standard=phpcs.xml.dist laqira-payments.php app src index.php",
+        "qa:stan": "php -l laqira-payments.php && php -l app/class-bootstrap.php && vendor/bin/phpstan analyse",
+        "qa:surface": "php -l laqira-payments.php && php -l app/class-bootstrap.php",
+        "rector": "vendor/bin/rector",
+        "phpcs": "vendor/bin/phpcs",
+        "phpunit": "vendor/bin/phpunit"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

@@ -1,6 +1,12 @@
 <?php
 
-namespace LaqiraPay\Domain\Services;
+namespace LaqiraPayments\Domain\Services;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 class UtilityService {
 

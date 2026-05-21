@@ -1,6 +1,12 @@
 <?php
 
-namespace LaqiraPay\Domain\Models;
+namespace LaqiraPayments\Domain\Models;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 /**
  * Data model representing a blockchain transaction.
@@ -65,7 +71,15 @@ class Transaction {
 	 * Create a transaction instance from the current HTTP POST request.
 	 */
 	public static function fromRequest(): self {
-		return self::fromArray( $_POST );
+		$data = array();
+		foreach ( array( 'orderID', 'amount', 'fromAddress', 'from', 'toAddress', 'to', 'txHash', 'status', 'nonce' ) as $key ) {
+			$value = filter_input( INPUT_POST, $key, FILTER_UNSAFE_RAW ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Value object hydration; nonce is validated by request handlers before use.
+			if ( is_scalar( $value ) ) {
+				$data[ $key ] = $value;
+			}
+		}
+
+		return self::fromArray( $data );
 	}
 
 	public function getOrderId(): ?int {

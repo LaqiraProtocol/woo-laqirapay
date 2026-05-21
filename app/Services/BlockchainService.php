@@ -1,9 +1,15 @@
 <?php
 
-namespace LaqiraPay\Services;
+namespace LaqiraPayments\Services;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 use Web3\Utils;
-use LaqiraPay\Domain\Services\LaqiraLogger;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
 use WP_Error;
 
 /**
@@ -24,9 +30,9 @@ class BlockchainService {
 	 */
 	public function getConfigurationReadiness(): array {
 		return array(
-			'has_api_key'          => $this->hasNonEmptyOption( 'laqirapay_api_key' ),
-			'has_contract_address' => $this->hasNonEmptyOption( 'laqirapay_main_contract' ),
-			'has_rpc_url'          => $this->hasNonEmptyOption( 'laqirapay_main_rpc_url' ),
+			'has_api_key'          => $this->hasNonEmptyOption( 'laqira_payments_api_key' ),
+			'has_contract_address' => $this->hasNonEmptyOption( 'laqira_payments_main_contract' ),
+			'has_rpc_url'          => $this->hasNonEmptyOption( 'laqira_payments_main_rpc_url' ),
 		);
 	}
 
@@ -43,12 +49,12 @@ class BlockchainService {
 	 * @return string
 	 */
 	public function getProvider() {
-		$api_key = get_option( 'laqirapay_api_key' );
+		$api_key = get_option( 'laqira_payments_api_key' );
 		if ( ! Utils::isAddress( $api_key ) ) {
 			LaqiraLogger::log( 300, 'web3', 'invalid_provider_key' );
 			return 'Your Api Key is invalid';
 		}
-		update_option( 'laqirapay_provider_key', $api_key );
+		update_option( 'laqira_payments_provider_key', $api_key );
 		LaqiraLogger::log( 200, 'web3', 'provider_key_loaded' );
 		return $api_key;
 	}
@@ -59,7 +65,7 @@ class BlockchainService {
 	 * @return mixed
 	 */
 	public function getProviderLocal() {
-		return get_option( 'laqirapay_api_key' );// get_option('laqirapay_provider_key');
+		return get_option( 'laqira_payments_api_key' );// get_option('laqira_payments_provider_key');
 	}
 
 	/**
@@ -69,7 +75,7 @@ class BlockchainService {
 	 * @return array|null
 	 */
 	public function getRemoteJsonCid( $api ) {
-		$cached = get_transient( 'laqirapay_remote_cid_data' );
+		$cached = get_transient( 'laqira_payments_remote_cid_data' );
 		if ( $cached !== false ) {
 			return $cached; // Serve cached data to reduce external requests.
 		}
@@ -89,8 +95,8 @@ class BlockchainService {
 			return array( 'error' => 'Unable to parse JSON data.' );
 		}
 		$ttl = defined( 'HOUR_IN_SECONDS' ) ? HOUR_IN_SECONDS : 3600;
-		set_transient( 'laqirapay_remote_cid_data', $json_data, $ttl );
-		update_option( 'laqirapay_remote_cid_data', $json_data );
+		set_transient( 'laqira_payments_remote_cid_data', $json_data, $ttl );
+		update_option( 'laqira_payments_remote_cid_data', $json_data );
 		return $json_data;
 	}
 
@@ -100,7 +106,7 @@ class BlockchainService {
 	 * @return mixed
 	 */
 	public function getCidLocal() {
-		return get_option( 'laqirapay_cid' );
+		return get_option( 'laqira_payments_cid' );
 	}
 
 	/**
@@ -118,13 +124,13 @@ class BlockchainService {
 	 * @return array
 	 */
 	public function getNetworks(): array {
-		$cached = get_transient( 'laqirapay_networks_cached' );
+		$cached = get_transient( 'laqira_payments_networks_cached' );
 		if ( $cached !== false ) {
 			return $cached;
 		}
 		$networks = $this->getMainnetNetworks();
 		$ttl      = defined( 'HOUR_IN_SECONDS' ) ? HOUR_IN_SECONDS : 3600;
-		set_transient( 'laqirapay_networks_cached', $networks, $ttl );
+		set_transient( 'laqira_payments_networks_cached', $networks, $ttl );
 		return $networks;
 	}
 
@@ -134,7 +140,7 @@ class BlockchainService {
 	 * @return array
 	 */
 	public function showNetworks(): array {
-		$cached = get_transient( 'laqirapay_networks_status_cached' );
+		$cached = get_transient( 'laqira_payments_networks_status_cached' );
 		if ( $cached !== false ) {
 			return $cached;
 		}
@@ -155,7 +161,7 @@ class BlockchainService {
 			$statusMessage = (
 				$isActive ? '✅' : '❌'
 			) . " $networkName " . (
-				$isActive ? esc_html__( 'is Active', 'laqirapay' ) : esc_html__( 'is Not Active', 'laqirapay' )
+				$isActive ? esc_html__( 'is Active', 'laqira-payments' ) : esc_html__( 'is Not Active', 'laqira-payments' )
 			); // Build human-friendly status message.
 			$result[]      = array(
 				'network' => $networkName,
@@ -164,7 +170,7 @@ class BlockchainService {
 			);
 		}
 		$ttl = defined( 'HOUR_IN_SECONDS' ) ? HOUR_IN_SECONDS : 3600;
-		set_transient( 'laqirapay_networks_status_cached', $result, $ttl );
+		set_transient( 'laqira_payments_networks_status_cached', $result, $ttl );
 		return $result;
 	}
 
@@ -174,13 +180,13 @@ class BlockchainService {
 	 * @return array
 	 */
 	public function getNetworksAssets(): array {
-		$cached = get_transient( 'laqirapay_networks_assets_cached' );
+		$cached = get_transient( 'laqira_payments_networks_assets_cached' );
 		if ( $cached !== false ) {
 			return $cached;
 		}
 		$assets = $this->getMainnetNetworksAssets();
 		$ttl    = defined( 'HOUR_IN_SECONDS' ) ? HOUR_IN_SECONDS : 3600;
-		set_transient( 'laqirapay_networks_assets_cached', $assets, $ttl );
+		set_transient( 'laqira_payments_networks_assets_cached', $assets, $ttl );
 		return $assets;
 	}
 
@@ -190,7 +196,7 @@ class BlockchainService {
 	 * @return mixed|null
 	 */
 	public function getStableCoins() {
-		$cached = get_transient( 'laqirapay_stablecoins_cached' );
+		$cached = get_transient( 'laqira_payments_stablecoins_cached' );
 		if ( $cached !== false ) {
 			return $cached;
 		}
@@ -200,7 +206,7 @@ class BlockchainService {
 		}
 		$stable = $data['stablecoins'] ?? null;
 		$ttl    = defined( 'HOUR_IN_SECONDS' ) ? HOUR_IN_SECONDS : 3600;
-		set_transient( 'laqirapay_stablecoins_cached', $stable, $ttl );
+		set_transient( 'laqira_payments_stablecoins_cached', $stable, $ttl );
 		return $stable;
 	}
 
@@ -266,7 +272,7 @@ class BlockchainService {
 		if ( ! isset( $mainnet_networks ) || ! is_array( $mainnet_networks ) ) {
 			return array();
 		}
-		$providerAddress = get_option( 'laqirapay_api_key' );
+		$providerAddress = get_option( 'laqira_payments_api_key' );
 		$activeNetworks  = array_filter(
 			$mainnet_networks,
 			function ( $network ) use ( $providerAddress ) {
@@ -322,8 +328,8 @@ class BlockchainService {
 
 		if ( class_exists( WP_Error::class ) ) {
 			return new WP_Error(
-				'laqirapay_' . $event,
-				esc_html__( 'Unable to retrieve transaction details at this time. Please try again later.', 'laqirapay' ),
+				'laqira_payments_' . $event,
+				esc_html__( 'Unable to retrieve transaction details at this time. Please try again later.', 'laqira-payments' ),
 				$context
 			);
 		}
@@ -346,12 +352,7 @@ class BlockchainService {
 			return sanitize_text_field( $string );
 		}
 
-		$string = strip_tags( $string );
-		if ($string === null) {
-   			 $string = '';
-			}
-
-
+		$string = wp_strip_all_tags( $string );
 		return trim( preg_replace( '/[\r\n\t\0\x0B]+/', ' ', $string ) );
 	}
 }

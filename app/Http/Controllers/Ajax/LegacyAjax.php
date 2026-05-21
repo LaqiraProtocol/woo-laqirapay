@@ -1,17 +1,24 @@
 <?php
 
-use LaqiraPay\Helpers\WooCommerceHelper;
-use LaqiraPay\Helpers\JwtHelper;
-use LaqiraPay\Services\BlockchainService;
-use LaqiraPay\Services\TransactionDecoder;
-use LaqiraPay\Domain\Services\LaqiraLogger;
-use kornrunner\Keccak;
-use function LaqiraPay\Support\are_cart_and_order_items_equal;
-use function LaqiraPay\Support\find_order_by_tx_hash;
-use function LaqiraPay\Support\format_date;
 
-if ( ! function_exists( 'laqirapay_sanitize_simple_text' ) ) {
-	function laqirapay_sanitize_simple_text( $value ): string {
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+use LaqiraPayments\Helpers\WooCommerceHelper;
+use LaqiraPayments\Helpers\JwtHelper;
+use LaqiraPayments\Services\BlockchainService;
+use LaqiraPayments\Services\TransactionDecoder;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
+use LaqiraPayments\WooCommerce\Gateway;
+use kornrunner\Keccak;
+use function LaqiraPayments\Support\laqira_payments_are_cart_and_order_items_equal;
+use function LaqiraPayments\Support\laqira_payments_find_order_by_tx_hash;
+use function LaqiraPayments\Support\laqira_payments_format_date;
+
+if ( ! function_exists( 'laqira_payments_sanitize_simple_text' ) ) {
+	function laqira_payments_sanitize_simple_text( $value ): string {
 		if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
 				$value = (string) $value;
 		}
@@ -26,7 +33,7 @@ if ( ! function_exists( 'laqirapay_sanitize_simple_text' ) ) {
 				return sanitize_text_field( $value );
 		}
 
-			$value = strip_tags( $value );
+			$value = wp_strip_all_tags( $value );
 			if ($value === null) {
    			 $value = '';
 			}
@@ -36,8 +43,8 @@ if ( ! function_exists( 'laqirapay_sanitize_simple_text' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_sanitize_textarea' ) ) {
-	function laqirapay_sanitize_textarea( $value ): string {
+if ( ! function_exists( 'laqira_payments_sanitize_textarea' ) ) {
+	function laqira_payments_sanitize_textarea( $value ): string {
 		if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
 				$value = (string) $value;
 		}
@@ -50,12 +57,12 @@ if ( ! function_exists( 'laqirapay_sanitize_textarea' ) ) {
 				return sanitize_textarea_field( $value );
 		}
 
-			return laqirapay_sanitize_simple_text( $value );
+			return laqira_payments_sanitize_simple_text( $value );
 	}
 }
 
-if ( ! function_exists( 'laqirapay_sanitize_positive_int' ) ) {
-	function laqirapay_sanitize_positive_int( $value ): ?int {
+if ( ! function_exists( 'laqira_payments_sanitize_positive_int' ) ) {
+	function laqira_payments_sanitize_positive_int( $value ): ?int {
 		if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
 				$value = (string) $value;
 		}
@@ -84,8 +91,8 @@ if ( ! function_exists( 'laqirapay_sanitize_positive_int' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_sanitize_decimal_string' ) ) {
-	function laqirapay_sanitize_decimal_string( $value, bool $allow_zero = true ): ?string {
+if ( ! function_exists( 'laqira_payments_sanitize_decimal_string' ) ) {
+	function laqira_payments_sanitize_decimal_string( $value, bool $allow_zero = true ): ?string {
 		if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
 				$value = (string) $value;
 		}
@@ -112,8 +119,8 @@ if ( ! function_exists( 'laqirapay_sanitize_decimal_string' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_sanitize_eth_address' ) ) {
-	function laqirapay_sanitize_eth_address( $value ): ?string {
+if ( ! function_exists( 'laqira_payments_sanitize_eth_address' ) ) {
+	function laqira_payments_sanitize_eth_address( $value ): ?string {
 		if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
 				$value = (string) $value;
 		}
@@ -136,8 +143,8 @@ if ( ! function_exists( 'laqirapay_sanitize_eth_address' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_sanitize_tx_hash' ) ) {
-	function laqirapay_sanitize_tx_hash( $value ): ?string {
+if ( ! function_exists( 'laqira_payments_sanitize_tx_hash' ) ) {
+	function laqira_payments_sanitize_tx_hash( $value ): ?string {
 		if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
 				$value = (string) $value;
 		}
@@ -160,8 +167,8 @@ if ( ! function_exists( 'laqirapay_sanitize_tx_hash' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_sanitize_req_hash' ) ) {
-	function laqirapay_sanitize_req_hash( $value ): ?string {
+if ( ! function_exists( 'laqira_payments_sanitize_req_hash' ) ) {
+	function laqira_payments_sanitize_req_hash( $value ): ?string {
 		if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
 				$value = (string) $value;
 		}
@@ -184,8 +191,8 @@ if ( ! function_exists( 'laqirapay_sanitize_req_hash' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_admin_result_allowed_html' ) ) {
-	function laqirapay_admin_result_allowed_html(): array {
+if ( ! function_exists( 'laqira_payments_admin_result_allowed_html' ) ) {
+	function laqira_payments_admin_result_allowed_html(): array {
 			return array(
 				'div'  => array(
 					'class' => true,
@@ -204,77 +211,35 @@ if ( ! function_exists( 'laqirapay_admin_result_allowed_html' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_filter_input' ) ) {
-	function laqirapay_filter_input( int $type, string $key, int $filter = FILTER_UNSAFE_RAW ) {
+if ( ! function_exists( 'laqira_payments_filter_input' ) ) {
+	function laqira_payments_filter_input( int $type, string $key, int $filter = FILTER_UNSAFE_RAW ) {
 			$value = filter_input( $type, $key, $filter );
 
 		if ( $value !== null && $value !== false ) {
 				return $value;
 		}
-
-		if ( $value === false ) {
-				return false;
-		}
-
-		switch ( $type ) {
-			case INPUT_GET:
-					$source = $_GET ?? array();
-				break;
-			case INPUT_POST:
-					$source = $_POST ?? array();
-				break;
-			case INPUT_COOKIE:
-					$source = $_COOKIE ?? array();
-				break;
-			case INPUT_SERVER:
-					$source = $_SERVER ?? array();
-				break;
-			case INPUT_ENV:
-					$source = $_ENV ?? array();
-				break;
-			default:
-					$source = null;
-				break;
-		}
-
-		if ( ! is_array( $source ) || ! array_key_exists( $key, $source ) ) {
-				return null;
-		}
-
-			$raw = $source[ $key ];
-
-		if ( is_array( $raw ) ) {
-				return null;
-		}
-
-		if ( $filter === FILTER_UNSAFE_RAW ) {
-				return $raw;
-		}
-
-			$filtered = filter_var( $raw, $filter );
-
-			return $filtered === false ? false : $filtered;
+		return $value;
 	}
 }
 
-if ( ! function_exists( 'laqirapay_get_sanitized_wp_error_message' ) ) {
-	function laqirapay_get_sanitized_wp_error_message( $maybe_error, string $fallback = '' ): ?string {
+if ( ! function_exists( 'laqira_payments_get_sanitized_wp_error_message' ) ) {
+	function laqira_payments_get_sanitized_wp_error_message( $maybe_error, string $fallback = '' ): ?string {
 		if ( ! function_exists( 'is_wp_error' ) || ! is_wp_error( $maybe_error ) ) {
 				return null;
 		}
 
 			$message   = $maybe_error->get_error_message();
-			$sanitized = laqirapay_sanitize_textarea( $message );
+			$sanitized = laqira_payments_sanitize_textarea( $message );
 
 		if ( $sanitized === '' ) {
-				$sanitized = $fallback !== '' ? $fallback : esc_html__( 'An unexpected error occurred. Please try again later.', 'laqirapay' );
+				$sanitized = $fallback !== '' ? $fallback : esc_html__( 'An unexpected error occurred. Please try again later.', 'laqira-payments' );
 		}
 
 			return $sanitized;
 	}
 }
 
-if ( ! function_exists( 'laqirapay_is_successful_transaction_status' ) ) {
+if ( ! function_exists( 'laqira_payments_is_successful_transaction_status' ) ) {
 		/**
 		 * Determine whether a transaction status value represents a successful outcome.
 		 *
@@ -282,7 +247,7 @@ if ( ! function_exists( 'laqirapay_is_successful_transaction_status' ) ) {
 		 *
 		 * @return bool True when the provided status indicates a successful transaction.
 		 */
-	function laqirapay_is_successful_transaction_status( $status ): bool {
+	function laqira_payments_is_successful_transaction_status( $status ): bool {
 		if ( is_object( $status ) && method_exists( $status, '__toString' ) ) {
 				$status = (string) $status;
 		}
@@ -323,8 +288,8 @@ if ( ! function_exists( 'laqirapay_is_successful_transaction_status' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_sanitize_url_field' ) ) {
-	function laqirapay_sanitize_url_field( $value ): ?string {
+if ( ! function_exists( 'laqira_payments_sanitize_url_field' ) ) {
+	function laqira_payments_sanitize_url_field( $value ): ?string {
 		if ( is_object( $value ) && method_exists( $value, '__toString' ) ) {
 				$value = (string) $value;
 		}
@@ -345,7 +310,7 @@ if ( ! function_exists( 'laqirapay_sanitize_url_field' ) ) {
 				return null;
 		}
 
-			$scheme = strtolower( (string) parse_url( $sanitized, PHP_URL_SCHEME ) );
+			$scheme = strtolower( (string) wp_parse_url( $sanitized, PHP_URL_SCHEME ) );
 
 		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
 				return null;
@@ -355,8 +320,8 @@ if ( ! function_exists( 'laqirapay_sanitize_url_field' ) ) {
 	}
 }
 
-if ( ! function_exists( 'laqirapay_sanitize_transaction_payload' ) ) {
-	function laqirapay_sanitize_transaction_payload( array $payload, array $required_keys = array() ): array {
+if ( ! function_exists( 'laqira_payments_sanitize_transaction_payload' ) ) {
+	function laqira_payments_sanitize_transaction_payload( array $payload, array $required_keys = array() ): array {
 			$spec = array(
 				'orderID'                => array(
 					'output_key' => 'order_id',
@@ -462,9 +427,10 @@ if ( ! function_exists( 'laqirapay_sanitize_transaction_payload' ) ) {
 
 				if ( ! $hasValue ) {
 					if ( $required ) {
-						$label = esc_html__( $info['label'], 'laqirapay' );
-
-						return array( 'error' => sprintf( esc_html__( 'Missing required %s.', 'laqirapay' ), $label ) );
+						//$label = esc_html__( $info['label'], 'laqira-payments' );
+							$label = esc_html( $info['label'] );
+							/* translators: %s: required field label. */
+							return array( 'error' => sprintf( esc_html__( 'Missing required %s.', 'laqira-payments' ), $label ) );
 					}
 
 					if ( $default !== null ) {
@@ -481,35 +447,36 @@ if ( ! function_exists( 'laqirapay_sanitize_transaction_payload' ) ) {
 
 				switch ( $info['type'] ) {
 					case 'int':
-							$value = laqirapay_sanitize_positive_int( $rawValue );
+							$value = laqira_payments_sanitize_positive_int( $rawValue );
 						break;
 					case 'decimal':
 							$allowZero = $info['options']['allow_zero'] ?? true;
-								$value = laqirapay_sanitize_decimal_string( $rawValue, $allowZero );
+								$value = laqira_payments_sanitize_decimal_string( $rawValue, $allowZero );
 						break;
 					case 'eth_address':
-							$value = laqirapay_sanitize_eth_address( $rawValue );
+							$value = laqira_payments_sanitize_eth_address( $rawValue );
 						break;
 					case 'tx_hash':
-							$value = laqirapay_sanitize_tx_hash( $rawValue );
+							$value = laqira_payments_sanitize_tx_hash( $rawValue );
 						break;
 					case 'req_hash':
-							$value = laqirapay_sanitize_req_hash( $rawValue );
+							$value = laqira_payments_sanitize_req_hash( $rawValue );
 						break;
 					case 'url':
-							$value = laqirapay_sanitize_url_field( $rawValue );
+							$value = laqira_payments_sanitize_url_field( $rawValue );
 						break;
 					case 'text':
 					default:
-							$value = laqirapay_sanitize_simple_text( $rawValue );
+							$value = laqira_payments_sanitize_simple_text( $rawValue );
 						break;
 				}
 
 				if ( $value === null || ( $value === '' && ! $allowEmpty ) ) {
 					if ( $required ) {
-							$label = esc_html__( $info['label'], 'laqirapay' );
-
-							return array( 'error' => sprintf( esc_html__( 'Invalid %s.', 'laqirapay' ), $label ) );
+							//$label = esc_html__( $info['label'], 'laqira-payments' );
+							$label = esc_html( $info['label'] );
+							/* translators: %s: field label with invalid value. */
+							return array( 'error' => sprintf( esc_html__( 'Invalid %s.', 'laqira-payments' ), $label ) );
 					}
 
 					if ( $default !== null ) {
@@ -544,20 +511,56 @@ if ( ! function_exists( 'laqirapay_sanitize_transaction_payload' ) ) {
 	}
 }
 
+if ( ! function_exists( 'laqira_payments_upsert_transaction_record' ) ) {
+	/**
+	 * Create or update the plugin transaction index for order/tx lookups.
+	 *
+	 * @param array<string,mixed> $transaction Transaction data keyed by table column.
+	 */
+	function laqira_payments_upsert_transaction_record( array $transaction ): void {
+		global $wpdb;
 
-add_action( 'wp_ajax_laqirapay_update_cart_data', 'laqirapay_update_cart_data' );
+		$order_id = isset( $transaction['wc_order_id'] ) ? laqira_payments_sanitize_positive_int( $transaction['wc_order_id'] ) : null;
+		if ( null === $order_id ) {
+			return;
+		}
 
-add_action( 'wp_ajax_nopriv_laqirapay_update_cart_data', 'laqirapay_update_cart_data' );
+		$table_name = esc_sql( $wpdb->prefix . 'laqira_payments_transactions' );
+		$row_count  = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Single-row lookup in the plugin transaction table.
+			$wpdb->prepare(
+				'SELECT COUNT(1) FROM %i WHERE wc_order_id = %d',
+				$table_name,
+				$order_id
+			)
+		);
+
+		if ( (int) $row_count > 0 ) {
+			$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Persisting plugin transaction state.
+				$table_name,
+				$transaction,
+				array( 'wc_order_id' => $order_id )
+			);
+			return;
+		}
+
+		$wpdb->insert( $table_name, $transaction ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Persisting plugin transaction state.
+	}
+}
+
+
+add_action( 'wp_ajax_laqira_payments_update_cart_data', 'laqira_payments_update_cart_data' );
+
+add_action( 'wp_ajax_nopriv_laqira_payments_update_cart_data', 'laqira_payments_update_cart_data' );
 
 /**
  * Update cart totals using the saved exchange rate and respond with JSON.
  *
  * @return void
  */
-function laqirapay_update_cart_data(): void {
+function laqira_payments_update_cart_data(): void {
 	if ( ! check_ajax_referer( 'laqira_nonce', 'security', false ) ) {
 			LaqiraLogger::log( 300, 'ajax', 'legacy_update_cart_data_invalid_nonce' );
-			wp_send_json_error( array( 'message' => esc_html__( 'nonce Error!!!', 'laqirapay' ) ) );
+			wp_send_json_error( array( 'message' => esc_html__( 'nonce Error!!!', 'laqira-payments' ) ) );
 			return;
 	}
 
@@ -571,7 +574,7 @@ function laqirapay_update_cart_data(): void {
 	// Check if the current currency is not USD; if so, apply exchange rate conversion.
 	if ( $current_currency != 'USD' ) {
 		// Retrieve the saved exchange rate for the current currency.
-		$saved_exchange_rate = get_option( 'laqirapay_exchange_rate_' . $current_currency, '' );
+		$saved_exchange_rate = get_option( 'laqira_payments_exchange_rate_' . $current_currency, '' );
 
 		// If no saved exchange rate exists, default to 1.
 		if ( ! $saved_exchange_rate ) {
@@ -609,31 +612,31 @@ LaqiraLogger::log(
 }
 
 
-add_action( 'wp_ajax_laqira_get_order_for_laqira_pay', 'laqira_get_order_for_laqira_pay' );
-add_action( 'wp_ajax_nopriv_laqira_get_order_for_laqira_pay', 'laqira_get_order_for_laqira_pay' );
+add_action( 'wp_ajax_laqira_payments_get_order_for_laqira_pay', 'laqira_payments_get_order_for_laqira_pay' );
+add_action( 'wp_ajax_nopriv_laqira_payments_get_order_for_laqira_pay', 'laqira_payments_get_order_for_laqira_pay' );
 
 /**
- * Create or update an order for LaqiraPay checkout.
+ * Create or update an order for LaqiraPayments checkout.
  *
  * @return void
  */
-function laqira_get_order_for_laqira_pay() {
+function laqira_payments_get_order_for_laqira_pay() {
 	try {
 				// Check Ajax nonce.
-				$nonce_raw = laqirapay_filter_input( INPUT_POST, 'security' );
+				$nonce_raw = laqira_payments_filter_input( INPUT_POST, 'security' );
 				$nonce     = is_string( $nonce_raw ) ? sanitize_text_field( wp_unslash( $nonce_raw ) ) : '';
 		if ( ! wp_verify_nonce( $nonce, 'laqira_nonce' ) ) {
 				LaqiraLogger::log( 300, 'security', 'get_order_invalid_nonce' );
 				wp_send_json_error(
 					array(
 						'result' => 'failed',
-						'error'  => esc_html__( 'nonce Error!!!', 'laqirapay' ),
+						'error'  => esc_html__( 'nonce Error!!!', 'laqira-payments' ),
 					)
 				);
 				return;
 		}
 
-				$jwt_cookie_raw = laqirapay_filter_input( INPUT_COOKIE, 'laqira_jwt' );
+				$jwt_cookie_raw = laqira_payments_filter_input( INPUT_COOKIE, 'laqira_jwt' );
 				$jwt_cookie     = '';
 		if ( is_string( $jwt_cookie_raw ) && $jwt_cookie_raw !== '' ) {
 				$jwt_cookie = sanitize_text_field( wp_unslash( $jwt_cookie_raw ) );
@@ -644,7 +647,7 @@ function laqira_get_order_for_laqira_pay() {
 				wp_send_json_error(
 					array(
 						'result' => 'error',
-						'error'  => esc_html__( 'Your request was not Authorized. Please refresh the checkout page again', 'laqirapay' ),
+						'error'  => esc_html__( 'Your request was not Authorized. Please refresh the checkout page again', 'laqira-payments' ),
 					)
 				);
 				return;
@@ -654,7 +657,7 @@ function laqira_get_order_for_laqira_pay() {
 
 				// Receive Customer Information (if any)
 
-				$customer_raw  = laqirapay_filter_input( INPUT_POST, 'customer' );
+				$customer_raw  = laqira_payments_filter_input( INPUT_POST, 'customer' );
 				$customer_json = '';
 		if ( is_string( $customer_raw ) && $customer_raw !== '' ) {
 			if ( function_exists( 'wp_unslash' ) ) {
@@ -692,7 +695,7 @@ function laqira_get_order_for_laqira_pay() {
 						$last_order_id &&
 						$old_order &&
 						$old_order->get_status() === 'pending' &&
-						are_cart_and_order_items_equal( $current_cart, $old_order )
+						laqira_payments_are_cart_and_order_items_equal( $current_cart, $old_order )
 				) {
 						// Cart unchanged; reuse existing pending order
 
@@ -724,7 +727,7 @@ function laqira_get_order_for_laqira_pay() {
 
 		// Set user information (if login is login)
 
-		if ( get_option( 'laqirapay_only_logged_in_user' ) != 0 && is_user_logged_in() ) {
+		if ( get_option( 'laqira_payments_only_logged_in_user' ) != 0 && is_user_logged_in() ) {
 			$order->set_customer_id( get_current_user_id() );
 		}
 
@@ -734,14 +737,14 @@ function laqira_get_order_for_laqira_pay() {
 
 		// Set the status and order notes
 
-		$order->update_status( 'wc-pending', esc_html__( 'Payment is awaited.', 'laqirapay' ) );
-		$order->add_order_note( esc_html__( 'Customer has chosen LaqiraPay Wallet payment method, payment is pending.', 'laqirapay' ) );
+		$order->update_status( 'wc-pending', esc_html__( 'Payment is awaited.', 'laqira-payments' ) );
+		$order->add_order_note( esc_html__( 'Customer has chosen LaqiraPayments Wallet payment method, payment is pending.', 'laqira-payments' ) );
 
 		// Set customer information (if existing)
 
 		if ( ! empty( $customer_data ) ) {
 				$order_comment = $customer_data['order_comments'] ?? '';
-				$order->set_customer_note( laqirapay_sanitize_textarea( $order_comment ) );
+				$order->set_customer_note( laqira_payments_sanitize_textarea( $order_comment ) );
 				$billing_address  = array();
 				$shipping_address = array();
 			foreach ( $customer_data as $key => $value ) {
@@ -753,7 +756,7 @@ function laqira_get_order_for_laqira_pay() {
 					continue;
 				}
 
-						$sanitized_value = laqirapay_sanitize_simple_text( $value );
+						$sanitized_value = laqira_payments_sanitize_simple_text( $value );
 
 				if ( str_contains( $key, 'billing_' ) ) {
 						$billing_address[ $key ] = $sanitized_value;
@@ -775,12 +778,12 @@ function laqira_get_order_for_laqira_pay() {
 			}
 		}
 
-		$order->set_payment_method( 'WC_laqirapay' );
+		$order->set_payment_method( Gateway::GATEWAY_ID );
 		$order->set_created_via( 'checkout' );
 		$order->save();
 
 		$current_currency    = get_woocommerce_currency();
-		$saved_exchange_rate = get_option( 'laqirapay_exchange_rate_' . $current_currency, '' );
+		$saved_exchange_rate = get_option( 'laqira_payments_exchange_rate_' . $current_currency, '' );
 
 		if ( $order->get_id() ) {
 				LaqiraLogger::log(
@@ -813,14 +816,14 @@ function laqira_get_order_for_laqira_pay() {
 				wp_send_json_error(
 					array(
 						'result' => 'failed',
-						'error'  => esc_html__( 'create or update order not successful. please try again...', 'laqirapay' ),
+						'error'  => esc_html__( 'create or update order not successful. please try again...', 'laqira-payments' ),
 					)
 				);
 		}
 	} catch ( Exception $e ) {
-			$error_message = laqirapay_sanitize_textarea( $e->getMessage() );
+			$error_message = laqira_payments_sanitize_textarea( $e->getMessage() );
 		if ( $error_message === '' ) {
-				$error_message = esc_html__( 'An unexpected error occurred. Please try again later.', 'laqirapay' );
+				$error_message = esc_html__( 'An unexpected error occurred. Please try again later.', 'laqira-payments' );
 		}
 			wp_send_json_error(
 				array(
@@ -837,24 +840,24 @@ function laqira_get_order_for_laqira_pay() {
  *
  * @return void, but send JSON response.
  */
-add_action( 'wp_ajax_laqira_payment_create_tx_hash', 'laqira_payment_create_tx_hash' );
-add_action( 'wp_ajax_nopriv_laqira_payment_create_tx_hash', 'laqira_payment_create_tx_hash' );
-function laqira_payment_create_tx_hash(): void {
+add_action( 'wp_ajax_laqira_payments_create_tx_hash', 'laqira_payments_create_tx_hash' );
+add_action( 'wp_ajax_nopriv_laqira_payments_create_tx_hash', 'laqira_payments_create_tx_hash' );
+function laqira_payments_create_tx_hash(): void {
 		// Check Ajax nonce.
-		$nonce_raw = laqirapay_filter_input( INPUT_POST, 'security' );
+		$nonce_raw = laqira_payments_filter_input( INPUT_POST, 'security' );
 		$nonce     = is_string( $nonce_raw ) ? sanitize_text_field( wp_unslash( $nonce_raw ) ) : '';
 	if ( ! wp_verify_nonce( $nonce, 'laqira_nonce' ) ) {
 			LaqiraLogger::log( 300, 'ajax', 'create_tx_hash_invalid_nonce' );
 			wp_send_json_error(
 				array(
 					'result' => 'failed',
-					'error'  => esc_html__( 'nonce Error!!!', 'laqirapay' ),
+					'error'  => esc_html__( 'nonce Error!!!', 'laqira-payments' ),
 				)
 			);
 			return;
 	}
 
-		$jwt_cookie_raw = laqirapay_filter_input( INPUT_COOKIE, 'laqira_jwt' );
+		$jwt_cookie_raw = laqira_payments_filter_input( INPUT_COOKIE, 'laqira_jwt' );
 		$headers        = '';
 	if ( is_string( $jwt_cookie_raw ) && $jwt_cookie_raw !== '' ) {
 			$headers = sanitize_text_field( wp_unslash( $jwt_cookie_raw ) );
@@ -865,19 +868,19 @@ function laqira_payment_create_tx_hash(): void {
 			wp_send_json_error(
 				array(
 					'result' => 'error',
-					'error'  => esc_html__( 'Your request was not Authorized. Please refresh the checkout page again', 'laqirapay' ),
+					'error'  => esc_html__( 'Your request was not Authorized. Please refresh the checkout page again', 'laqira-payments' ),
 				)
 			);
 			return;
 	}
 
-		$laqira_data_raw = laqirapay_filter_input( INPUT_POST, 'laqiradata' );
+		$laqira_data_raw = laqira_payments_filter_input( INPUT_POST, 'laqiradata' );
 	if ( ! is_string( $laqira_data_raw ) || $laqira_data_raw === '' ) {
 			LaqiraLogger::log( 400, 'ajax', 'create_tx_hash_missing_payload' );
 			wp_send_json_error(
 				array(
 					'result' => 'error',
-					'error'  => esc_html__( 'Invalid transaction payload.', 'laqirapay' ),
+					'error'  => esc_html__( 'Invalid transaction payload.', 'laqira-payments' ),
 				)
 			);
 			return;
@@ -891,7 +894,7 @@ function laqira_payment_create_tx_hash(): void {
 			wp_send_json_error(
 				array(
 					'result' => 'error',
-					'error'  => esc_html__( 'Invalid transaction payload.', 'laqirapay' ),
+					'error'  => esc_html__( 'Invalid transaction payload.', 'laqira-payments' ),
 				)
 			);
 			return;
@@ -925,7 +928,7 @@ function laqira_payment_create_tx_hash(): void {
 			'network_rpc',
 		);
 
-		$sanitized_result = laqirapay_sanitize_transaction_payload( $decoded, $required_fields );
+		$sanitized_result = laqira_payments_sanitize_transaction_payload( $decoded, $required_fields );
 
 		if ( isset( $sanitized_result['error'] ) ) {
 				LaqiraLogger::log( 400, 'ajax', 'create_tx_hash_invalid_payload', array( 'error' => $sanitized_result['error'] ) );
@@ -964,7 +967,7 @@ function laqira_payment_create_tx_hash(): void {
 		wp_send_json_error(
 		array(
 		'result' => 'error',
-		'error'  => esc_html__( 'Invalid order.', 'laqirapay' ),
+		'error'  => esc_html__( 'Invalid order.', 'laqira-payments' ),
 		)
 		);
 		return;
@@ -1063,9 +1066,25 @@ $order->update_meta_data( 'CustomerWalletAddress', $user_wallet );
 		// Order total update.
 		$order->calculate_totals();
 
-$order->save();
+		$order->save();
 
-$release_lock();
+		laqira_payments_upsert_transaction_record(
+			array(
+				'wc_total_price' => $price,
+				'wc_currency'    => get_woocommerce_currency(),
+				'exchange_rate'  => $exchange_rate,
+				'wc_order_id'    => (int) $order->get_id(),
+				'tx_hash'        => $tx_hash,
+				'token_address'  => $asset,
+				'token_name'     => $asset_name,
+				'token_amount'   => $asset_amount,
+				'req_hash'       => $req_hash,
+				'tx_from'        => $user_wallet,
+				'tx_to'          => $site_admin_address_wallet,
+			)
+		);
+
+		$release_lock();
 
 		LaqiraLogger::log(
 			200,
@@ -1084,23 +1103,23 @@ $release_lock();
  *
  * @return void, send $order->get_checkout_order_received_url with wp_send_json_success to redirect by JS.
  */
-add_action( 'wp_ajax_laqira_payment_confirmation', 'laqira_payment_confirmation' );
-add_action( 'wp_ajax_nopriv_laqira_payment_confirmation', 'laqira_payment_confirmation' );
-function laqira_payment_confirmation() {
-		$nonce_raw = laqirapay_filter_input( INPUT_POST, 'security' );
+add_action( 'wp_ajax_laqira_payments_confirm_payment', 'laqira_payments_confirm_payment' );
+add_action( 'wp_ajax_nopriv_laqira_payments_confirm_payment', 'laqira_payments_confirm_payment' );
+function laqira_payments_confirm_payment() {
+		$nonce_raw = laqira_payments_filter_input( INPUT_POST, 'security' );
 		$nonce     = is_string( $nonce_raw ) ? sanitize_text_field( wp_unslash( $nonce_raw ) ) : '';
 	if ( ! wp_verify_nonce( $nonce, 'laqira_nonce' ) ) {
 			LaqiraLogger::log( 300, 'ajax', 'payment_confirmation_invalid_nonce' );
 			wp_send_json_error(
 				array(
 					'result' => 'failed',
-					'error'  => esc_html__( 'nonce Error!!!', 'laqirapay' ),
+					'error'  => esc_html__( 'nonce Error!!!', 'laqira-payments' ),
 				)
 			);
 			return;
 	}
 
-		$jwt_cookie_raw = laqirapay_filter_input( INPUT_COOKIE, 'laqira_jwt' );
+		$jwt_cookie_raw = laqira_payments_filter_input( INPUT_COOKIE, 'laqira_jwt' );
 		$headers        = '';
 	if ( is_string( $jwt_cookie_raw ) && $jwt_cookie_raw !== '' ) {
 			$headers = sanitize_text_field( wp_unslash( $jwt_cookie_raw ) );
@@ -1111,7 +1130,7 @@ function laqira_payment_confirmation() {
 			wp_send_json_error(
 				array(
 					'result' => 'error',
-					'error'  => esc_html__( 'Your request was not Authorized. Please refresh the checkout page again', 'laqirapay' ),
+					'error'  => esc_html__( 'Your request was not Authorized. Please refresh the checkout page again', 'laqira-payments' ),
 				)
 			);
 			return;
@@ -1119,16 +1138,16 @@ function laqira_payment_confirmation() {
 
 		global $woocommerce;
 		$current_currency    = get_woocommerce_currency();
-		$saved_exchange_rate = get_option( 'laqirapay_exchange_rate_' . $current_currency, '' );
-		$saved_exchange_rate = laqirapay_sanitize_decimal_string( $saved_exchange_rate, false ) ?? '1';
+		$saved_exchange_rate = get_option( 'laqira_payments_exchange_rate_' . $current_currency, '' );
+		$saved_exchange_rate = laqira_payments_sanitize_decimal_string( $saved_exchange_rate, false ) ?? '1';
 
-		$laqira_data_raw = laqirapay_filter_input( INPUT_POST, 'laqiradata' );
+		$laqira_data_raw = laqira_payments_filter_input( INPUT_POST, 'laqiradata' );
 	if ( ! is_string( $laqira_data_raw ) || $laqira_data_raw === '' ) {
 			LaqiraLogger::log( 400, 'ajax', 'payment_confirmation_missing_payload' );
 			wp_send_json_error(
 				array(
 					'result' => 'error',
-					'error'  => esc_html__( 'Invalid transaction payload.', 'laqirapay' ),
+					'error'  => esc_html__( 'Invalid transaction payload.', 'laqira-payments' ),
 				)
 			);
 			return;
@@ -1142,7 +1161,7 @@ function laqira_payment_confirmation() {
 			wp_send_json_error(
 				array(
 					'result' => 'error',
-					'error'  => esc_html__( 'Invalid transaction payload.', 'laqirapay' ),
+					'error'  => esc_html__( 'Invalid transaction payload.', 'laqira-payments' ),
 				)
 			);
 			return;
@@ -1174,7 +1193,7 @@ function laqira_payment_confirmation() {
 			'network_rpc',
 		);
 
-		$sanitized_result = laqirapay_sanitize_transaction_payload( $decoded, $required_fields );
+		$sanitized_result = laqira_payments_sanitize_transaction_payload( $decoded, $required_fields );
 
 		if ( isset( $sanitized_result['error'] ) ) {
 				LaqiraLogger::log( 400, 'ajax', 'payment_confirmation_invalid_payload', array( 'error' => $sanitized_result['error'] ) );
@@ -1208,7 +1227,7 @@ function laqira_payment_confirmation() {
 				wp_send_json_error(
 					array(
 						'result' => 'error',
-						'error'  => esc_html__( 'Invalid order.', 'laqirapay' ),
+						'error'  => esc_html__( 'Invalid order.', 'laqira-payments' ),
 					)
 				);
 				return;
@@ -1271,7 +1290,7 @@ function laqira_payment_confirmation() {
 		$old_req_hash = $stored_req_hash_raw;
 
 		if ( is_string( $stored_tx_hash_raw ) ) {
-				$normalized_stored_tx_hash = laqirapay_sanitize_tx_hash( $stored_tx_hash_raw );
+				$normalized_stored_tx_hash = laqira_payments_sanitize_tx_hash( $stored_tx_hash_raw );
 
 			if ( $normalized_stored_tx_hash !== null ) {
 					$old_tx_hash = $normalized_stored_tx_hash;
@@ -1279,7 +1298,7 @@ function laqira_payment_confirmation() {
 		}
 
 		if ( is_string( $stored_req_hash_raw ) ) {
-				$normalized_stored_req_hash = laqirapay_sanitize_req_hash( $stored_req_hash_raw );
+				$normalized_stored_req_hash = laqira_payments_sanitize_req_hash( $stored_req_hash_raw );
 
 			if ( $normalized_stored_req_hash !== null ) {
 					$old_req_hash = $normalized_stored_req_hash;
@@ -1303,7 +1322,7 @@ function laqira_payment_confirmation() {
         wp_send_json_error(
         array(
         'result' => 'error',
-        'error'  => esc_html__( 'Submitted transaction data does not match the order.', 'laqirapay' ),
+        'error'  => esc_html__( 'Submitted transaction data does not match the order.', 'laqira-payments' ),
         )
         );
         return;
@@ -1327,9 +1346,9 @@ function laqira_payment_confirmation() {
 				);
 		}
 
-		$tx_error_message = laqirapay_get_sanitized_wp_error_message(
+		$tx_error_message = laqira_payments_get_sanitized_wp_error_message(
 			$tx_results,
-			esc_html__( 'Unable to retrieve blockchain transaction details. Please try again later.', 'laqirapay' )
+			esc_html__( 'Unable to retrieve blockchain transaction details. Please try again later.', 'laqira-payments' )
 		);
 
 if ( $tx_error_message !== null ) {
@@ -1362,7 +1381,7 @@ LaqiraLogger::log(
 				strtolower( '0x' . $req_hash ) !== strtolower( $tx_results['_reqHash'] )
 		) {
 			$order->update_status( 'wc-failed', '' );
-$order->add_order_note( esc_html__( 'Order not verified by blockchain.', 'laqirapay' ) );
+$order->add_order_note( esc_html__( 'Order not verified by blockchain.', 'laqira-payments' ) );
 $order->save();
 LaqiraLogger::log(
 				400,
@@ -1377,7 +1396,7 @@ LaqiraLogger::log(
   wp_send_json_error(
   array(
   'result' => 'error',
-  'error'  => esc_html__( 'Transaction verification failed.', 'laqirapay' ),
+  'error'  => esc_html__( 'Transaction verification failed.', 'laqira-payments' ),
   )
   );
   return;
@@ -1412,15 +1431,16 @@ LaqiraLogger::log(
 		// Order total update.
 		$order->calculate_totals();
 		$payment_gateways = $woocommerce->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways['WC_laqirapay'] );
-		$order_status = get_option( 'laqirapay_order_recovery_status' );
+		$gateway_instance = $payment_gateways[ Gateway::GATEWAY_ID ] ?? $payment_gateways[ Gateway::LEGACY_GATEWAY_ID ] ?? null;
+		if ( null !== $gateway_instance ) {
+			$order->set_payment_method( $gateway_instance );
+		}
+		$order_status = get_option( 'laqira_payments_order_recovery_status' );
 		$order->update_status( $order_status, '' );
 		$order->add_order_note( 'Order Update by ' . $payment_type . ' method with TxHash ' . $tx_hash );
 		$order->save();
 
-		global $wpdb;
-		$table_name_laqira_transactions = esc_sql( $wpdb->prefix . 'laqirapay_transactions' );
-		$order_id_int                   = (int) $order->get_id();
+		$order_id_int = (int) $order->get_id();
 
 		$laqira_transactions = array(
 			'wc_total_price' => $price,
@@ -1436,25 +1456,7 @@ LaqiraLogger::log(
 			'tx_to'          => $site_admin_address_wallet,
 		);
 
-		$existing_row_count = $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT COUNT(1) FROM %s WHERE wc_order_id = %d', 
-				$table_name_laqira_transactions,
-				$order_id_int 
-			)
-		);
-
-	if ( (int) $existing_row_count > 0 ) {
-			$wpdb->update(
-				$table_name_laqira_transactions,
-				$laqira_transactions,
-				array( 'wc_order_id' => $order_id_int ),
-				null,
-				array( '%d' )
-			);
-	} else {
-			$wpdb->insert( $table_name_laqira_transactions, $laqira_transactions );
-	}
+		laqira_payments_upsert_transaction_record( $laqira_transactions );
 
 		LaqiraLogger::log(
 			200,
@@ -1481,24 +1483,24 @@ array(
  *
  * @return void This function does not return anything, but sends data to JavaScript as JSON.
  */
-add_action( 'wp_ajax_laqira_payment_data', 'laqira_payment_data' );
-add_action( 'wp_ajax_nopriv_laqira_payment_data', 'laqira_payment_data' );
-function laqira_payment_data() {
+add_action( 'wp_ajax_laqira_payments_get_payment_data', 'laqira_payments_get_payment_data' );
+add_action( 'wp_ajax_nopriv_laqira_payments_get_payment_data', 'laqira_payments_get_payment_data' );
+function laqira_payments_get_payment_data() {
 		// Check Ajax nonce.
-		$nonce_raw = laqirapay_filter_input( INPUT_POST, 'security' );
+		$nonce_raw = laqira_payments_filter_input( INPUT_POST, 'security' );
 		$nonce     = is_string( $nonce_raw ) ? sanitize_text_field( wp_unslash( $nonce_raw ) ) : '';
 	if ( ! wp_verify_nonce( $nonce, 'laqira_nonce' ) ) {
 			LaqiraLogger::log( 300, 'ajax', 'payment_data_invalid_nonce' );
 			wp_send_json_error(
 				array(
 					'result' => 'failed',
-					'error'  => esc_html__( 'nonce Error!!!', 'laqirapay' ),
+					'error'  => esc_html__( 'nonce Error!!!', 'laqira-payments' ),
 				)
 			);
 			return;
 	}
 
-		$jwt_cookie_raw = laqirapay_filter_input( INPUT_COOKIE, 'laqira_jwt' );
+		$jwt_cookie_raw = laqira_payments_filter_input( INPUT_COOKIE, 'laqira_jwt' );
 		$headers        = '';
 	if ( is_string( $jwt_cookie_raw ) && $jwt_cookie_raw !== '' ) {
 			$headers = sanitize_text_field( wp_unslash( $jwt_cookie_raw ) );
@@ -1509,13 +1511,13 @@ function laqira_payment_data() {
 			wp_send_json_error(
 				array(
 					'result' => 'error',
-					'error'  => esc_html__( 'Your request was not Authorized. Please refresh the checkout page again', 'laqirapay' ),
+					'error'  => esc_html__( 'Your request was not Authorized. Please refresh the checkout page again', 'laqira-payments' ),
 				)
 			);
 			return;
 	}
 
-		$order_id_raw = laqirapay_filter_input( INPUT_POST, 'orderID', FILTER_SANITIZE_NUMBER_INT );
+		$order_id_raw = laqira_payments_filter_input( INPUT_POST, 'orderID', FILTER_SANITIZE_NUMBER_INT );
 		$order_id     = ( $order_id_raw !== null && $order_id_raw !== false ) ? (int) $order_id_raw : 0;
 
 	if ( $order_id <= 0 ) {
@@ -1523,7 +1525,7 @@ function laqira_payment_data() {
 			wp_send_json_error(
 				array(
 					'result' => 'error',
-					'error'  => esc_html__( 'Invalid order ID provided.', 'laqirapay' ),
+					'error'  => esc_html__( 'Invalid order ID provided.', 'laqira-payments' ),
 				)
 			);
 			return;
@@ -1532,11 +1534,11 @@ function laqira_payment_data() {
 		global $woocommerce;
 			// $cart_total = $woocommerce->cart->get_total('edit');
 
-			$key_encode          = get_option( 'laqirapay_api_key' );
+			$key_encode          = get_option( 'laqira_payments_api_key' );
 			$current_currency    = get_woocommerce_currency();
 			$order               = wc_get_order( intval( $order_id ) );
 			$cart_total          = ( new WooCommerceHelper() )->getTotal();
-			$saved_exchange_rate = get_option( 'laqirapay_exchange_rate_' . $current_currency, '' );
+			$saved_exchange_rate = get_option( 'laqira_payments_exchange_rate_' . $current_currency, '' );
 	if ( ! $saved_exchange_rate ) {
 		$saved_exchange_rate = 1;
 	}
@@ -1609,34 +1611,37 @@ function laqira_payment_data() {
 		);
 }
 
-add_action( 'wp_ajax_laqirapay_view_confirmation_tx_hash', 'laqirapay_view_confirmation_tx_hash' );
-add_action( 'wp_ajax_nopriv_laqirapay_view_confirmation_tx_hash', 'laqirapay_view_confirmation_tx_hash' );
+add_action( 'wp_ajax_laqira_payments_view_confirmation_tx_hash', 'laqira_payments_view_confirmation_tx_hash' );
+add_action( 'wp_ajax_nopriv_laqira_payments_view_confirmation_tx_hash', 'laqira_payments_view_confirmation_tx_hash' );
 
 /**
- * The function `laqirapay_view_confirmation_tx_hash` processes and displays transaction details and
+ * The function `laqira_payments_view_confirmation_tx_hash` processes and displays transaction details and
  * order information based on input values.
  *
  * @return This function is responsible for viewing and confirming a transaction hash. It takes an
  * input value from a form submission, retrieves transaction information using different functions, and
  * then checks and displays various details related to the transaction and associated order.
  */
-function laqirapay_view_confirmation_tx_hash() {
-	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'laqirapay_view_confirmation_tx_hash' ) ) {
+function laqira_payments_view_confirmation_tx_hash() {
+	$nonce_raw = laqira_payments_filter_input( INPUT_POST, 'nonce' );
+	$nonce     = is_string( $nonce_raw ) ? sanitize_text_field( wp_unslash( $nonce_raw ) ) : '';
+	if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'laqira_payments_view_confirmation_tx_hash' ) ) {
 					LaqiraLogger::log( 300, 'ajax', 'view_confirmation_tx_hash_invalid_nonce' );
 					wp_send_json_error(
 						array(
 							'result' => 'failed',
-							'error'  => esc_html__( 'nonce Error!!!', 'laqirapay' ),
+							'error'  => esc_html__( 'nonce Error!!!', 'laqira-payments' ),
 						)
 					);
 					return;
 	}
-	if ( isset( $_POST['input_value'] ) ) {
-			$allowed_tags         = laqirapay_get_order_confirmation_allowed_tags();
+	$input_value_raw = laqira_payments_filter_input( INPUT_POST, 'input_value' );
+	if ( is_string( $input_value_raw ) ) {
+			$allowed_tags         = laqira_payments_get_order_confirmation_allowed_tags();
 			$confirmation_payload = null;
-			$input_value          = sanitize_text_field( $_POST['input_value'] );
+			$input_value          = sanitize_text_field( wp_unslash( $input_value_raw ) );
 			$tx_hash_to_find      = $input_value;
-			$order_id             = find_order_by_tx_hash( $tx_hash_to_find );
+			$order_id             = laqira_payments_find_order_by_tx_hash( $tx_hash_to_find );
 			ob_start();
 		if ( $order_id ) {
 				$order       = wc_get_order( $order_id );
@@ -1686,7 +1691,7 @@ function laqirapay_view_confirmation_tx_hash() {
 				$price_from_tx                   = 0.0;
 				$req_hash_from_tx                = '';
 				$user_wallet_address_form_tx     = '';
-				$main_laqirapay_contract_from_tx = '';
+				$main_laqira_payments_contract_from_tx = '';
 				$transaction_status_from_tx      = '';
 
 			if ( isset( $tx_results_direct ) && is_array( $tx_results_direct ) && count( $tx_results_direct ) > 0 ) {
@@ -1707,7 +1712,7 @@ function laqirapay_view_confirmation_tx_hash() {
 
 			if ( isset( $tx_results_receipt ) && is_array( $tx_results_receipt ) && count( $tx_results_receipt ) > 0 ) {
 				$user_wallet_address_form_tx     = $tx_results_receipt['from'];
-				$main_laqirapay_contract_from_tx = $tx_results_receipt['to'];
+				$main_laqira_payments_contract_from_tx = $tx_results_receipt['to'];
 				$transaction_status_from_tx      = $tx_results_receipt['status'];
 			}
 
@@ -1716,12 +1721,12 @@ function laqirapay_view_confirmation_tx_hash() {
 			if ( strtolower( $original_provider ) == strtolower( $provider_address_from_tx ) ) {
 						echo wp_kses_post( '<p><span class="dashicons dashicons-yes-alt" style="color:green;"></span>Provider Address confirmed</p>' );
 
-				if ( laqirapay_is_successful_transaction_status( $transaction_status_from_tx ) ) {
+				if ( laqira_payments_is_successful_transaction_status( $transaction_status_from_tx ) ) {
 					echo wp_kses_post( '<p><span class="dashicons dashicons-yes-alt" style="color:green;"></span>The transaction status is compelete on blockchain</p>' );
 					if ( $order_id ) {
 										echo wp_kses_post( '<p><span class="dashicons dashicons-yes-alt" style="color:green;"></span>An order found</p>' );
 						// $order                 = wc_get_order( intval( $order_id ) );
-						$order_recovery_status = get_option( 'laqirapay_order_recovery_status' );
+						$order_recovery_status = get_option( 'laqira_payments_order_recovery_status' );
 						$order_status          = 'wc-' . $order->get_status();
 						if ( ( $order_status != 'wc-completed' ) && ( $order_status != $order_recovery_status ) ) {
 
@@ -1742,8 +1747,8 @@ function laqirapay_view_confirmation_tx_hash() {
 
 															$order_registration_message = sprintf(
 																/* translators: %s: WooCommerce order ID. */
-																__( 'Order #%s has been registered with this transaction hash. Order and transaction details are below.', 'laqirapay' ),
-																laqirapay_sanitize_simple_text( $order_id )
+																__( 'Order #%s has been registered with this transaction hash. Order and transaction details are below.', 'laqira-payments' ),
+																laqira_payments_sanitize_simple_text( $order_id )
 															);
 															printf(
 																'<p><span class="dashicons dashicons-yes-alt" style="color:green;"></span>%s</p>',
@@ -1751,7 +1756,7 @@ function laqirapay_view_confirmation_tx_hash() {
 															);
 
 															echo wp_kses_post( '<hr><h4>Order Details:</h4>' );
-															$output  = '<table class="laqirapay-table">';
+															$output  = '<table class="laqira-payments-table">';
 															$output .= '<tr><th>Title </th><th>Value</th></tr>';
 
 															$output .= '<tr>';
@@ -1761,12 +1766,12 @@ function laqirapay_view_confirmation_tx_hash() {
 
 															$output .= '<tr>';
 															$output .= '<td><strong>Order Create Date</strong></td>';
-															$output .= '<td>' . esc_html( format_date( $order->get_date_created() ) ) . '</td>';
+															$output .= '<td>' . esc_html( laqira_payments_format_date( $order->get_date_created() ) ) . '</td>';
 															$output .= '</tr>';
 
 															$output .= '<tr>';
 															$output .= '<td><strong>Order Modified Date</strong></td>';
-															$output .= '<td>' . esc_html( format_date( $order->get_date_modified() ) ) . '</td>';
+															$output .= '<td>' . esc_html( laqira_payments_format_date( $order->get_date_modified() ) ) . '</td>';
 															$output .= '</tr>';
 
 															$output         .= '<tr>';
@@ -1781,7 +1786,7 @@ function laqirapay_view_confirmation_tx_hash() {
 
 								if ( current_user_can( 'administrator' ) || get_current_user_id() == $order->get_user_id() ) {
 																		echo wp_kses_post( '<br><h4>Order Items:</h4>' );
-									$order_items_output  = '<table class="laqirapay-table">';
+									$order_items_output  = '<table class="laqira-payments-table">';
 									$order_items_output .= '<tr><th>Product ID </th><th>Name</th><th>Quantity</th><th>SubTotal</th></tr>';
 									foreach ( $order->get_items() as $item_id => $item ) {
 										$product             = $item->get_product();
@@ -1797,7 +1802,7 @@ function laqirapay_view_confirmation_tx_hash() {
 								}
 
 															echo wp_kses_post( '<hr><h4>Transaction Details:</h4>' );
-															$output  = '<table class="laqirapay-table">';
+															$output  = '<table class="laqira-payments-table">';
 															$output .= '<tr><th>Title </th><th>Value</th></tr>';
 
 															$output .= '<tr>';
@@ -1812,7 +1817,7 @@ function laqirapay_view_confirmation_tx_hash() {
 
 															$output .= '<tr>';
 															$output .= '<td><strong>To</strong></td>';
-															$output .= '<td>' . esc_html( $main_laqirapay_contract_from_tx ) . '</td>';
+															$output .= '<td>' . esc_html( $main_laqira_payments_contract_from_tx ) . '</td>';
 															$output .= '</tr>';
 
 															$output .= '<tr>';
@@ -1835,7 +1840,7 @@ function laqirapay_view_confirmation_tx_hash() {
 
 															echo wp_kses_post( $output . '</div>' );
 
-																															$confirmation_payload = do_compelete_order( $order_id );
+																															$confirmation_payload = laqira_payments_do_complete_order( $order_id );
 							} else {
 														echo wp_kses_post( '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>Your data not confirmed</p>' );
 							}
@@ -1856,7 +1861,7 @@ function laqirapay_view_confirmation_tx_hash() {
 				);
 				$message        = sprintf(
 						/* translators: %s: provider address debug information. */
-					__( 'Provider Address not Confirmed %s', 'laqirapay' ),
+					__( 'Provider Address not Confirmed %s', 'laqira-payments' ),
 					$provider_debug
 				);
 				printf(
@@ -1892,31 +1897,54 @@ function laqirapay_view_confirmation_tx_hash() {
 			wp_send_json_error(
 				array(
 					'result'  => 'failed',
-					'message' => esc_html__( 'Transaction hash is required.', 'laqirapay' ),
+					'message' => esc_html__( 'Transaction hash is required.', 'laqira-payments' ),
 				)
 			);
 	}
 }
 
 
-add_action( 'wp_ajax_laqirapay_view_confirmation_tx_hash_admin', 'laqirapay_view_confirmation_tx_hash_admin' );
-function laqirapay_view_confirmation_tx_hash_admin() {
-	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'laqirapay_view_confirmation_tx_hash_admin' ) ) {
+add_action( 'wp_ajax_laqira_payments_view_confirmation_tx_hash_admin', 'laqira_payments_view_confirmation_tx_hash_admin' );
+function laqira_payments_view_confirmation_tx_hash_admin() {
+	$nonce_raw = laqira_payments_filter_input( INPUT_POST, 'nonce' );
+	$nonce     = is_string( $nonce_raw ) ? sanitize_text_field( wp_unslash( $nonce_raw ) ) : '';
+	if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'laqira_payments_view_confirmation_tx_hash_admin' ) ) {
 					LaqiraLogger::log( 300, 'ajax', 'view_confirmation_tx_hash_admin_invalid_nonce' );
 					wp_send_json_error(
 						array(
 							'result' => 'failed',
-							'error'  => esc_html__( 'nonce Error!!!', 'laqirapay' ),
+							'error'  => esc_html__( 'nonce Error!!!', 'laqira-payments' ),
 						)
 					);
 					return;
 	}
-	if ( isset( $_POST['input_value'] ) ) {
-			$allowed_tags         = laqirapay_get_order_confirmation_allowed_tags();
+	if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce registers this capability for store administration.
+					LaqiraLogger::log( 403, 'ajax', 'view_confirmation_tx_hash_admin_forbidden' );
+					wp_send_json_error(
+						array(
+							'result' => 'failed',
+							'error'  => esc_html__( 'Insufficient permissions.', 'laqira-payments' ),
+						)
+					);
+					return;
+	}
+	$input_value_raw = laqira_payments_filter_input( INPUT_POST, 'input_value' );
+	if ( is_string( $input_value_raw ) ) {
+			$allowed_tags         = laqira_payments_get_order_confirmation_allowed_tags();
 			$confirmation_payload = null;
-			$input_value          = sanitize_text_field( $_POST['input_value'] );
-			$order_id             = intval( $_POST['order_id'] );
+			$input_value          = sanitize_text_field( wp_unslash( $input_value_raw ) );
+			$order_id_raw         = laqira_payments_filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_NUMBER_INT );
+			$order_id             = is_string( $order_id_raw ) ? intval( wp_unslash( $order_id_raw ) ) : 0;
 			$order                = wc_get_order( intval( $order_id ) );
+		if ( ! $order instanceof WC_Order ) {
+				wp_send_json_error(
+					array(
+						'result' => 'failed',
+						'error'  => esc_html__( 'Order not found.', 'laqira-payments' ),
+					)
+				);
+				return;
+		}
 			$network_rpc          = $order->get_meta( 'network_rpc' );
 			ob_start();
 
@@ -1964,7 +1992,7 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 		$price_from_tx                   = 0.0;
 		$req_hash_from_tx                = '';
 		$user_wallet_address_form_tx     = '';
-		$main_laqirapay_contract_from_tx = '';
+		$main_laqira_payments_contract_from_tx = '';
 		$transaction_status_from_tx      = '';
 
 		if ( isset( $tx_results_direct ) && is_array( $tx_results_direct ) && count( $tx_results_direct ) > 0 ) {
@@ -1985,7 +2013,7 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 
 		if ( isset( $tx_results_receipt ) && is_array( $tx_results_receipt ) && count( $tx_results_receipt ) > 0 ) {
 			$user_wallet_address_form_tx     = $tx_results_receipt['from'];
-			$main_laqirapay_contract_from_tx = $tx_results_receipt['to'];
+			$main_laqira_payments_contract_from_tx = $tx_results_receipt['to'];
 			$transaction_status_from_tx      = $tx_results_receipt['status'];
 		}
 
@@ -1994,12 +2022,12 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 		if ( strtolower( $original_provider ) == strtolower( $provider_address_from_tx ) ) {
 			echo wp_kses_post( '<p><span class="dashicons dashicons-yes-alt" style="color:green;"></span>Provider Address confirmed</p>' );
 
-			if ( laqirapay_is_successful_transaction_status( $transaction_status_from_tx ) ) {
+			if ( laqira_payments_is_successful_transaction_status( $transaction_status_from_tx ) ) {
 				echo wp_kses_post( '<p><span class="dashicons dashicons-yes-alt" style="color:green;"></span>The transaction status is compelete on blockchain</p>' );
 				if ( $order_id ) {
 							echo wp_kses_post( '<p><span class="dashicons dashicons-yes-alt" style="color:green;"></span>An order found</p>' );
 
-					$order_recovery_status = get_option( 'laqirapay_order_recovery_status' );
+					$order_recovery_status = get_option( 'laqira_payments_order_recovery_status' );
 					$order_status          = 'wc-' . $order->get_status();
 					if ( ( $order_status != 'wc-completed' ) && ( $order_status != $order_recovery_status ) ) {
 
@@ -2020,8 +2048,8 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 
 												$order_registration_message = sprintf(
 													/* translators: %s: WooCommerce order ID. */
-													__( 'Order #%s has been registered with this transaction hash. Order and transaction details are below.', 'laqirapay' ),
-													laqirapay_sanitize_simple_text( $order_id )
+													__( 'Order #%s has been registered with this transaction hash. Order and transaction details are below.', 'laqira-payments' ),
+													laqira_payments_sanitize_simple_text( $order_id )
 												);
 												printf(
 													'<p><span class="dashicons dashicons-yes-alt" style="color:green;"></span>%s</p>',
@@ -2029,7 +2057,7 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 												);
 
 													echo wp_kses_post( '<hr><h4>Order Details:</h4>' );
-												$output  = '<table class="laqirapay-table">';
+												$output  = '<table class="laqira-payments-table">';
 												$output .= '<tr><th>Title </th><th>Value</th></tr>';
 
 												$output .= '<tr>';
@@ -2039,12 +2067,12 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 
 												$output .= '<tr>';
 												$output .= '<td><strong>Order Create Date</strong></td>';
-												$output .= '<td>' . esc_html( format_date( $order->get_date_created() ) ) . '</td>';
+												$output .= '<td>' . esc_html( laqira_payments_format_date( $order->get_date_created() ) ) . '</td>';
 												$output .= '</tr>';
 
 												$output .= '<tr>';
 												$output .= '<td><strong>Order Modified Date</strong></td>';
-												$output .= '<td>' . esc_html( format_date( $order->get_date_modified() ) ) . '</td>';
+												$output .= '<td>' . esc_html( laqira_payments_format_date( $order->get_date_modified() ) ) . '</td>';
 												$output .= '</tr>';
 
 												$output         .= '<tr>';
@@ -2059,7 +2087,7 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 
 							if ( current_user_can( 'administrator' ) || get_current_user_id() == $order->get_user_id() ) {
 															echo wp_kses_post( '<br><h4>Order Items:</h4>' );
-								$order_items_output  = '<table class="laqirapay-table">';
+								$order_items_output  = '<table class="laqira-payments-table">';
 								$order_items_output .= '<tr><th>Product ID </th><th>Name</th><th>Quantity</th><th>SubTotal</th></tr>';
 								foreach ( $order->get_items() as $item_id => $item ) {
 									$product             = $item->get_product();
@@ -2075,7 +2103,7 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 							}
 
 													echo wp_kses_post( '<hr><h4>Transaction Details:</h4>' );
-							$output  = '<table class="laqirapay-table">';
+							$output  = '<table class="laqira-payments-table">';
 							$output .= '<tr><th>Title </th><th>Value</th></tr>';
 
 							$output                     .= '<tr>';
@@ -2090,7 +2118,7 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 
 												$output .= '<tr>';
 												$output .= '<td><strong>To</strong></td>';
-												$output .= '<td>' . esc_html( $main_laqirapay_contract_from_tx ) . '</td>';
+												$output .= '<td>' . esc_html( $main_laqira_payments_contract_from_tx ) . '</td>';
 												$output .= '</tr>';
 
 												$output .= '<tr>';
@@ -2113,7 +2141,7 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 
 													echo wp_kses_post( $output . '</div>' );
 
-																											$confirmation_payload = do_compelete_order_failed( $order_id, $input_value );
+																											$confirmation_payload = laqira_payments_do_complete_order_failed( $order_id, $input_value );
 						} else {
 													echo wp_kses_post( '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>Your data not confirmed</p>' );
 						}
@@ -2134,7 +2162,7 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 			);
 			$message        = sprintf(
 					/* translators: %s: provider address debug information. */
-				__( 'Provider Address not Confirmed %s', 'laqirapay' ),
+				__( 'Provider Address not Confirmed %s', 'laqira-payments' ),
 				$provider_debug
 			);
 			printf(
@@ -2168,31 +2196,44 @@ function laqirapay_view_confirmation_tx_hash_admin() {
 			wp_send_json_error(
 				array(
 					'result'  => 'failed',
-					'message' => esc_html__( 'Transaction hash is required.', 'laqirapay' ),
+					'message' => esc_html__( 'Transaction hash is required.', 'laqira-payments' ),
 				)
 			);
 	}
 }
 
 
-add_action( 'wp_ajax_laqirapay_confirm_tx_hash_in_user_panel', 'laqirapay_confirm_tx_hash_in_user_panel' );
-function laqirapay_confirm_tx_hash_in_user_panel() {
+add_action( 'wp_ajax_laqira_payments_confirm_tx_hash_in_user_panel', 'laqira_payments_confirm_tx_hash_in_user_panel' );
+function laqira_payments_confirm_tx_hash_in_user_panel() {
 	try {
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'laqira_nonce_confirm_tx_hash_in_user_panel' ) ) {
+		$nonce_raw = laqira_payments_filter_input( INPUT_POST, 'nonce' );
+		$nonce     = is_string( $nonce_raw ) ? sanitize_text_field( wp_unslash( $nonce_raw ) ) : '';
+		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'laqira_nonce_confirm_tx_hash_in_user_panel' ) ) {
 				LaqiraLogger::log( 300, 'ajax', 'confirm_tx_hash_in_user_panel_invalid_nonce' );
 				wp_send_json_error(
 					array(
 						'result'  => 'error',
-						'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'Error on security Process', 'laqirapay' ) . '</p>',
+						'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'Error on security Process', 'laqira-payments' ) . '</p>',
 					)
 				);
 		}
 
-		if ( isset( $_POST['input_value'] ) ) {
+		$input_value_raw = laqira_payments_filter_input( INPUT_POST, 'input_value' );
+		if ( is_string( $input_value_raw ) ) {
 			global $wpdb;
-			$input_value = sanitize_text_field( $_POST['input_value'] );
-			$order_id    = intval( $_POST['order_id'] );
+			$input_value  = sanitize_text_field( wp_unslash( $input_value_raw ) );
+			$order_id_raw = laqira_payments_filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_NUMBER_INT );
+			$order_id     = is_string( $order_id_raw ) ? intval( wp_unslash( $order_id_raw ) ) : 0;
 			$order       = wc_get_order( intval( $order_id ) );
+			if ( ! $order instanceof WC_Order ) {
+					wp_send_json_error(
+						array(
+							'result'  => 'error',
+							'message' => esc_html__( 'Order not found.', 'laqira-payments' ),
+						)
+					);
+					return;
+			}
 			$network_rpc = $order->get_meta( 'network_rpc' );
 
 						$tx_results_direct = ( new BlockchainService() )->getTransactionInfo(
@@ -2239,7 +2280,7 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 			$price_from_tx                   = 0.0;
 			$req_hash_from_tx                = '';
 			$user_wallet_address_form_tx     = '';
-			$main_laqirapay_contract_from_tx = '';
+			$main_laqira_payments_contract_from_tx = '';
 			$transaction_status_from_tx      = '';
 
 			if ( isset( $tx_results_direct ) && is_array( $tx_results_direct ) && count( $tx_results_direct ) > 0 ) {
@@ -2260,16 +2301,16 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 
 			if ( isset( $tx_results_receipt ) && is_array( $tx_results_receipt ) && count( $tx_results_receipt ) > 0 ) {
 				$user_wallet_address_form_tx     = $tx_results_receipt['from'];
-				$main_laqirapay_contract_from_tx = $tx_results_receipt['to'];
+				$main_laqira_payments_contract_from_tx = $tx_results_receipt['to'];
 				$transaction_status_from_tx      = $tx_results_receipt['status'];
 			}
 
 						$original_provider = ( new BlockchainService() )->getProviderLocal();
 			if ( strtolower( $original_provider ) == ( $provider_address_from_tx ) ) {
-				if ( laqirapay_is_successful_transaction_status( $transaction_status_from_tx ) ) {
+				if ( laqira_payments_is_successful_transaction_status( $transaction_status_from_tx ) ) {
 					if ( $order_id ) {
 
-						$order_recovery_status = get_option( 'laqirapay_order_recovery_status' );
+						$order_recovery_status = get_option( 'laqira_payments_order_recovery_status' );
 						$order_status          = 'wc-' . $order->get_status();
 						if ( ( $order_status != 'wc-completed' ) && ( $order_status != $order_recovery_status ) ) {
 
@@ -2307,14 +2348,14 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 
 								$tx_hash               = $input_value;
 								$order                 = wc_get_order( intval( $order_id ) );
-								$order_recovery_status = get_option( 'laqirapay_order_recovery_status' );
+								$order_recovery_status = get_option( 'laqira_payments_order_recovery_status' );
 								$order->update_meta_data( 'tx_hash', $tx_hash );
 								$order->update_meta_data( 'tx_status', 'success' );
-								$order->update_status( $order_recovery_status, esc_html__( 'Order updated by TX hash confirmation method', 'laqirapay' ) );
-								$order->add_order_note( esc_html__( 'Order updated by TX hash confirmation method ', 'laqirapay' ) );
+								$order->update_status( $order_recovery_status, esc_html__( 'Order updated by TX hash confirmation method', 'laqira-payments' ) );
+								$order->add_order_note( esc_html__( 'Order updated by TX hash confirmation method ', 'laqira-payments' ) );
 								$order->save();
 
-								$table_name_laqira_transactions                      = $wpdb->prefix . 'laqirapay_transactions';
+								$table_name_laqira_transactions                      = esc_sql( $wpdb->prefix . 'laqira_payments_transactions' );
 																$order_id_int        = (int) $order->get_id();
 																$laqira_transactions = array(
 																	'wc_total_price' => $order->get_total(),
@@ -2330,25 +2371,25 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 																	'tx_to'          => $order->get_meta( 'AdminWalletAddress' ),
 																);
 
-																$existing_row_count = $wpdb->get_var(
-																	$wpdb->prepare(
-																		'SELECT COUNT(1) FROM %s WHERE wc_order_id = %%d',
-																		$table_name_laqira_transactions
-																	),
-																	$order_id_int
-																);
+																	$existing_row_count = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+																		$wpdb->prepare(
+																			'SELECT COUNT(1) FROM %i WHERE wc_order_id = %d',
+																			$table_name_laqira_transactions,
+																			$order_id_int
+																		)
+																	);
 
 								if ( (int) $existing_row_count > 0 ) {
-										$wpdb->update(
-											$table_name_laqira_transactions,
-											$laqira_transactions,
-											array( 'wc_order_id' => $order_id_int ),
-											null,
-											array( '%d' )
-										);
-								} else {
-										$wpdb->insert( $table_name_laqira_transactions, $laqira_transactions );
-								}
+																				$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+																					$table_name_laqira_transactions,
+																					$laqira_transactions,
+																					array( 'wc_order_id' => $order_id_int ),
+																					null,
+																					array( '%d' )
+																				);
+									} else {
+																			$wpdb->insert( $table_name_laqira_transactions, $laqira_transactions ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+									}
 
 																LaqiraLogger::log(
 																	200,
@@ -2371,7 +2412,7 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 									wp_send_json_error(
 										array(
 											'result'  => 'error',
-											'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'Your data not confirmed', 'laqirapay' ) . '</p>',
+											'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'Your data not confirmed', 'laqira-payments' ) . '</p>',
 										)
 									);
 							}
@@ -2380,7 +2421,7 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 								wp_send_json_error(
 									array(
 										'result'  => 'error',
-										'message' => '<p><span class="dashicons dashicons-info" style="color:orange;"></span>' . esc_html__( 'The order is already stable and does not require further confirmation', 'laqirapay' ) . '</p>',
+										'message' => '<p><span class="dashicons dashicons-info" style="color:orange;"></span>' . esc_html__( 'The order is already stable and does not require further confirmation', 'laqira-payments' ) . '</p>',
 									)
 								);
 						}
@@ -2389,7 +2430,7 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 										wp_send_json_error(
 											array(
 												'result'  => 'error',
-												'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'No order found with this Transaction hash', 'laqirapay' ) . '</p>',
+												'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'No order found with this Transaction hash', 'laqira-payments' ) . '</p>',
 											)
 										);
 					}
@@ -2398,7 +2439,7 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 						wp_send_json_error(
 							array(
 								'result'  => 'error',
-								'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'The transaction status is not Completed on Blockchain', 'laqirapay' ) . '</p>',
+								'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'The transaction status is not Completed on Blockchain', 'laqira-payments' ) . '</p>',
 							)
 						);
 				}
@@ -2407,7 +2448,7 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 					wp_send_json_error(
 						array(
 							'result'  => 'error',
-							'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'Provider Address not Confirmed', 'laqirapay' ) . '</p>',
+							'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'Provider Address not Confirmed', 'laqira-payments' ) . '</p>',
 						)
 					);
 			}
@@ -2415,9 +2456,9 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 		}
 				wp_die();
 	} catch ( Exception $e ) {
-			$sanitized_exception_message = laqirapay_sanitize_textarea( $e->getMessage() );
+			$sanitized_exception_message = laqira_payments_sanitize_textarea( $e->getMessage() );
 		if ( $sanitized_exception_message === '' ) {
-				$sanitized_exception_message = esc_html__( 'An unexpected error occurred. Please try again later.', 'laqirapay' );
+				$sanitized_exception_message = esc_html__( 'An unexpected error occurred. Please try again later.', 'laqira-payments' );
 		}
 			LaqiraLogger::log(
 				400,
@@ -2430,34 +2471,47 @@ function laqirapay_confirm_tx_hash_in_user_panel() {
 			wp_send_json_error(
 				array(
 					'result'  => 'error',
-					'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'Error on Confirmatin Process', 'laqirapay' ) . '</p>',
+					'message' => '<p><span class="dashicons dashicons-dismiss" style="color:red;"></span>' . esc_html__( 'Error on Confirmatin Process', 'laqira-payments' ) . '</p>',
 				)
 			);
 	}
 }
 
-add_action( 'wp_ajax_laqirapay_do_confim_tx_hash', 'laqirapay_do_confim_tx_hash' );
-add_action( 'wp_ajax_nopriv_laqirapay_do_confim_tx_hash', 'laqirapay_do_confim_tx_hash' );
+add_action( 'wp_ajax_laqira_payments_do_confim_tx_hash', 'laqira_payments_do_confim_tx_hash' );
+add_action( 'wp_ajax_nopriv_laqira_payments_do_confim_tx_hash', 'laqira_payments_do_confim_tx_hash' );
 
 /**
- * The function `laqirapay_do_confim_tx_hash` processes and confirms transactions for orders in
+ * The function `laqira_payments_do_confim_tx_hash` processes and confirms transactions for orders in
  * WooCommerce using a custom payment gateway.
  */
-function laqirapay_do_confim_tx_hash() {
+function laqira_payments_do_confim_tx_hash() {
 		global $woocommerce;
-		// check_ajax_referer('laqirapay_do_confim_tx_hash', 'nonce');
-		$order_id = isset( $_POST['orderID'] ) ? intval( sanitize_text_field( wp_unslash( $_POST['orderID'] ) ) ) : 0;
+	if ( ! check_ajax_referer( 'laqira_payments_do_confim_tx_hash', 'nonce', false ) ) {
+			LaqiraLogger::log( 300, 'ajax', 'do_confim_tx_hash_invalid_nonce' );
+			wp_send_json_error(
+				array(
+					'result'  => 'failed',
+					'message' => esc_html__( 'nonce Error!!!', 'laqira-payments' ),
+				)
+			);
+			return;
+	}
+		$order_id_raw = laqira_payments_filter_input( INPUT_POST, 'orderID', FILTER_SANITIZE_NUMBER_INT );
+		$order_id     = is_string( $order_id_raw ) ? intval( sanitize_text_field( wp_unslash( $order_id_raw ) ) ) : 0;
 	if ( $order_id ) {
 			$order            = wc_get_order( intval( $order_id ) );
 			$payment_gateways = $woocommerce->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways['WC_laqirapay'] );
-		$order_recovery_status = get_option( 'laqirapay_order_recovery_status' );
-		$order->update_status( $order_recovery_status, esc_html__( 'Order updated by TX hash confirmation method', 'laqirapay' ) );
-		$order->add_order_note( esc_html__( 'Order updated by TX hash confirmation method ', 'laqirapay' ) );
+		$gateway_instance = $payment_gateways[ Gateway::GATEWAY_ID ] ?? $payment_gateways[ Gateway::LEGACY_GATEWAY_ID ] ?? null;
+		if ( null !== $gateway_instance ) {
+			$order->set_payment_method( $gateway_instance );
+		}
+		$order_recovery_status = get_option( 'laqira_payments_order_recovery_status' );
+		$order->update_status( $order_recovery_status, esc_html__( 'Order updated by TX hash confirmation method', 'laqira-payments' ) );
+		$order->add_order_note( esc_html__( 'Order updated by TX hash confirmation method ', 'laqira-payments' ) );
 		$order->save();
 
 		global $wpdb;
-		$table_name_laqira_transactions = $wpdb->prefix . 'laqirapay_transactions';
+		$table_name_laqira_transactions = esc_sql( $wpdb->prefix . 'laqira_payments_transactions' );
 		$order_id_int                   = (int) $order->get_id();
 		$laqira_transactions            = array(
 			'wc_total_price' => $order->get_total(),
@@ -2473,24 +2527,24 @@ function laqirapay_do_confim_tx_hash() {
 			'tx_to'          => $order->get_meta( 'AdminWalletAddress' ),
 		);
 
-		$existing_row_count = $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT COUNT(1) FROM %s WHERE wc_order_id = %%d',
-				$table_name_laqira_transactions
-			),
-			$order_id_int
-		);
+			$existing_row_count = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->prepare(
+					'SELECT COUNT(1) FROM %i WHERE wc_order_id = %d',
+					$table_name_laqira_transactions,
+					$order_id_int
+				)
+			);
 
 		if ( (int) $existing_row_count > 0 ) {
-			$wpdb->update(
-				$table_name_laqira_transactions,
-				$laqira_transactions,
-				array( 'wc_order_id' => $order_id_int ),
-				null,
-				array( '%d' )
-			);
+				$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$table_name_laqira_transactions,
+					$laqira_transactions,
+					array( 'wc_order_id' => $order_id_int ),
+					null,
+					array( '%d' )
+				);
 		} else {
-			$wpdb->insert( $table_name_laqira_transactions, $laqira_transactions );
+				$wpdb->insert( $table_name_laqira_transactions, $laqira_transactions ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		}
 
 		$html = '
@@ -2513,7 +2567,7 @@ function laqirapay_do_confim_tx_hash() {
 				array(
 					'result'       => 'success',
 					'redirect'     => esc_url_raw( $order->get_checkout_order_received_url() ),
-					'admin_result' => wp_kses( $html, laqirapay_admin_result_allowed_html() ),
+					'admin_result' => wp_kses( $html, laqira_payments_admin_result_allowed_html() ),
 				)
 			);
 	} else {
@@ -2521,7 +2575,7 @@ function laqirapay_do_confim_tx_hash() {
 			wp_send_json_error(
 				array(
 					'result'  => 'failed',
-					'message' => esc_html__( 'Order and Transaction not confirmed.', 'laqirapay' ),
+					'message' => esc_html__( 'Order and Transaction not confirmed.', 'laqira-payments' ),
 				)
 			);
 	}
@@ -2533,7 +2587,7 @@ function laqirapay_do_confim_tx_hash() {
  *
  * @return array<string, array<string, bool|string>>
  */
-function laqirapay_get_order_confirmation_allowed_tags() {
+function laqira_payments_get_order_confirmation_allowed_tags() {
 		$allowed_tags = wp_kses_allowed_html( 'post' );
 
 		$allowed_tags['script'] = array(
@@ -2594,39 +2648,43 @@ function laqirapay_get_order_confirmation_allowed_tags() {
  *     @type string $markup   Sanitized HTML markup for the confirmation controls.
  * }
  */
-function do_compelete_order( $order_id ) {
-				$sanitized_order_id = laqirapay_sanitize_positive_int( $order_id );
+function laqira_payments_do_complete_order( $order_id ) {
+				$sanitized_order_id = laqira_payments_sanitize_positive_int( $order_id );
 	if ( $sanitized_order_id === null ) {
 					$sanitized_order_id = '';
 	} else {
 					$sanitized_order_id = (string) $sanitized_order_id;
 	}
 
+				$nonce_value = wp_create_nonce( 'laqira_payments_do_confim_tx_hash' );
 				$loading_src = LAQIRA_PLUGINS_URL . 'assets/img/loading.svg';
 
 				$markup = sprintf(
-					'<div class="laqirapay-confirmation-actions">'
+					'<div class="laqira-payments-confirmation-actions">'
 						. '<input type="hidden" id="order_id_input" name="order_id_input" value="%1$s" />'
-						. '<button class="button save_order button-primary laqirapay-confirm-button" type="button" id="do-confirm-button">%2$s</button>'
-						. '<div id="laqirapay-after-confirmation-action"></div>'
+						. '<input type="hidden" id="nonce_input" name="nonce_input" value="%2$s" />'
+						. '<button class="button save_order button-primary laqira-payments-confirm-button" type="button" id="do-confirm-button">%3$s</button>'
+						. '<div id="laqira-payments-after-confirmation-action"></div>'
 						. '<div style="text-align:center;" id="loading-indicator-bottom">'
-						. '<img class="loading" width="24" height="24" src="%3$s" alt="%4$s" />'
+						. '<img class="loading" width="24" height="24" src="%4$s" alt="%5$s" />'
 						. '</div>'
 						. '</div>',
 					esc_attr( $sanitized_order_id ),
-					esc_html__( 'Confirm Order', 'laqirapay' ),
+					esc_attr( (string) $nonce_value ),
+					esc_html__( 'Confirm Order', 'laqira-payments' ),
 					esc_url( $loading_src ),
-					esc_attr__( 'Loading', 'laqirapay' )
+					esc_attr__( 'Loading', 'laqira-payments' )
 				);
 
 				return array(
 					'order_id' => $sanitized_order_id,
-					'action'   => 'laqirapay_do_confim_tx_hash',
+					'action'   => 'laqira_payments_do_confim_tx_hash',
 					'request'  => array(
-						'action'  => 'laqirapay_do_confim_tx_hash',
+						'action'  => 'laqira_payments_do_confim_tx_hash',
 						'orderID' => $sanitized_order_id,
+						'nonce'   => (string) $nonce_value,
 					),
-					'markup'   => wp_kses( $markup, laqirapay_get_order_confirmation_allowed_tags() ),
+					'markup'   => wp_kses( $markup, laqira_payments_get_order_confirmation_allowed_tags() ),
 				);
 }
 
@@ -2645,26 +2703,26 @@ function do_compelete_order( $order_id ) {
  *     @type string $markup   Sanitized HTML markup for the confirmation controls.
  * }
  */
-function do_compelete_order_failed( $order_id, $tx_hash ) {
-				$sanitized_order_id = laqirapay_sanitize_positive_int( $order_id );
+function laqira_payments_do_complete_order_failed( $order_id, $tx_hash ) {
+				$sanitized_order_id = laqira_payments_sanitize_positive_int( $order_id );
 	if ( $sanitized_order_id === null ) {
 					$sanitized_order_id = 0;
 	}
 
-				$sanitized_tx_hash = laqirapay_sanitize_tx_hash( $tx_hash );
+				$sanitized_tx_hash = laqira_payments_sanitize_tx_hash( $tx_hash );
 	if ( $sanitized_tx_hash === null ) {
-					$sanitized_tx_hash = laqirapay_sanitize_simple_text( $tx_hash );
+					$sanitized_tx_hash = laqira_payments_sanitize_simple_text( $tx_hash );
 	}
-				$nonce_value = wp_create_nonce( 'laqirapay_do_confim_tx_hash_for_faild_transaction' );
+				$nonce_value = wp_create_nonce( 'laqira_payments_do_confim_tx_hash_for_faild_transaction' );
 				$loading_src = LAQIRA_PLUGINS_URL . 'assets/img/loading.svg';
 
 				$markup = sprintf(
-					'<div class="laqirapay-confirmation-actions">'
+					'<div class="laqira-payments-confirmation-actions">'
 						. '<input type="hidden" id="order_id_input" name="order_id_input" value="%1$s" />'
 						. '<input type="hidden" id="tx_hash_input" name="tx_hash_input" value="%2$s" />'
 						. '<input type="hidden" id="nonce_input" name="nonce_input" value="%3$s" />'
-						. '<button class="button save_order button-primary laqirapay-confirm-button" type="button" id="do-confirm-button">%4$s</button>'
-						. '<div id="laqirapay-after-confirmation-action"></div>'
+						. '<button class="button save_order button-primary laqira-payments-confirm-button" type="button" id="do-confirm-button">%4$s</button>'
+						. '<div id="laqira-payments-after-confirmation-action"></div>'
 						. '<div style="text-align:center;" id="loading-indicator-bottom">'
 						. '<img class="loading" width="24" height="24" src="%5$s" alt="%6$s" />'
 						. '</div>'
@@ -2672,56 +2730,61 @@ function do_compelete_order_failed( $order_id, $tx_hash ) {
 					esc_attr( (string) $sanitized_order_id ),
 					esc_attr( (string) $sanitized_tx_hash ),
 					esc_attr( (string) $nonce_value ),
-					esc_html__( 'Confirm Order', 'laqirapay' ),
+					esc_html__( 'Confirm Order', 'laqira-payments' ),
 					esc_url( $loading_src ),
-					esc_attr__( 'Loading', 'laqirapay' )
+					esc_attr__( 'Loading', 'laqira-payments' )
 				);
 
 				return array(
 					'order_id' => (string) $sanitized_order_id,
 					'tx_hash'  => (string) $sanitized_tx_hash,
-					'action'   => 'laqirapay_do_confim_tx_hash_for_faild_transaction',
+					'action'   => 'laqira_payments_do_confim_tx_hash_for_faild_transaction',
 					'request'  => array(
-						'action'  => 'laqirapay_do_confim_tx_hash_for_faild_transaction',
+						'action'  => 'laqira_payments_do_confim_tx_hash_for_faild_transaction',
 						'orderID' => (string) $sanitized_order_id,
 						'txHash'  => (string) $sanitized_tx_hash,
 						'nonce'   => (string) $nonce_value,
 					),
-					'markup'   => wp_kses( $markup, laqirapay_get_order_confirmation_allowed_tags() ),
+					'markup'   => wp_kses( $markup, laqira_payments_get_order_confirmation_allowed_tags() ),
 				);
 }
 
-add_action( 'wp_ajax_laqirapay_do_confim_tx_hash_for_faild_transaction', 'laqirapay_do_confim_tx_hash_for_faild_transaction' );
-add_action( 'wp_ajax_nopriv_laqirapay_do_confim_tx_hash_for_faild_transaction', 'laqirapay_do_confim_tx_hash_for_faild_transaction' );
+add_action( 'wp_ajax_laqira_payments_do_confim_tx_hash_for_faild_transaction', 'laqira_payments_do_confim_tx_hash_for_faild_transaction' );
+add_action( 'wp_ajax_nopriv_laqira_payments_do_confim_tx_hash_for_faild_transaction', 'laqira_payments_do_confim_tx_hash_for_faild_transaction' );
 
-function laqirapay_do_confim_tx_hash_for_faild_transaction() {
+function laqira_payments_do_confim_tx_hash_for_faild_transaction() {
 		global $woocommerce;
-	if ( ! check_ajax_referer( 'laqirapay_do_confim_tx_hash_for_faild_transaction', 'nonce', false ) ) {
+	if ( ! check_ajax_referer( 'laqira_payments_do_confim_tx_hash_for_faild_transaction', 'nonce', false ) ) {
 			LaqiraLogger::log( 300, 'ajax', 'do_confim_tx_hash_for_faild_transaction_invalid_nonce' );
 			wp_send_json_error(
 				array(
 					'result'  => 'failed',
-					'message' => esc_html__( 'nonce Error!!!', 'laqirapay' ),
+					'message' => esc_html__( 'nonce Error!!!', 'laqira-payments' ),
 				)
 			);
 			return;
 	}
 
-	if ( isset( $_POST['orderID'] ) ) {
-			$order_id         = intval( sanitize_text_field( wp_unslash( $_POST['orderID'] ) ) );
-			$tx_hash          = isset( $_POST['txHash'] ) ? sanitize_text_field( wp_unslash( $_POST['txHash'] ) ) : '';
+	$order_id_raw = laqira_payments_filter_input( INPUT_POST, 'orderID', FILTER_SANITIZE_NUMBER_INT );
+	if ( is_string( $order_id_raw ) ) {
+			$order_id         = intval( sanitize_text_field( wp_unslash( $order_id_raw ) ) );
+			$tx_hash_raw      = laqira_payments_filter_input( INPUT_POST, 'txHash' );
+			$tx_hash          = is_string( $tx_hash_raw ) ? sanitize_text_field( wp_unslash( $tx_hash_raw ) ) : '';
 			$order            = wc_get_order( intval( $order_id ) );
 			$payment_gateways = $woocommerce->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways['WC_laqirapay'] );
-		$order_recovery_status = get_option( 'laqirapay_order_recovery_status' );
+		$gateway_instance = $payment_gateways[ Gateway::GATEWAY_ID ] ?? $payment_gateways[ Gateway::LEGACY_GATEWAY_ID ] ?? null;
+		if ( null !== $gateway_instance ) {
+			$order->set_payment_method( $gateway_instance );
+		}
+		$order_recovery_status = get_option( 'laqira_payments_order_recovery_status' );
 		$order->update_meta_data( 'tx_hash', $tx_hash );
 		$order->update_meta_data( 'tx_status', 'success' );
-		$order->update_status( $order_recovery_status, esc_html__( 'Order updated by TX hash confirmation method', 'laqirapay' ) );
-		$order->add_order_note( esc_html__( 'Order updated by TX hash confirmation method ', 'laqirapay' ) );
+		$order->update_status( $order_recovery_status, esc_html__( 'Order updated by TX hash confirmation method', 'laqira-payments' ) );
+		$order->add_order_note( esc_html__( 'Order updated by TX hash confirmation method ', 'laqira-payments' ) );
 		$order->save();
 
 		global $wpdb;
-		$table_name_laqira_transactions = $wpdb->prefix . 'laqirapay_transactions';
+		$table_name_laqira_transactions = esc_sql( $wpdb->prefix . 'laqira_payments_transactions' );
 		$order_id_int                   = (int) $order->get_id();
 		$laqira_transactions            = array(
 			'wc_total_price' => $order->get_total(),
@@ -2737,25 +2800,24 @@ function laqirapay_do_confim_tx_hash_for_faild_transaction() {
 			'tx_to'          => $order->get_meta( 'AdminWalletAddress' ),
 		);
 
-		$existing_row_count = $wpdb->get_var(
-			$wpdb->prepare(
-			// Table name uses $wpdb->prefix with a known suffix and is trusted.
-				'SELECT COUNT(1) FROM %s WHERE wc_order_id = %%d',
-				$table_name_laqira_transactions
-			),
-			$order_id_int
-		);
+			$existing_row_count = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->prepare(
+					'SELECT COUNT(1) FROM %i WHERE wc_order_id = %d',
+					$table_name_laqira_transactions,
+					$order_id_int
+				)
+			);
 
 		if ( (int) $existing_row_count > 0 ) {
-			$wpdb->update(
-				$table_name_laqira_transactions,
-				$laqira_transactions,
-				array( 'wc_order_id' => $order_id_int ),
-				null,
-				array( '%d' )
-			);
+				$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$table_name_laqira_transactions,
+					$laqira_transactions,
+					array( 'wc_order_id' => $order_id_int ),
+					null,
+					array( '%d' )
+				);
 		} else {
-			$wpdb->insert( $table_name_laqira_transactions, $laqira_transactions );
+				$wpdb->insert( $table_name_laqira_transactions, $laqira_transactions ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		}
 
 		$html = '
@@ -2779,7 +2841,7 @@ function laqirapay_do_confim_tx_hash_for_faild_transaction() {
 				array(
 					'result'       => 'success',
 					'redirect'     => esc_url_raw( $order->get_checkout_order_received_url() ),
-					'admin_result' => wp_kses( $html, laqirapay_admin_result_allowed_html() ),
+					'admin_result' => wp_kses( $html, laqira_payments_admin_result_allowed_html() ),
 				)
 			);
 	} else {
@@ -2787,7 +2849,7 @@ function laqirapay_do_confim_tx_hash_for_faild_transaction() {
 			wp_send_json_error(
 				array(
 					'result'  => 'failed',
-					'message' => esc_html__( 'Order and Transaction not confirmed.', 'laqirapay' ),
+					'message' => esc_html__( 'Order and Transaction not confirmed.', 'laqira-payments' ),
 				)
 			);
 	}

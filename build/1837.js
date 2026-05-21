@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[1837],{1837(C,e,l){l.r(e),l.d(e,{clockSvg:()=>i});const i=l(2618).JW`<svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[1837],{1837(e,C,l){l.r(C),l.d(C,{clockSvg:()=>i});const i=l(2618).JW`<svg width="14" height="14" viewBox="0 0 14 14" fill="none">
   <path 
     fill-rule="evenodd" 
     clip-rule="evenodd" 

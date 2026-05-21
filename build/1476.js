@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[1476],{1476(l,e,i){i.r(e),i.d(e,{addSvg:()=>C});const C=i(2618).JW`<svg
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[1476],{1476(e,l,s){s.r(l),s.d(l,{addSvg:()=>i});const i=s(2618).JW`<svg
   width="14"
   height="14"
   viewBox="0 0 14 14"

@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[4554],{4554(C,l,e){e.r(l),e.d(l,{copySvg:()=>i});const i=e(2618).JW`<svg
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[4554],{4554(C,e,l){l.r(e),l.d(e,{copySvg:()=>s});const s=l(2618).JW`<svg
   xmlns="http://www.w3.org/2000/svg"
   width="16"
   height="16"

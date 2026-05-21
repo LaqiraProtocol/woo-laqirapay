@@ -2,15 +2,21 @@
 /**
  * Transactions list table implementation.
  *
- * @package LaqiraPay\Admin
+ * @package LaqiraPayments\Admin
  */
 
-namespace LaqiraPay\Admin;
+namespace LaqiraPayments\Admin;
 
-use LaqiraPay\Helpers\TransactionDetailsRenderer;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Helpers\TransactionDetailsRenderer;
 use WP_List_Table;
 use wpdb;
-use function laqirapay_filter_input;
+use function laqira_payments_filter_input;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -20,7 +26,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * Admin list table for displaying transactions.
  */
 /**
- * Admin list table for displaying LaqiraPay transactions.
+ * Admin list table for displaying LaqiraPayments transactions.
  */
 class TransactionsListTable extends WP_List_Table {
 
@@ -44,7 +50,7 @@ class TransactionsListTable extends WP_List_Table {
 	public function __construct() {
 		global $wpdb;
 		$this->db    = $wpdb;
-		$this->table = $wpdb->prefix . 'laqirapay_transactions';
+		$this->table = $wpdb->prefix . 'laqira_payments_transactions';
 
 		parent::__construct(
 			array(
@@ -61,7 +67,7 @@ class TransactionsListTable extends WP_List_Table {
 	 * @return array<int,array<string,mixed>>
 	 */
 	private function get_data(): array {
-		$search_input = laqirapay_filter_input( INPUT_GET, 's' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search_input = laqira_payments_filter_input( INPUT_GET, 's' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list table search parameter.
 		if ( ! is_string( $search_input ) ) {
 			$search_input = '';
 		}
@@ -94,7 +100,7 @@ class TransactionsListTable extends WP_List_Table {
 		$orderby = $allowed_orderby['wc_order_id'];
 		$order   = 'ASC';
 
-		$orderby_input = laqirapay_filter_input( INPUT_GET, 'orderby' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$orderby_input = laqira_payments_filter_input( INPUT_GET, 'orderby' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list table sort parameter.
 		if ( is_string( $orderby_input ) ) {
 			$requested_orderby = sanitize_text_field( wp_unslash( $orderby_input ) );
 			if ( isset( $allowed_orderby[ $requested_orderby ] ) ) {
@@ -102,7 +108,7 @@ class TransactionsListTable extends WP_List_Table {
 			}
 		}
 
-		$order_input = laqirapay_filter_input( INPUT_GET, 'order' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$order_input = laqira_payments_filter_input( INPUT_GET, 'order' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list table sort direction parameter.
 		if ( is_string( $order_input ) ) {
 			$requested_order = strtoupper( sanitize_text_field( wp_unslash( $order_input ) ) );
 			if ( isset( $allowed_directions[ $requested_order ] ) ) {
@@ -156,14 +162,14 @@ class TransactionsListTable extends WP_List_Table {
 	 */
 	public function get_columns(): array {
 		return array(
-			'wc_order_id'    => esc_html__( 'Order ID', 'laqirapay' ),
-			'wc_total_price' => esc_html__( 'Total Price', 'laqirapay' ),
-			'wc_currency'    => esc_html__( 'Currency', 'laqirapay' ),
-			'exchange_rate'  => esc_html__( 'Exchange Rate', 'laqirapay' ),
-			'token_name'     => esc_html__( 'Paid By', 'laqirapay' ),
-			'token_amount'   => esc_html__( 'Token Amount', 'laqirapay' ),
-			'tx_hash'        => esc_html__( 'Transaction Hash', 'laqirapay' ),
-			'tx_from'        => esc_html__( 'From', 'laqirapay' ),
+			'wc_order_id'    => esc_html__( 'Order ID', 'laqira-payments' ),
+			'wc_total_price' => esc_html__( 'Total Price', 'laqira-payments' ),
+			'wc_currency'    => esc_html__( 'Currency', 'laqira-payments' ),
+			'exchange_rate'  => esc_html__( 'Exchange Rate', 'laqira-payments' ),
+			'token_name'     => esc_html__( 'Paid By', 'laqira-payments' ),
+			'token_amount'   => esc_html__( 'Token Amount', 'laqira-payments' ),
+			'tx_hash'        => esc_html__( 'Transaction Hash', 'laqira-payments' ),
+			'tx_from'        => esc_html__( 'From', 'laqira-payments' ),
 		);
 	}
 
@@ -275,15 +281,17 @@ class TransactionsListTable extends WP_List_Table {
 		$order           = 'asc';
 		$allowed_columns = array_keys( $this->get_sortable_columns() );
 
-		if ( ! empty( $_GET['orderby'] ) ) {
-			$requested_orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+		$orderby_input = laqira_payments_filter_input( INPUT_GET, 'orderby' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only sort parameter.
+		if ( is_string( $orderby_input ) && '' !== $orderby_input ) {
+			$requested_orderby = sanitize_text_field( wp_unslash( $orderby_input ) );
 			if ( in_array( $requested_orderby, $allowed_columns, true ) ) {
 				$orderby = $requested_orderby;
 			}
 		}
 
-		if ( ! empty( $_GET['order'] ) ) {
-			$requested_order = sanitize_text_field( wp_unslash( $_GET['order'] ) );
+		$order_input = laqira_payments_filter_input( INPUT_GET, 'order' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only sort direction parameter.
+		if ( is_string( $order_input ) && '' !== $order_input ) {
+			$requested_order = sanitize_text_field( wp_unslash( $order_input ) );
 			if ( in_array( strtolower( $requested_order ), array( 'asc', 'desc' ), true ) ) {
 				$order = strtolower( $requested_order );
 			}

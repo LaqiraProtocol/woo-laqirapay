@@ -1,15 +1,21 @@
 <?php
 /**
- * Settings controller for LaqiraPay admin pages.
+ * Settings controller for LaqiraPayments admin pages.
  *
- * @package LaqiraPay
+ * @package LaqiraPayments
  */
 
-namespace LaqiraPay\Http\Controllers\Admin;
+namespace LaqiraPayments\Http\Controllers\Admin;
 
-use LaqiraPay\Domain\Models\Settings;
-use LaqiraPay\Domain\Services\LaqiraLogger;
-use LaqiraPay\Services\BlockchainService;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Domain\Models\Settings;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
+use LaqiraPayments\Services\BlockchainService;
 
 /**
  * Handles registration and rendering of plugin settings fields.
@@ -33,27 +39,27 @@ class SettingsController {
 	/**
 	 * Identifier for the general settings option group.
 	 */
-	private const OPTION_GROUP_GENERAL = 'laqirapay_general_options';
+	private const OPTION_GROUP_GENERAL = 'laqira_payments_general_options';
 
 	/**
 	 * Identifier for the exchange rate option group.
 	 */
-	private const OPTION_GROUP_EXCHANGE_RATE = 'laqirapay_exchange_rate_options';
+	private const OPTION_GROUP_EXCHANGE_RATE = 'laqira_payments_exchange_rate_options';
 
 	/**
 	 * Identifier for the general settings section.
 	 */
-	public const SECTION_GENERAL = 'laqirapay_main_section';
+	public const SECTION_GENERAL = 'laqira_payments_main_section';
 
 	/**
 	 * Identifier for the exchange rate settings section.
 	 */
-	public const SECTION_EXCHANGE_RATE = 'laqirapay_exchange_rate_section';
+	public const SECTION_EXCHANGE_RATE = 'laqira_payments_exchange_rate_section';
 
 	/**
 	 * Identifier for the order recovery settings section.
 	 */
-	public const SECTION_ORDER_RECOVERY = 'laqirapay_order_recovery_section';
+	public const SECTION_ORDER_RECOVERY = 'laqira_payments_order_recovery_section';
 
 	/**
 	 * Whitelisted view templates rendered by the settings controller.
@@ -117,16 +123,46 @@ class SettingsController {
 	 * @var string[]
 	 */
 	private const SETTINGS_OPTION_NAMES = array(
-		'laqirapay_main_contract',
-		'laqirapay_main_rpc_url',
-		'laqirapay_api_key',
-		'laqirapay_only_logged_in_user',
-		'laqirapay_delete_data_uninstall',
-		'laqirapay_order_recovery_status',
-		'laqirapay_walletconnect_project_id',
-		'laqirapay_log_enabled',
-		'laqirapay_current_tab_setting',
+		'laqira_payments_main_contract',
+		'laqira_payments_main_rpc_url',
+		'laqira_payments_api_key',
+		'laqira_payments_only_logged_in_user',
+		'laqira_payments_delete_data_uninstall',
+		'laqira_payments_order_recovery_status',
+		'laqira_payments_walletconnect_project_id',
+		'laqira_payments_log_enabled',
+		'laqira_payments_current_tab_setting',
 	);
+
+	public static function sanitize_any_option( $value ) {
+	if ( is_array( $value ) ) {
+		foreach ( $value as $k => $v ) {
+			$value[ $k ] = self::sanitize_any_option( $v );
+		}
+		return $value;
+	}
+
+	if ( is_bool( $value ) ) {
+		return $value ? 1 : 0;
+	}
+
+	if ( null === $value ) {
+		return '';
+	}
+
+	if ( is_string( $value ) ) {
+		$value = wp_unslash( $value );
+		// URL-like
+		if ( preg_match( '#^https?://#i', $value ) ) {
+			return esc_url_raw( $value );
+		}
+		return sanitize_text_field( $value );
+	}
+
+	// ints/floats and everything else
+	return $value;
+}
+
 
 	/**
 	 * Register settings sections and fields for the admin area.
@@ -134,78 +170,88 @@ class SettingsController {
 	public function register_and_build_fields(): void {
 		$this->register_exchange_rate_setting();
 
+		// foreach ( self::SETTINGS_OPTION_NAMES as $option ) {
+		// 	register_setting( self::OPTION_GROUP_GENERAL, $option );
+		// }
+
 		foreach ( self::SETTINGS_OPTION_NAMES as $option ) {
-			register_setting( self::OPTION_GROUP_GENERAL, $option );
+			register_setting(
+				self::OPTION_GROUP_GENERAL,
+				$option,
+				array(
+					'sanitize_callback' => array( __CLASS__, 'sanitize_any_option' ),
+				)
+			);
 		}
 
-		$settings_page = 'laqirapay-settings';
+		$settings_page = 'laqira-payments-settings';
 
 		add_settings_section(
 			self::SECTION_GENERAL,
-			esc_html__( 'Main Settings', 'laqirapay' ),
+			esc_html__( 'Main Settings', 'laqira-payments' ),
 			array( $this, 'display_general_setting' ),
 			$settings_page
 		);
 
 		add_settings_field(
-			'laqirapay_main_contract',
-			esc_html__( 'Laqira Contract Address', 'laqirapay' ),
+			'laqira_payments_main_contract',
+			esc_html__( 'Laqira Contract Address', 'laqira-payments' ),
 			array( $this, 'main_contract_field' ),
 			$settings_page,
 			self::SECTION_GENERAL
 		);
 
 		add_settings_field(
-			'laqirapay_main_rpc_url',
-			esc_html__( 'Laqira RPC Url', 'laqirapay' ),
+			'laqira_payments_main_rpc_url',
+			esc_html__( 'Laqira RPC Url', 'laqira-payments' ),
 			array( $this, 'main_rpc_url_field' ),
 			$settings_page,
 			self::SECTION_GENERAL
 		);
 
 		add_settings_field(
-			'laqirapay_api_key',
-			esc_html__( 'API Key', 'laqirapay' ),
+			'laqira_payments_api_key',
+			esc_html__( 'API Key', 'laqira-payments' ),
 			array( $this, 'api_key_field' ),
 			$settings_page,
 			self::SECTION_GENERAL
 		);
 
 		add_settings_field(
-			'laqirapay_walletconnect_project_id',
-			esc_html__( 'WalletConnect Project ID', 'laqirapay' ),
+			'laqira_payments_walletconnect_project_id',
+			esc_html__( 'WalletConnect Project ID', 'laqira-payments' ),
 			array( $this, 'walletconnect_project_id_field' ),
 			$settings_page,
 			self::SECTION_GENERAL
 		);
 
 		add_settings_field(
-			'laqirapay_only_logged_in_user',
-			esc_html__( 'Only logged in users can pay', 'laqirapay' ),
+			'laqira_payments_only_logged_in_user',
+			esc_html__( 'Only logged in users can pay', 'laqira-payments' ),
 			array( $this, 'only_logged_in_user_field' ),
 			$settings_page,
 			self::SECTION_GENERAL
 		);
 
 		add_settings_field(
-			'laqirapay_delete_data_uninstall',
-			esc_html__( 'Delete All plugin Data on uninstallation', 'laqirapay' ),
+			'laqira_payments_delete_data_uninstall',
+			esc_html__( 'Delete All plugin Data on uninstallation', 'laqira-payments' ),
 			array( $this, 'delete_data_uninstall_field' ),
 			$settings_page,
 			self::SECTION_GENERAL
 		);
 
 		add_settings_field(
-			'laqirapay_order_recovery_status',
-			esc_html__( 'Order Status after order complete/recovery by TX hash', 'laqirapay' ),
+			'laqira_payments_order_recovery_status',
+			esc_html__( 'Order Status after order complete/recovery by TX hash', 'laqira-payments' ),
 			array( $this, 'order_recovery_status_field' ),
 			$settings_page,
 			self::SECTION_GENERAL
 		);
 
 		add_settings_field(
-			'laqirapay_log_enabled',
-			esc_html__( 'Enable Logging', 'laqirapay' ),
+			'laqira_payments_log_enabled',
+			esc_html__( 'Enable Logging', 'laqira-payments' ),
 			array( $this, 'log_field' ),
 			$settings_page,
 			self::SECTION_GENERAL
@@ -213,14 +259,14 @@ class SettingsController {
 
 		add_settings_section(
 			self::SECTION_EXCHANGE_RATE,
-			esc_html__( 'Exchange Rate', 'laqirapay' ),
+			esc_html__( 'Exchange Rate', 'laqira-payments' ),
 			array( $this, 'display_exchange_rate_setting' ),
 			$settings_page
 		);
 
 		add_settings_field(
-			'laqirapay_exchange_rate_field',
-			esc_html__( 'Currency Exchange Rate', 'laqirapay' ),
+			'laqira_payments_exchange_rate_field',
+			esc_html__( 'Currency Exchange Rate', 'laqira-payments' ),
 			array( $this, 'exchange_rate_field' ),
 			$settings_page,
 			self::SECTION_EXCHANGE_RATE
@@ -228,7 +274,7 @@ class SettingsController {
 
 		add_settings_section(
 			self::SECTION_ORDER_RECOVERY,
-			esc_html__( 'Order Recovery', 'laqirapay' ),
+			esc_html__( 'Order Recovery', 'laqira-payments' ),
 			array( $this, 'display_order_recovery_setting' ),
 			$settings_page
 		);
@@ -260,7 +306,7 @@ class SettingsController {
 		}
 
 		$config = self::VIEW_CONFIG[ $normalized_view ];
-		$path   = LAQIRAPAY_PLUGIN_DIR . 'app/Http/Views/' . $config['path'] . '.php';
+		$path   = LAQIRAPAYMENTS_PLUGIN_DIR . 'app/Http/Views/' . $config['path'] . '.php';
 
 		if ( ! is_readable( $path ) ) {
 			LaqiraLogger::log( 500, 'admin', 'settings_render_missing_view', array( 'view' => $normalized_view ) );
@@ -282,10 +328,10 @@ class SettingsController {
 	 * Render the API key field.
 	 */
 	public function api_key_field(): void {
-		$api_key      = (string) Settings::get( 'laqirapay_api_key' );
-		$provider_key = (string) Settings::get( 'laqirapay_provider_key' );
-		$contract     = (string) Settings::get( 'laqirapay_main_contract' );
-		$rpc_url      = (string) Settings::get( 'laqirapay_main_rpc_url' );
+		$api_key      = (string) Settings::get( 'laqira_payments_api_key' );
+		$provider_key = (string) Settings::get( 'laqira_payments_provider_key' );
+		$contract     = (string) Settings::get( 'laqira_payments_main_contract' );
+		$rpc_url      = (string) Settings::get( 'laqira_payments_main_rpc_url' );
 
 		$is_config_ready = '' !== $api_key && '' !== $contract && '' !== $rpc_url;
 		$networks        = $is_config_ready ? ( new BlockchainService() )->showNetworks() : array();
@@ -307,7 +353,7 @@ class SettingsController {
 	public function exchange_rate_field(): void {
 		$current_currency = '' === $this->current_currency ? get_woocommerce_currency() : $this->current_currency;
 		$option_name      = '' === $this->exchange_rate_option_name
-			? 'laqirapay_exchange_rate_' . $current_currency
+			? 'laqira_payments_exchange_rate_' . $current_currency
 			: $this->exchange_rate_option_name;
 
 		if ( 'USD' === $current_currency ) {
@@ -317,7 +363,7 @@ class SettingsController {
 		$saved_rate  = get_option( $option_name, '' );
 		$nonce_field = 'USD' === $current_currency
 			? ''
-			: wp_nonce_field( 'laqirapay_currency_rate_action', 'laqirapay_currency_rate_nonce', true, false );
+			: wp_nonce_field( 'laqira_payments_currency_rate_action', 'laqira_payments_currency_rate_nonce', true, false );
 
 		$this->render(
 			'admin/field-exchange-rate',
@@ -334,7 +380,7 @@ class SettingsController {
 	 * Render the main contract field.
 	 */
 	public function main_contract_field(): void {
-		$value = Settings::get( 'laqirapay_main_contract' );
+		$value = Settings::get( 'laqira_payments_main_contract' );
 		$this->render( 'admin/field-main-contract', array( 'value' => $value ) );
 	}
 
@@ -342,7 +388,7 @@ class SettingsController {
 	 * Render the main RPC URL field.
 	 */
 	public function main_rpc_url_field(): void {
-		$value = Settings::get( 'laqirapay_main_rpc_url' );
+		$value = Settings::get( 'laqira_payments_main_rpc_url' );
 		$this->render( 'admin/field-main-rpc-url', array( 'value' => $value ) );
 	}
 
@@ -350,7 +396,7 @@ class SettingsController {
 	 * Render the WalletConnect project ID field.
 	 */
 	public function walletconnect_project_id_field(): void {
-		$value = Settings::get( 'laqirapay_walletconnect_project_id' );
+		$value = Settings::get( 'laqira_payments_walletconnect_project_id' );
 		$this->render( 'admin/field-walletconnect-project-id', array( 'value' => $value ) );
 	}
 
@@ -358,7 +404,7 @@ class SettingsController {
 	 * Render the option for restricting payments to logged-in users.
 	 */
 	public function only_logged_in_user_field(): void {
-		$checked = Settings::get( 'laqirapay_only_logged_in_user' ) ? 'checked' : '';
+		$checked = Settings::get( 'laqira_payments_only_logged_in_user' ) ? 'checked' : '';
 		$this->render( 'admin/field-only-logged-in-user', array( 'checked' => $checked ) );
 	}
 
@@ -366,7 +412,7 @@ class SettingsController {
 	 * Render the option to delete plugin data on uninstall.
 	 */
 	public function delete_data_uninstall_field(): void {
-		$checked = Settings::get( 'laqirapay_delete_data_uninstall' ) ? 'checked' : '';
+		$checked = Settings::get( 'laqira_payments_delete_data_uninstall' ) ? 'checked' : '';
 		$this->render( 'admin/field-delete-data-uninstall', array( 'checked' => $checked ) );
 	}
 
@@ -374,7 +420,7 @@ class SettingsController {
 	 * Render the order recovery status field.
 	 */
 	public function order_recovery_status_field(): void {
-		$value          = Settings::get( 'laqirapay_order_recovery_status' );
+		$value          = Settings::get( 'laqira_payments_order_recovery_status' );
 		$order_statuses = wc_get_order_statuses();
 		$this->render(
 			'admin/field-order-recovery-status',
@@ -393,7 +439,7 @@ class SettingsController {
 	public function sanitize_exchange_rate_option( $value ): string {
 		$currency    = '' === $this->current_currency ? get_woocommerce_currency() : $this->current_currency;
 		$option_name = '' === $this->exchange_rate_option_name
-			? 'laqirapay_exchange_rate_' . $currency
+			? 'laqira_payments_exchange_rate_' . $currency
 			: $this->exchange_rate_option_name;
 
 		if ( 'USD' === $currency ) {
@@ -401,7 +447,7 @@ class SettingsController {
 		}
 
 		$request_method       = '';
-		$request_method_input = laqirapay_filter_input( INPUT_SERVER, 'REQUEST_METHOD' );
+		$request_method_input = laqira_payments_filter_input( INPUT_SERVER, 'REQUEST_METHOD' );
 		if ( is_string( $request_method_input ) ) {
 			$request_method = strtoupper( sanitize_text_field( wp_unslash( $request_method_input ) ) );
 		}
@@ -410,7 +456,7 @@ class SettingsController {
 		}
 
 		$option_page       = '';
-		$option_page_input = laqirapay_filter_input( INPUT_POST, 'option_page' );
+		$option_page_input = laqira_payments_filter_input( INPUT_POST, 'option_page' );
 		if ( is_string( $option_page_input ) ) {
 			$option_page = $this->sanitize_option_key( wp_unslash( $option_page_input ) );
 		}
@@ -420,24 +466,24 @@ class SettingsController {
 
 		if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce registers this capability.
 			add_settings_error(
-				'laqirapay_exchange_rate',
-				'laqirapay_exchange_rate_cap',
-				esc_html__( 'You are not allowed to update the exchange rate.', 'laqirapay' )
+				'laqira_payments_exchange_rate',
+				'laqira_payments_exchange_rate_cap',
+				esc_html__( 'You are not allowed to update the exchange rate.', 'laqira-payments' )
 			);
 
 			return (string) get_option( $option_name, '' );
 		}
 
 		$nonce       = '';
-		$nonce_input = laqirapay_filter_input( INPUT_POST, 'laqirapay_currency_rate_nonce' );
+		$nonce_input = laqira_payments_filter_input( INPUT_POST, 'laqira_payments_currency_rate_nonce' );
 		if ( is_string( $nonce_input ) ) {
 			$nonce = sanitize_text_field( wp_unslash( $nonce_input ) );
 		}
-		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'laqirapay_currency_rate_action' ) ) {
+		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'laqira_payments_currency_rate_action' ) ) {
 			add_settings_error(
-				'laqirapay_exchange_rate',
-				'laqirapay_exchange_rate_nonce',
-				esc_html__( 'Security check failed. Please refresh the page and try again.', 'laqirapay' )
+				'laqira_payments_exchange_rate',
+				'laqira_payments_exchange_rate_nonce',
+				esc_html__( 'Security check failed. Please refresh the page and try again.', 'laqira-payments' )
 			);
 
 			return (string) get_option( $option_name, '' );
@@ -450,18 +496,18 @@ class SettingsController {
 		$formatted_rate = wc_format_decimal( (string) $value );
 		if ( '' === $formatted_rate ) {
 			add_settings_error(
-				'laqirapay_exchange_rate',
-				'laqirapay_exchange_rate_format',
-				esc_html__( 'Exchange rate must be a number.', 'laqirapay' )
+				'laqira_payments_exchange_rate',
+				'laqira_payments_exchange_rate_format',
+				esc_html__( 'Exchange rate must be a number.', 'laqira-payments' )
 			);
 
 			return (string) get_option( $option_name, '' );
 		}
 
 		add_settings_error(
-			'laqirapay_exchange_rate',
-			'laqirapay_exchange_rate_saved',
-			esc_html__( 'Exchange rate saved!', 'laqirapay' ),
+			'laqira_payments_exchange_rate',
+			'laqira_payments_exchange_rate_saved',
+			esc_html__( 'Exchange rate saved!', 'laqira-payments' ),
 			'updated'
 		);
 
@@ -473,7 +519,7 @@ class SettingsController {
 	 */
 	private function register_exchange_rate_setting(): void {
 		$this->current_currency          = get_woocommerce_currency();
-		$this->exchange_rate_option_name = 'laqirapay_exchange_rate_' . $this->current_currency;
+		$this->exchange_rate_option_name = 'laqira_payments_exchange_rate_' . $this->current_currency;
 
 		register_setting(
 			self::OPTION_GROUP_EXCHANGE_RATE,
@@ -492,12 +538,12 @@ class SettingsController {
 	 * Delete all transients related to Web3 caches.
 	 */
 	private function flush_web3_cache(): void {
-		delete_transient( 'laqirapay_cid_cached' );
-		delete_transient( 'laqirapay_remote_cid_data' );
-		delete_transient( 'laqirapay_networks_cached' );
-		delete_transient( 'laqirapay_networks_status_cached' );
-		delete_transient( 'laqirapay_networks_assets_cached' );
-		delete_transient( 'laqirapay_stablecoins_cached' );
+		delete_transient( 'laqira_payments_cid_cached' );
+		delete_transient( 'laqira_payments_remote_cid_data' );
+		delete_transient( 'laqira_payments_networks_cached' );
+		delete_transient( 'laqira_payments_networks_status_cached' );
+		delete_transient( 'laqira_payments_networks_assets_cached' );
+		delete_transient( 'laqira_payments_stablecoins_cached' );
 	}
 
 	/**
@@ -505,15 +551,15 @@ class SettingsController {
 	 */
 	public function clear_web3_cache(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Unauthorized', 'laqirapay' ) );
+			wp_die( esc_html__( 'Unauthorized', 'laqira-payments' ) );
 		}
 
-		check_admin_referer( 'laqirapay_clear_web3_cache' );
+		check_admin_referer( 'laqira_payments_clear_web3_cache' );
 		$this->flush_web3_cache();
 
 		$redirect_url = wp_get_referer();
 		if ( ! $redirect_url ) {
-			$redirect_url = admin_url( 'admin.php?page=laqirapay-settings' );
+			$redirect_url = admin_url( 'admin.php?page=laqira-payments-settings' );
 		}
 
 		wp_safe_redirect( $redirect_url );
@@ -548,7 +594,7 @@ class SettingsController {
 	 * Render the option to enable logging.
 	 */
 	public function log_field(): void {
-		$checked = Settings::get( 'laqirapay_log_enabled' ) ? 'checked' : '';
+		$checked = Settings::get( 'laqira_payments_log_enabled' ) ? 'checked' : '';
 		$this->render( 'admin/field-log', array( 'checked' => $checked ) );
 	}
 

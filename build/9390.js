@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[9390],{9390(e,l,r){r.r(l),r.d(l,{checkmarkSvg:()=>a});const a=r(2618).JW`<svg
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[9390],{9390(e,l,s){s.r(l),s.d(l,{checkmarkSvg:()=>n});const n=s(2618).JW`<svg
   width="28"
   height="28"
   viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">

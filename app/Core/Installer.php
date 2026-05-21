@@ -1,8 +1,14 @@
 <?php
 
-namespace LaqiraPay\Core;
+namespace LaqiraPayments\Core;
 
-use LaqiraPay\Domain\Services\LaqiraLogger;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+use LaqiraPayments\Domain\Services\LaqiraLogger;
+
 
 class Installer {
 
@@ -10,23 +16,24 @@ class Installer {
 	public static function activate() {
 
 		self::laqira_create_transactions_table();
-		self::laqirapay_create_recovery_order_page();
-		if ( get_option( 'laqirapay_order_recovery_status' ) === false ) {
-			update_option( 'laqirapay_order_recovery_status', 'wc-completed' );
+		self::laqira_payments_create_recovery_order_page();
+		if ( get_option( 'laqira_payments_order_recovery_status' ) === false ) {
+			update_option( 'laqira_payments_order_recovery_status', 'wc-completed' );
 		}
-		if ( get_option( 'laqirapay_only_logged_in_user' ) === false ) {
-			update_option( 'laqirapay_only_logged_in_user', 'checked' );
+		if ( get_option( 'laqira_payments_only_logged_in_user' ) === false ) {
+			update_option( 'laqira_payments_only_logged_in_user', 'checked' );
 		}
-		LaqiraLogger::log( 200, 'system', 'plugin_activated' );
+		update_option( 'laqira_payments_activation_log_pending', time() );
 	}
 
 	/**
-	 * Creates a custom page for order recovery with shortcode [lqr_recovery].
+	 * Creates or updates the recovery page to use the plugin-prefixed shortcode.
 	 */
-	private static function laqirapay_create_recovery_order_page() {
+	private static function laqira_payments_create_recovery_order_page() {
+		$shortcode_tag = '[laqira_payments_recovery]';
 		// Define the page title, content, and other parameters
 		$page_title    = 'Recovery Order';
-		$page_content  = '[lqr_recovery]';
+		$page_content  = $shortcode_tag;
 		$page_template = ''; // Optional: specify a custom template file
 
 		// Check if the page already exists
@@ -54,8 +61,30 @@ class Installer {
 
 			// Store the page ID in the options table for future reference
 			if ( $page_id && ! is_wp_error( $page_id ) ) {
-				update_option( 'laqirapay_recovery_order_page_id', $page_id );
+				update_option( 'laqira_payments_recovery_order_page_id', $page_id );
 			}
+			return;
+		}
+
+		$page = $pages[0];
+		if ( ! isset( $page->ID ) ) {
+			return;
+		}
+
+		$current_content = isset( $page->post_content ) ? (string) $page->post_content : '';
+		$updated_content = str_replace( '[lqr_recovery]', $shortcode_tag, $current_content );
+
+		if ( $updated_content === '' ) {
+			$updated_content = $page_content;
+		}
+
+		if ( $updated_content !== $current_content ) {
+			wp_update_post(
+				array(
+					'ID'           => (int) $page->ID,
+					'post_content' => $updated_content,
+				)
+			);
 		}
 	}
 
@@ -64,7 +93,7 @@ class Installer {
 	 */
 	private static function laqira_create_transactions_table() {
 		global $wpdb;
-		$table_name      = $wpdb->prefix . 'laqirapay_transactions';
+		$table_name      = $wpdb->prefix . 'laqira_payments_transactions';
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
@@ -91,7 +120,7 @@ class Installer {
 	}
 
 	public static function deactivate(): void {
-		wp_clear_scheduled_hook( 'laqirapay_web3_cache_cron_hourly' );
+		wp_clear_scheduled_hook( 'laqira_payments_web3_cache_cron_hourly' );
 		flush_rewrite_rules();
 		LaqiraLogger::log( 200, 'system', 'plugin_deactivated' );
 	}

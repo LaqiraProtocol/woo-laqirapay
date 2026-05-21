@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[5426],{5426(h,a,l){l.r(a),l.d(a,{farcasterSvg:()=>v});const v=l(2618).JW`<svg style="border-radius: 9999px; overflow: hidden;"  fill="none" viewBox="0 0 1000 1000">
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[5426],{5426(h,a,e){e.r(a),e.d(a,{farcasterSvg:()=>l});const l=e(2618).JW`<svg style="border-radius: 9999px; overflow: hidden;"  fill="none" viewBox="0 0 1000 1000">
   <rect width="1000" height="1000" rx="9999" ry="9999" fill="#855DCD"/>
   <path fill="#855DCD" d="M0 0h1000v1000H0V0Z" />
   <path

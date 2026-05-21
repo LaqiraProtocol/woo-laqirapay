@@ -1,21 +1,29 @@
 <?php
 /**
- * Admin controller for LaqiraPay back office pages.
+ * Admin controller for LaqiraPayments back office pages.
  *
- * @package LaqiraPay
+ * @package LaqiraPayments
  */
 
-namespace LaqiraPay\Http\Controllers\Admin;
+namespace LaqiraPayments\Http\Controllers\Admin;
 
-use LaqiraPay\Domain\Models\Settings;
-use LaqiraPay\Domain\Services\LaqiraLogger;
-use LaqiraPay\Services\BlockchainService;
-use LaqiraPay\Support\Requirements;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Domain\Models\Settings;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
+use LaqiraPayments\Services\BlockchainService;
+use LaqiraPayments\Support\Requirements;
 
 /**
  * Manages admin pages, assets, and settings interactions.
  */
 class AdminController {
+	private const DASHBOARD_MENU_SUFFIX = '-dashboard';
+	private const RECOVERY_SHORTCODE    = 'laqira_payments_recovery';
 
 	/**
 	 * Plugin slug.
@@ -51,8 +59,8 @@ class AdminController {
 	 * @var array<string,string>
 	 */
 	private const ADMIN_VIEW_FILES = array(
-		'admin-settings-display' => 'laqirapay-admin-settings-display',
-		'admin-transactions'     => 'laqirapay-admin-transactions',
+		'admin-settings-display' => 'laqira-payments-admin-settings-display',
+		'admin-transactions'     => 'laqira-payments-admin-transactions',
 	);
 
 	/**
@@ -83,7 +91,7 @@ class AdminController {
 
 		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ), 9 );
 		add_action( 'admin_init', array( $this->settings_controller, 'register_and_build_fields' ) );
-		add_action( 'admin_post_laqirapay_clear_web3_cache', array( $this->settings_controller, 'clear_web3_cache' ) );
+		add_action( 'admin_post_laqira_payments_clear_web3_cache', array( $this->settings_controller, 'clear_web3_cache' ) );
 		add_action( 'updated_option', array( $this->settings_controller, 'maybeclear_web3_cache_on_settings_update' ), 10, 3 );
 		add_action( 'added_option', array( $this->settings_controller, 'maybeclear_web3_cache_on_settings_update' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_global_assets' ) );
@@ -102,13 +110,13 @@ class AdminController {
 
 		wp_enqueue_style(
 			$this->plugin_name,
-			LAQIRA_PLUGINS_URL . 'assets/admin/css/laqirapay-admin.css',
+			LAQIRA_PLUGINS_URL . 'assets/admin/css/laqira-payments-admin.css',
 			array(),
 			$this->version
 		);
 
 		wp_enqueue_style(
-			'laqirapay-admin-menu',
+			'laqira-payments-admin-menu',
 			LAQIRA_PLUGINS_URL . 'assets/admin/css/menu-icon.css',
 			array(),
 			$this->version
@@ -116,7 +124,7 @@ class AdminController {
 
 		wp_enqueue_script(
 			$this->plugin_name,
-			LAQIRA_PLUGINS_URL . 'assets/admin/js/laqirapay-admin.js',
+			LAQIRA_PLUGINS_URL . 'assets/admin/js/laqira-payments-admin.js',
 			array( 'jquery' ),
 			$this->version,
 			false
@@ -158,21 +166,21 @@ class AdminController {
 		);
 
 		wp_enqueue_style(
-			'laqirapay-settings',
-			LAQIRA_PLUGINS_URL . 'assets/admin/css/laqirapay-settings.css',
+			'laqira-payments-settings',
+			LAQIRA_PLUGINS_URL . 'assets/admin/css/laqira-payments-settings.css',
 			array(),
 			$this->version
 		);
 
 		wp_enqueue_script(
-			'laqirapay-settings',
-			LAQIRA_PLUGINS_URL . 'assets/admin/js/laqirapay-settings.js',
+			'laqira-payments-settings',
+			LAQIRA_PLUGINS_URL . 'assets/admin/js/laqira-payments-settings.js',
 			array( 'jquery' ),
 			$this->version,
 			true
 		);
 
-		$tables_language_option = Settings::get( 'laqirapay_tables_language_option', 'en' );
+		$tables_language_option = Settings::get( 'laqira_payments_tables_language_option', 'en' );
 
 		if ( ! is_string( $tables_language_option ) || '' === $tables_language_option ) {
 			$tables_language_option = 'en';
@@ -181,8 +189,8 @@ class AdminController {
 		$tables_language_option = sanitize_text_field( $tables_language_option );
 
 		wp_localize_script(
-			'laqirapay-settings',
-			'laqirapay',
+			'laqira-payments-settings',
+			'laqira-payments',
 			array(
 				'tables_language_option' => $tables_language_option,
 			)
@@ -195,9 +203,9 @@ class AdminController {
 	public function add_plugin_admin_menu(): void {
 		add_menu_page(
 			$this->plugin_name,
-			'LaqiraPay',
+			'LaqiraPayments',
 			'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce registers this capability.
-			$this->plugin_name . '-main',
+			$this->plugin_name . self::DASHBOARD_MENU_SUFFIX,
 			array( $this, 'display_plugin_admin_dashboard' ),
 			LAQIRA_PLUGINS_URL . 'assets/img/icon-logo.png',
 			26
@@ -205,9 +213,9 @@ class AdminController {
 
 		$pages = array(
 			array(
-				'page_title' => 'LaqiraPay Dashboard',
+				'page_title' => 'LaqiraPayments Dashboard',
 				'menu_title' => 'Dashboard',
-				'menu_slug'  => $this->plugin_name . '-main',
+				'menu_slug'  => $this->plugin_name . self::DASHBOARD_MENU_SUFFIX,
 				'callback'   => array( $this, 'display_plugin_admin_dashboard' ),
 				'capability' => 'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce registers this capability.
 			),
@@ -219,14 +227,14 @@ class AdminController {
 				'capability' => 'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce registers this capability.
 			),
 			array(
-				'page_title' => 'LaqiraPay Order Recovery',
+				'page_title' => 'LaqiraPayments Order Recovery',
 				'menu_title' => 'Order Recovery',
 				'menu_slug'  => $this->plugin_name . '-order-recovery',
 				'callback'   => array( $this, 'display_plugin_admin_order_recovery' ),
 				'capability' => 'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce registers this capability.
 			),
 			array(
-				'page_title' => 'LaqiraPay Settings',
+				'page_title' => 'LaqiraPayments Settings',
 				'menu_title' => 'Settings',
 				'menu_slug'  => $this->plugin_name . '-settings',
 				'callback'   => array( $this, 'display_plugin_admin_settings' ),
@@ -236,7 +244,7 @@ class AdminController {
 
 		foreach ( $pages as $page ) {
 			add_submenu_page(
-				$this->plugin_name . '-main',
+				$this->plugin_name . self::DASHBOARD_MENU_SUFFIX,
 				$page['page_title'],
 				$page['menu_title'],
 				$page['capability'] ?? 'administrator',
@@ -245,7 +253,7 @@ class AdminController {
 			);
 		}
 
-		remove_submenu_page( $this->plugin_name . '-main', $this->plugin_name . '-main' );
+		remove_submenu_page( $this->plugin_name . self::DASHBOARD_MENU_SUFFIX, $this->plugin_name . self::DASHBOARD_MENU_SUFFIX );
 	}
 
 	/**
@@ -253,7 +261,7 @@ class AdminController {
 	 */
 	public function display_plugin_admin_dashboard(): void {
 		LaqiraLogger::log( 200, 'admin', 'view_dashboard' );
-		require LAQIRAPAY_PLUGIN_DIR . 'app/Http/Views/admin/' . $this->plugin_name . '-admin-display.php';
+		require LAQIRAPAYMENTS_PLUGIN_DIR . 'app/Http/Views/admin/' . $this->plugin_name . '-admin-display.php';
 	}
 
 	/**
@@ -273,8 +281,8 @@ class AdminController {
 		settings_errors();
 		$order_recovery_settings_output = ob_get_clean();
 
-		$order_recovery_allowed_tags = laqirapay_get_order_confirmation_allowed_tags();
-		$order_recovery_content      = do_shortcode( '[lqr_recovery]' );
+		$order_recovery_allowed_tags = laqira_payments_get_order_confirmation_allowed_tags();
+		$order_recovery_content      = do_shortcode( '[' . self::RECOVERY_SHORTCODE . ']' );
 
 		$this->render_admin_page(
 			'admin-settings-display',
@@ -315,7 +323,7 @@ class AdminController {
 
 		LaqiraLogger::log( 200, 'admin', 'view_order_recovery' );
 
-		update_option( 'laqirapay_current_tab_setting', SettingsController::SECTION_ORDER_RECOVERY );
+		update_option( 'laqira_payments_current_tab_setting', SettingsController::SECTION_ORDER_RECOVERY );
 
 		wp_safe_redirect(
 			add_query_arg(
@@ -339,15 +347,15 @@ class AdminController {
 	private function check_access( string $capability ): ?array {
 		if ( ! current_user_can( $capability ) ) {
 			return array(
-				'title'   => esc_html__( 'Access Denied...', 'laqirapay' ),
-				'message' => esc_html__( "You don't have right permission to this setting page", 'laqirapay' ),
+				'title'   => esc_html__( 'Access Denied...', 'laqira-payments' ),
+				'message' => esc_html__( "You don't have right permission to this setting page", 'laqira-payments' ),
 			);
 		}
 
 		if ( ! Requirements::check() ) {
 			return array(
-				'title'   => esc_html__( 'Plugin Requirements Not Met', 'laqirapay' ),
-				'message' => esc_html__( 'Please check PHP >= 8.1 ,wordpress >= 6.3, Woocommerce >= 8.2 ', 'laqirapay' ),
+				'title'   => esc_html__( 'Plugin Requirements Not Met', 'laqira-payments' ),
+				'message' => esc_html__( 'Please check PHP >= 8.1 ,wordpress >= 6.3, Woocommerce >= 8.2 ', 'laqira-payments' ),
 			);
 		}
 
@@ -362,7 +370,7 @@ class AdminController {
 	private function render_message( array $notice ): void {
 		$title   = $notice['title'];
 		$message = $notice['message'];
-		require LAQIRAPAY_PLUGIN_DIR . 'app/Http/Views/admin/admin-message.php';
+		require LAQIRAPAYMENTS_PLUGIN_DIR . 'app/Http/Views/admin/admin-message.php';
 	}
 
 	/**
@@ -385,24 +393,26 @@ class AdminController {
 			return;
 		}
 
-		$file = LAQIRAPAY_PLUGIN_DIR . 'app/Http/Views/admin/' . self::ADMIN_VIEW_FILES[ $view_key ] . '.php';
+		$file = LAQIRAPAYMENTS_PLUGIN_DIR . 'app/Http/Views/admin/' . self::ADMIN_VIEW_FILES[ $view_key ] . '.php';
 		if ( ! is_readable( $file ) ) {
 			LaqiraLogger::log( 500, 'admin', 'render_admin_page_missing_file', array( 'view' => $view_key ) );
 			return;
 		}
 
 		$active_tab = 'general';
-		if ( isset( $_GET['tab'] ) ) {
-			$tab_param = sanitize_text_field( wp_unslash( (string) $_GET['tab'] ) );
+		$tab_raw    = filter_input( INPUT_GET, 'tab', FILTER_UNSAFE_RAW ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin UI state parameter.
+		if ( null !== $tab_raw && false !== $tab_raw ) {
+			$tab_param = sanitize_text_field( wp_unslash( (string) $tab_raw ) );
 			if ( '' !== $tab_param ) {
 				$active_tab = esc_html( $tab_param );
 			}
 		}
 
-		if ( isset( $_GET['error_message'] ) ) {
-			$error_param = sanitize_text_field( wp_unslash( (string) $_GET['error_message'] ) );
-			add_action( 'admin_notices', array( $this, 'settings_page_settings_messages' ) );
-			do_action( 'admin_notices', esc_html( $error_param ) );
+		$error_raw = filter_input( INPUT_GET, 'error_message', FILTER_UNSAFE_RAW ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin notice parameter.
+		if ( null !== $error_raw && false !== $error_raw ) {
+			$error_param = sanitize_text_field( wp_unslash( (string) $error_raw ) );
+			add_action( 'admin_notices', array( $this, 'settings_page_settings_messages' ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core WordPress hook.
+			do_action( 'admin_notices', esc_html( $error_param ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core WordPress hook.
 		}
 
 		$allowed_keys   = self::ADMIN_VIEW_ALLOWED_KEYS[ $view_key ] ?? array();
@@ -432,7 +442,7 @@ class AdminController {
 	public function settings_page_settings_messages( string $error_message ): void {
 		switch ( $error_message ) {
 			case '1':
-				$message       = esc_html__( 'There was an error adding this setting. Please try again.  If this persists, shoot us an email.', 'laqirapay' );
+				$message       = esc_html__( 'There was an error adding this setting. Please try again.  If this persists, shoot us an email.', 'laqira-payments' );
 				$err_code      = esc_attr( 'settings_page_example_setting' );
 				$setting_field = 'settings_page_example_setting';
 				break;

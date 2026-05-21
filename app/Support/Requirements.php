@@ -1,6 +1,12 @@
 <?php
 
-namespace LaqiraPay\Support;
+namespace LaqiraPayments\Support;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 class Requirements {
 	public static function check() {

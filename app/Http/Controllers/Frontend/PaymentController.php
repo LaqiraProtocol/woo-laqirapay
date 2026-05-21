@@ -1,15 +1,21 @@
 <?php
 
-namespace LaqiraPay\Http\Controllers\Frontend;
+namespace LaqiraPayments\Http\Controllers\Frontend;
 
-use LaqiraPay\Domain\Models\Settings;
-use LaqiraPay\Services\BlockchainService;
-use LaqiraPay\Helpers\JwtHelper;
-use LaqiraPay\Helpers\WooCommerceHelper;
-use LaqiraPay\Domain\Services\UtilityService;
-use LaqiraPay\Domain\Services\LaqiraLogger;
-use LaqiraPay\Support\LaqiraPayTranslations;
-use function LaqiraPay\Support\laqirapay_cookie_options;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Domain\Models\Settings;
+use LaqiraPayments\Services\BlockchainService;
+use LaqiraPayments\Helpers\JwtHelper;
+use LaqiraPayments\Helpers\WooCommerceHelper;
+use LaqiraPayments\Domain\Services\UtilityService;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
+use LaqiraPayments\Support\LaqiraPaymentsTranslations;
+use function LaqiraPayments\Support\laqira_payments_cookie_options;
 use Web3\Utils;
 
 /**
@@ -68,7 +74,7 @@ class PaymentController {
 			return array( 'result' => 'failure' );
 		}
 
-		$order->update_status( 'on-hold', esc_html__( 'Awaiting payment', 'laqirapay' ) );
+		$order->update_status( 'on-hold', esc_html__( 'Awaiting payment', 'laqira-payments' ) );
 		$order->reduce_order_stock();
 		WC()->cart->empty_cart();
 
@@ -86,10 +92,10 @@ class PaymentController {
 	 * @return void
 	 */
 	public function payment_fields(): void {
-		$requires_login = Settings::get( 'laqirapay_only_logged_in_user' );
+		$requires_login = Settings::get( 'laqira_payments_only_logged_in_user' );
 		if ( $requires_login && ! is_user_logged_in() ) {
 			LaqiraLogger::log( 300, 'checkout', 'payment_fields_login_required' );
-			$this->render( 'public/checkout', array( 'message' => esc_html__( 'Please login to make a payment!', 'laqirapay' ) ) );
+			$this->render( 'public/checkout', array( 'message' => esc_html__( 'Please login to make a payment!', 'laqira-payments' ) ) );
 			return;
 		}
 
@@ -123,7 +129,7 @@ class PaymentController {
 				LaqiraLogger::log( 300, 'checkout', 'payment_fields_assets_missing', array( 'errors' => $error_messages ) );
 			} else {
 				$error_messages = array(
-					esc_html__( 'LaqiraPay is not fully configured yet. Please choose another payment method.', 'laqirapay' ),
+					esc_html__( 'LaqiraPayments is not fully configured yet. Please choose another payment method.', 'laqira-payments' ),
 				);
 				LaqiraLogger::log(
 					300,
@@ -134,8 +140,8 @@ class PaymentController {
 			}
 
 			$timestamp = current_time( 'timestamp' );
-			wp_register_script( 'laqirapayJS', ( LAQIRA_PLUGINS_URL . '/assets/public/js/laqirapay-first.js' ), array( 'jquery' ), $timestamp, true );
-			$primary_error = $error_messages[0] ?? esc_html__( 'LaqiraPay is temporarily unavailable. Please choose another payment method.', 'laqirapay' );
+			wp_register_script( 'laqira-paymentsJS', ( LAQIRA_PLUGINS_URL . '/assets/public/js/laqira-payments-first.js' ), array( 'jquery' ), $timestamp, true );
+			$primary_error = $error_messages[0] ?? esc_html__( 'LaqiraPayments is temporarily unavailable. Please choose another payment method.', 'laqira-payments' );
 			$this->localize_bootstrap_script(
 				array(
 					'orderData' => array(
@@ -148,7 +154,7 @@ class PaymentController {
 					),
 				)
 			);
-			wp_enqueue_script( 'laqirapayJS' );
+			wp_enqueue_script( 'laqira-paymentsJS' );
 		}
 
 		$this->render(
@@ -184,7 +190,7 @@ class PaymentController {
 		}
 
 		$config = self::VIEW_CONFIG[ $normalized_view ];
-		$path   = LAQIRAPAY_PLUGIN_DIR . 'app/Http/Views/' . $config['path'] . '.php';
+		$path   = LAQIRAPAYMENTS_PLUGIN_DIR . 'app/Http/Views/' . $config['path'] . '.php';
 
 		if ( ! is_readable( $path ) ) {
 			LaqiraLogger::log( 500, 'checkout', 'render_missing_view', array( 'view' => $normalized_view ) );
@@ -204,14 +210,14 @@ class PaymentController {
 	private function enqueue_scripts(): void {
 		$timestamp = current_time( 'timestamp' );
 
-		wp_enqueue_script( 'laqirapayJS', ( LAQIRA_PLUGINS_URL . '/assets/public/js/laqirapay-first.js' ), array( 'jquery' ), $timestamp, true );
+		wp_enqueue_script( 'laqira-paymentsJS', ( LAQIRA_PLUGINS_URL . '/assets/public/js/laqira-payments-first.js' ), array( 'jquery' ), $timestamp, true );
 
-		$asset_file = LAQIRAPAY_PLUGIN_DIR . '/build/laqiraPayMain.asset.php';
+		$asset_file = LAQIRAPAYMENTS_PLUGIN_DIR . '/build/laqiraPaymentsMain.asset.php';
 		$assetjs    = include $asset_file;
 
 		wp_enqueue_script(
-			'wclaqirapay-script',
-			( LAQIRA_PLUGINS_URL . '/build/laqiraPayMain.js' ),
+			'laqira-payments-block-script',
+			( LAQIRA_PLUGINS_URL . '/build/laqiraPaymentsMain.js' ),
 			$assetjs['dependencies'],
 			$timestamp,
 			array(
@@ -220,31 +226,35 @@ class PaymentController {
 		);
 		if ( ! is_admin() ) {
 			wp_register_style(
-				'wclaqirapay-style',
-				( LAQIRA_PLUGINS_URL . 'build/laqiraPayMain.css' ),
+				'laqira-payments-block-style',
+				( LAQIRA_PLUGINS_URL . 'build/laqiraPaymentsMain.css' ),
 				array(),
 				$timestamp
 			);
-			wp_enqueue_style( 'wclaqirapay-style' );
+			wp_enqueue_style( 'laqira-payments-block-style' );
 		}
 
-		global $woocommerce;
+		global $woocommerce, $wp;
+		$order_id    = isset( $wp->query_vars['order-pay'] ) ? absint( $wp->query_vars['order-pay'] ) : null;
+		$order       = $order_id ? wc_get_order( $order_id ) : null;
+		$order_total = $order instanceof \WC_Order ? (float) $order->get_total( 'edit' ) : (float) $woocommerce->cart->get_total( 'edit' );
+
 		$currencies       = get_woocommerce_currencies();
 		$current_currency = get_woocommerce_currency();
 		if ( $current_currency !== 'USD' ) {
-			$saved_exchange_rate = Settings::get( 'laqirapay_exchange_rate_' . $current_currency, '' );
+			$saved_exchange_rate = Settings::get( 'laqira_payments_exchange_rate_' . $current_currency, '' );
 			if ( ! $saved_exchange_rate ) {
 				$saved_exchange_rate = 1;
 			}
-			$final_amount           = $woocommerce->cart->get_total( 'edit' ) / $saved_exchange_rate;
+			$final_amount           = $order_total / $saved_exchange_rate;
 			$final_amount_formatted = number_format( $final_amount, 2 );
 		} else {
 			$saved_exchange_rate    = 1;
-			$final_amount           = $woocommerce->cart->get_total( 'edit' ) / $saved_exchange_rate;
+			$final_amount           = $order_total / $saved_exchange_rate;
 			$final_amount_formatted = $final_amount;
 		}
 
-		$translations = LaqiraPayTranslations::get_translations();
+		$translations = LaqiraPaymentsTranslations::get_translations();
 		$provider     = $this->blockchainService->getProviderLocal();
 		$order_data   = array(
 			'paymentType'            => 'Classic',
@@ -255,24 +265,24 @@ class PaymentController {
 			'currencySymbol'         => 'USD',
 			'exchangeRate'           => $saved_exchange_rate,
 			'originalCurrencySymbol' => $current_currency,
-			'originalOrderAmount'    => $woocommerce->cart->get_total( 'edit' ),
+			'originalOrderAmount'    => $order_total,
 			'cartTotal'              => $final_amount_formatted,
 			'providerAddress'        => $provider,
 			'laqiraAajaxUrl'         => admin_url( 'admin-ajax.php' ),
 			'laqiraAjaxnonce'        => wp_create_nonce( 'laqira_nonce' ),
-			'mainContractAddress'    => CONTRACT_ADDRESS,
-			'originalOrderID'        => null,
-			'walletConnectProjectID' => Settings::get( 'laqirapay_walletconnect_project_id' ),
+			'mainContractAddress'    => LAQIRAPAYMENTS_MAIN_CONTRACT_ADDRESS,
+			'originalOrderID'        => $order_id ?: null,
+			'walletConnectProjectID' => Settings::get( 'laqira_payments_walletconnect_project_id' ),
 			'wcpi'                   => $this->wooCommerceService->getWcpi(),
 			'translation'            => $translations,
 			'isRTL'                  => $this->utilityService->detectRtl(),
-			'isGuest'                => Settings::get( 'laqirapay_only_logged_in_user' ),
+			'isGuest'                => Settings::get( 'laqira_payments_only_logged_in_user' ),
 		);
 
 		$order_data['error']  = '';
 		$order_data['errors'] = array();
 
-		$cookieOptions = laqirapay_cookie_options( time() + 3600 );
+		$cookieOptions = laqira_payments_cookie_options( time() + 3600 );
 		setcookie(
 			'laqira_jwt',
 			$this->jwtService->create_access_token( $provider )['token'],
@@ -286,7 +296,7 @@ class PaymentController {
 		);
 
 		wp_localize_script(
-			'wclaqirapay-script',
+			'laqira-payments-block-script',
 			'LaqiraData',
 			array(
 				'availableNetworks' => $this->blockchainService->getNetworks(),
@@ -299,7 +309,7 @@ class PaymentController {
 
 	private function localize_bootstrap_script( array $context ): void {
 		wp_localize_script(
-			'laqirapayJS',
+			'laqira-paymentsJS',
 			'LaqiraData',
 			$context
 		);
@@ -316,19 +326,19 @@ class PaymentController {
 		$errors = array();
 
 		if ( ! is_array( $nets ) || $nets === array() ) {
-			$errors[] = esc_html__( 'Required network information is unavailable.', 'laqirapay' );
+			$errors[] = esc_html__( 'Required network information is unavailable.', 'laqira-payments' );
 		}
 
 		if ( ! is_array( $assets ) || $assets === array() ) {
-			$errors[] = esc_html__( 'Digital asset configuration could not be loaded.', 'laqirapay' );
+			$errors[] = esc_html__( 'Digital asset configuration could not be loaded.', 'laqira-payments' );
 		}
 
 		if ( ! Utils::isAddress( (string) $provider ) ) {
-			$errors[] = esc_html__( 'Merchant wallet address is misconfigured.', 'laqirapay' );
+			$errors[] = esc_html__( 'Merchant wallet address is misconfigured.', 'laqira-payments' );
 		}
 
 		if ( $errors === array() ) {
-			$errors[] = esc_html__( 'LaqiraPay is temporarily unavailable. Please choose another payment method.', 'laqirapay' );
+			$errors[] = esc_html__( 'LaqiraPayments is temporarily unavailable. Please choose another payment method.', 'laqira-payments' );
 		}
 
 		return $errors;

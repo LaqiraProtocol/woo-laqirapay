@@ -1,21 +1,25 @@
 <?php
 /**
- * Register the LaqiraPay gateway with WooCommerce.
+ * Register the LaqiraPayments gateway with WooCommerce.
  */
 
-use LaqiraPay\WooCommerce\Gateway;
+use LaqiraPayments\WooCommerce\Gateway;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( defined( 'ABSPATH' ) && function_exists( 'add_filter' ) ) {
 	/**
-	 * Register LaqiraPay as a payment gateway.
+	 * Register LaqiraPayments as a payment gateway.
 	 *
 	 * @param array $gateways Existing WooCommerce gateways.
-	 * @return array Modified gateways including LaqiraPay gateway.
+	 * @return array Modified gateways including LaqiraPayments gateway.
 	 */
-	function laqirapay_register_gateway( $gateways ) {
+	function laqira_payments_register_gateway( $gateways ) {
 		$gateways[] = Gateway::class;
 		return $gateways;
 	}
 
-	add_filter( 'woocommerce_payment_gateways', 'laqirapay_register_gateway' );
+	add_filter( 'woocommerce_payment_gateways', 'laqira_payments_register_gateway' );
 }

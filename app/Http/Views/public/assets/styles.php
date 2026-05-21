@@ -1,4 +1,9 @@
 <?php
-/** @var array $data */
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 ?>
-<div class="laqirapay-assets-style" data-rtl="<?php echo esc_attr( ! empty( $data['is_rtl'] ) ? '1' : '0' ); ?>"></div>
+
+<?php /** @var array $data */
+?>
+<div class="laqira-payments-assets-style" data-rtl="<?php echo esc_attr( ! empty( $data['is_rtl'] ) ? '1' : '0' ); ?>"></div>

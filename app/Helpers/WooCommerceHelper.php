@@ -1,8 +1,14 @@
 <?php
 
-namespace LaqiraPay\Helpers;
+namespace LaqiraPayments\Helpers;
 
-use LaqiraPay\Services\BlockchainService;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Services\BlockchainService;
 
 class WooCommerceHelper {
 
@@ -18,9 +24,15 @@ class WooCommerceHelper {
 	}
 
 	public function isActive(): bool {
-		$plugin_path = trailingslashit( WP_PLUGIN_DIR ) . 'woocommerce/woocommerce.php';
-		return in_array( $plugin_path, wp_get_active_and_valid_plugins() ) // Check single-site plugins.
-			|| in_array( $plugin_path, wp_get_active_network_plugins() ); // Check network-wide plugins.
+		if ( ! function_exists( 'is_plugin_active' ) && is_readable( ABSPATH . 'wp-admin/includes/plugin.php' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		if ( function_exists( 'is_plugin_active' ) && is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			return true;
+		}
+
+		return class_exists( 'WooCommerce' );
 	}
 
 	public function getWcpi() {

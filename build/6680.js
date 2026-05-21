@@ -1,1 +1,1 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[6680],{6680(a,e,l){l.r(e),l.d(e,{default:()=>p.n});var p=l(4006)}}]);
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[6680],{6680(a,e,s){s.r(e),s.d(e,{default:()=>l.n});var l=s(4006)}}]);

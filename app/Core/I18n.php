@@ -1,14 +1,20 @@
 <?php
 
-namespace LaqiraPay\Core;
+namespace LaqiraPayments\Core;
 
-class I18n {
-
-	public static function load(): void {
-		load_plugin_textdomain(
-			'laqirapay',
-			false,
-			dirname( plugin_basename( __FILE__ ), 3 ) . '/languages'
-		);
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
 }
+
+
+
+// class I18n {
+
+// 	public static function load(): void {
+// 		load_plugin_textdomain(
+// 			'laqira-payments',
+// 			false,
+// 			dirname( plugin_basename( __FILE__ ), 3 ) . '/languages'
+// 		);
+// 	}
+// }

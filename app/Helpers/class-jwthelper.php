@@ -2,13 +2,19 @@
 /**
  * JWT helper utilities.
  *
- * @package LaqiraPay\Helpers
+ * @package LaqiraPayments\Helpers
  */
 
-namespace LaqiraPay\Helpers;
+namespace LaqiraPayments\Helpers;
 
-use LaqiraPay\Domain\Services\LaqiraLogger;
-use LaqiraPay\Services\BlockchainService;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Domain\Services\LaqiraLogger;
+use LaqiraPayments\Services\BlockchainService;
 use WP_Error;
 
 /**
@@ -30,13 +36,13 @@ class JwtHelper {
 	 * }
 	 */
 	public function create_access_token( $user_id ) {
-		$secret = $this->laqirapay_get_jwt_secret();
+		$secret = $this->laqira_payments_get_jwt_secret();
 		$now    = time();
 		$exp    = $now + 3600;
 
 		$header = array(
 			'typ' => 'JWT',
-			'alg' => LAQIRAPAY_JWT_ALG,
+			'alg' => LAQIRAPAYMENTS_JWT_ALG,
 		);
 
 		$payload = array(
@@ -50,7 +56,7 @@ class JwtHelper {
 		$data            = "$header_encoded.$payload_encoded";
 
 		$signature = hash_hmac(
-			LAQIRAPAY_JWT_ALG_SIGNATURE,
+			LAQIRAPAYMENTS_JWT_ALG_SIGNATURE,
 			$data,
 			$secret,
 			true
@@ -72,11 +78,11 @@ class JwtHelper {
 	 *
 	 * @return string JWT secret key stored in WordPress options.
 	 */
-	public function laqirapay_get_jwt_secret() {
-		$key = get_option( 'laqirapay_jwt_secret' );
+	public function laqira_payments_get_jwt_secret() {
+		$key = get_option( 'laqira_payments_jwt_secret' );
 		if ( ! $key ) {
 			$key = bin2hex( random_bytes( 32 ) );
-			update_option( 'laqirapay_jwt_secret', $key );
+			update_option( 'laqira_payments_jwt_secret', $key );
 		}
 
 		return $key;
@@ -103,10 +109,9 @@ class JwtHelper {
 		$token = $this->sanitize_token( $headers );
 
 		if ( '' === $token ) {
-			if ( isset( $_COOKIE['laqira_jwt'] ) ) {
-				$cookie_token = sanitize_text_field(
-					wp_unslash( $_COOKIE['laqira_jwt'] )
-				);
+			$cookie_token_raw = filter_input( INPUT_COOKIE, 'laqira_jwt', FILTER_UNSAFE_RAW );
+			if ( is_string( $cookie_token_raw ) ) {
+				$cookie_token = sanitize_text_field( wp_unslash( $cookie_token_raw ) );
 				$token        = $this->sanitize_token( $cookie_token );
 			}
 		}
@@ -186,7 +191,7 @@ class JwtHelper {
 
 			return new WP_Error(
 				'jwt_format_error',
-				esc_html__( 'JWT token format is invalid', 'laqirapay' ),
+				esc_html__( 'JWT token format is invalid', 'laqira-payments' ),
 				array( 'status' => 401 )
 			);
 		}
@@ -195,9 +200,9 @@ class JwtHelper {
 		$data                                       = "$header64.$payload64";
 		$expected_signature                         = $this->base64url_encode(
 			hash_hmac(
-				LAQIRAPAY_JWT_ALG_SIGNATURE,
+				LAQIRAPAYMENTS_JWT_ALG_SIGNATURE,
 				$data,
-				$this->laqirapay_get_jwt_secret(),
+				$this->laqira_payments_get_jwt_secret(),
 				true
 			)
 		);
@@ -213,7 +218,7 @@ class JwtHelper {
 
 			return new WP_Error(
 				'jwt_invalid_signature',
-				esc_html__( 'Signature mismatch', 'laqirapay' ),
+				esc_html__( 'Signature mismatch', 'laqira-payments' ),
 				array( 'status' => 401 )
 			);
 		}
@@ -224,7 +229,7 @@ class JwtHelper {
 
 			return new WP_Error(
 				'jwt_expired',
-				esc_html__( 'JWT token has expired', 'laqirapay' ),
+				esc_html__( 'JWT token has expired', 'laqira-payments' ),
 				array( 'status' => 401 )
 			);
 		}

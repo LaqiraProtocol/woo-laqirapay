@@ -2,18 +2,27 @@
 /**
  * Plugin bootstrapper.
  *
- * @package LaqiraPay
+ * @package LaqiraPayments
  */
 
-namespace LaqiraPay;
+namespace LaqiraPayments;
 
-use LaqiraPay\Core\I18n;
-use LaqiraPay\Jobs\Web3CacheCron;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Core\I18n;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
+use LaqiraPayments\Jobs\Web3CacheCron;
 
 /**
  * Boots plugin services and scheduled jobs.
  */
 class Bootstrap {
+
+	private const ACTIVATION_LOG_OPTION = 'laqira_payments_activation_log_pending';
 
 	/**
 	 * Register hooks on instantiation.
@@ -26,17 +35,32 @@ class Bootstrap {
 	 * Handles plugin initialization logic.
 	 */
 	public function boot(): void {
-		I18n::load();
+		add_action( 'init', array( $this, 'maybe_log_pending_activation' ), 15 );
 
-		if ( ! wp_next_scheduled( 'laqirapay_web3_cache_cron_hourly' ) ) {
-			wp_schedule_event( time(), 'hourly', 'laqirapay_web3_cache_cron_hourly' );
+		//I18n::load();
+
+		if ( ! wp_next_scheduled( 'laqira_payments_web3_cache_cron_hourly' ) ) {
+			wp_schedule_event( time(), 'hourly', 'laqira_payments_web3_cache_cron_hourly' );
 		}
 
 		$web3_cron = new Web3CacheCron();
-		add_action( 'laqirapay_web3_cache_cron_hourly', array( $web3_cron, 'handle' ) );
+		add_action( 'laqira_payments_web3_cache_cron_hourly', array( $web3_cron, 'handle' ) );
 
-		if ( function_exists( 'run_laqirapay' ) ) {
-			run_laqirapay();
+		if ( function_exists( 'laqira_payments_run' ) ) {
+			laqira_payments_run();
 		}
+	}
+
+	/**
+	 * Write the activation log once the request reaches init.
+	 */
+	public function maybe_log_pending_activation(): void {
+		$pending = get_option( self::ACTIVATION_LOG_OPTION );
+		if ( false === $pending ) {
+			return;
+		}
+
+		delete_option( self::ACTIVATION_LOG_OPTION );
+		LaqiraLogger::log( 200, 'system', 'plugin_activated' );
 	}
 }

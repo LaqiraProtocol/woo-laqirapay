@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[2931],{2931(l,a,h){h.r(a),h.d(a,{xSvg:()=>f});const f=h(2618).JW`<svg fill="none" viewBox="0 0 41 40">
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[2931],{2931(l,a,h){h.r(a),h.d(a,{xSvg:()=>f});const f=h(2618).JW`<svg fill="none" viewBox="0 0 41 40">
   <g clip-path="url(#a)">
     <path fill="#000" d="M.8 0h40v40H.8z" />
     <path

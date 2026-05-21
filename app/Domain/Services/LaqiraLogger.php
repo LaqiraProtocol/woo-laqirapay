@@ -1,5 +1,11 @@
 <?php
-namespace LaqiraPay\Domain\Services;
+namespace LaqiraPayments\Domain\Services;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 /**
  * Service for logging application events, integrated with WooCommerce Logger.
@@ -62,7 +68,7 @@ class LaqiraLogger {
 		}
 
 		// Check if logging is enabled
-		$loggingEnabled = (bool) get_option( 'laqirapay_log_enabled', true );
+		$loggingEnabled = (bool) get_option( 'laqira_payments_log_enabled', true );
 		if ( ! $loggingEnabled ) {
 			return;
 		}
@@ -292,7 +298,7 @@ class LaqiraLogger {
 	 * Detect the origin of the log call using a backtrace.
 	 */
 	private function detectSource(): string {
-		$trace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+		$trace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Used for structured logger source attribution.
 		foreach ( $trace as $frame ) {
 			if ( ( $frame['class'] ?? '' ) === self::class ) {
 				continue;
@@ -328,11 +334,7 @@ class LaqiraLogger {
 				return sanitize_text_field( $value );
 		}
 
-			$value = strip_tags( $value );
-			if ($value === null) {
-   			 $value = '';
-			}
-
+			$value = wp_strip_all_tags( $value );
 			return trim( preg_replace( '/[\r\n\t\0\x0B]+/', ' ', $value ) );
 	}
 }

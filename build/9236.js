@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[9236],{9236(a,e,l){l.r(e),l.d(e,{appStoreSvg:()=>s});const s=l(2618).JW`
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[9236],{9236(a,e,s){s.r(e),s.d(e,{appStoreSvg:()=>t});const t=s(2618).JW`
 <svg width="36" height="36">
   <path
     d="M28.724 0H7.271A7.269 7.269 0 0 0 0 7.272v21.46A7.268 7.268 0 0 0 7.271 36H28.73A7.272 7.272 0 0 0 36 28.728V7.272A7.275 7.275 0 0 0 28.724 0Z"

@@ -1,6 +1,12 @@
 <?php
 
-namespace LaqiraPay\Support;
+namespace LaqiraPayments\Support;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 /**
  * Fired during plugin uninstallation.
@@ -8,12 +14,12 @@ namespace LaqiraPay\Support;
  * This class defines all code necessary to run during the plugin's uninstallation.
  *
  * @since      0.1.0
- * @package    LaqiraPay
- * @subpackage LaqiraPay/includes
+ * @package    LaqiraPayments
+ * @subpackage LaqiraPayments/includes
  * @author     Laqira Protocol <info@laqira.io>
  */
 
-class LaqiraPayUninstaller {
+class LaqiraPaymentsUninstaller {
 
 
 	/**
@@ -22,44 +28,40 @@ class LaqiraPayUninstaller {
 	 * @since    1.0.0
 	 */
 	public static function uninstall() {
-		if ( get_option( 'laqirapay_delete_data_uninstall' ) == 1 ) {
-			self::laqirapay_delete_transactions_table();
-			self::laqirapay_delete_recovery_order_page();
-			delete_option( 'laqirapay_order_recovery_status' );
-			delete_option( 'laqirapay_only_logged_in_user' );
-			delete_option( 'laqirapay_recovery_order_page_id' );
-			delete_option( 'laqirapay_api_key' );
-			delete_option( 'laqirapay_walletconnect_project_id' );
-			delete_option( 'laqirapay_delete_data_uninstall' );
+		if ( get_option( 'laqira_payments_delete_data_uninstall' ) == 1 ) {
+			self::laqira_payments_delete_transactions_table();
+			self::laqira_payments_delete_recovery_order_page();
+			delete_option( 'laqira_payments_order_recovery_status' );
+			delete_option( 'laqira_payments_only_logged_in_user' );
+			delete_option( 'laqira_payments_recovery_order_page_id' );
+			delete_option( 'laqira_payments_api_key' );
+			delete_option( 'laqira_payments_walletconnect_project_id' );
+			delete_option( 'laqira_payments_delete_data_uninstall' );
 		}
 	}
 
 	/**
 	 * Deletes the Laqira transactions table from the WordPress database.
 	 */
-	private static function laqirapay_delete_transactions_table() {
+	private static function laqira_payments_delete_transactions_table() {
 		global $wpdb;
-		$table_name      = $wpdb->prefix . 'laqirapay_transactions';
-		if ($table_name === null) {
-   			 $table_name = '';
-			}
-
-		$sanitized_table = preg_replace( '/[^A-Za-z0-9_]/', '', (string) $table_name );
-
-		if ( $sanitized_table === '' ) {
+		$table_name = $wpdb->prefix . 'laqira_payments_transactions';
+		if ( ! is_string( $table_name ) || '' === $table_name ) {
 			return;
 		}
 
-		$sql = sprintf( 'DROP TABLE IF EXISTS `%s`', $sanitized_table );
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name is derived from $wpdb->prefix, sanitized above, and cannot be parameterized as a value.
-		$wpdb->query( $sql );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange -- Optional uninstall cleanup when merchant enabled data deletion.
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Optional uninstall cleanup when merchant enabled data deletion.
+			$wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name )
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange
 	}
 
 	/**
 	 * Deletes the Recovery Order page.
 	 */
-	private static function laqirapay_delete_recovery_order_page() {
-		$page_id = get_option( 'laqirapay_recovery_order_page_id' );
+	private static function laqira_payments_delete_recovery_order_page() {
+		$page_id = get_option( 'laqira_payments_recovery_order_page_id' );
 		if ( $page_id ) {
 			wp_delete_post( $page_id, true );
 		}

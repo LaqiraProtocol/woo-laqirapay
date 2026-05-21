@@ -1,12 +1,18 @@
 <?php
 
-namespace LaqiraPay\Http\Controllers\Frontend;
+namespace LaqiraPayments\Http\Controllers\Frontend;
 
-use LaqiraPay\Domain\Services\UtilityService;
-use LaqiraPay\Domain\Services\LaqiraLogger;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Domain\Services\UtilityService;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
 
 /**
- * Enqueues frontend assets for the LaqiraPay plugin.
+ * Enqueues frontend assets for the LaqiraPayments plugin.
  */
 class AssetsController {
 
@@ -45,10 +51,10 @@ class AssetsController {
 	public function enqueue_styles(): void {
 		$timestamp = function_exists( 'current_time' ) ? current_time( 'timestamp' ) : time(); // Simple cache buster.
 		$rtl       = $this->utilityService->detectRtl();
-		$css_file  = $rtl ? 'assets/public/css/laqirapay-public-rtl.css' : 'assets/public/css/laqirapay-public.css'; // Load RTL stylesheet when needed.
+		$css_file  = $rtl ? 'assets/public/css/laqira-payments-public-rtl.css' : 'assets/public/css/laqira-payments-public.css'; // Load RTL stylesheet when needed.
 
 		wp_enqueue_style(
-			'laqirapay-public-style',
+			'laqira-payments-public-style',
 			LAQIRA_PLUGINS_URL . $css_file,
 			array(),
 			$timestamp
@@ -76,8 +82,8 @@ class AssetsController {
 		$timestamp = function_exists( 'current_time' ) ? current_time( 'timestamp' ) : time(); // Sync with stylesheet timestamp.
 
 		wp_enqueue_script(
-			'laqirapay-public-script',
-			LAQIRA_PLUGINS_URL . 'assets/public/js/laqirapay-first.js',
+			'laqira-payments-public-script',
+			LAQIRA_PLUGINS_URL . 'assets/public/js/laqira-payments-first.js',
 			array( 'jquery' ),
 			$timestamp,
 			true
@@ -116,7 +122,7 @@ class AssetsController {
 		}
 
 		$config = self::VIEW_CONFIG[ $normalized_view ];
-		$path   = LAQIRAPAY_PLUGIN_DIR . 'app/Http/Views/' . $config['path'] . '.php';
+		$path   = LAQIRAPAYMENTS_PLUGIN_DIR . 'app/Http/Views/' . $config['path'] . '.php';
 
 		if ( ! is_readable( $path ) ) {
 			LaqiraLogger::log( 500, 'assets', 'render_missing_view', array( 'view' => $normalized_view ) );

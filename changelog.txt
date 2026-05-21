@@ -1,4 +1,67 @@
-*** LaqiraPay Changelog ***
+*** LaqiraPayments Changelog ***
+
+2026-05-09 - version 0.9.37
+* Fixed - Migrated public WooCommerce payment identifiers, checkout block handles, AJAX actions, and custom helper functions to plugin-specific Laqira Payments names while keeping legacy settings compatibility.
+* Fixed - Removed remote Google Fonts references from bundled and generated release assets.
+* Security - Re-audited request input handling, nonce verification, and WooCommerce admin capability checks around AJAX, settings, and order metabox flows.
+* Security - Removed the legacy whole-request fallback from the shared request input helper so only explicitly expected request keys are read.
+* Fixed - Replaced hardcoded plugin path detection with WordPress-safe plugin APIs and plugin constants.
+* Fixed - Hardened the GitHub Actions release build to rebuild production Composer dependencies with `--no-dev`, sanitize generated assets, and validate the final package before zipping.
+* Fixed - Corrected distribution ignore rules so Composer runtime source files inside `vendor` are preserved, preventing activation failures on clean WordPress installs.
+* Fixed - Excluded nested dependency lock files such as `vendor/**/package-lock.json` from the release package.
+* Fixed - Restored WooCommerce order-pay rendering compatibility for retrying failed or interrupted payments in classic and block checkout contexts.
+* Fixed - Split admin order recovery metabox behavior so recorded `tx_hash` orders use the recovery status metabox while orders without a transaction hash use the failed transaction recovery form.
+* Changed - Refined WordPress.org readme metadata, explicit external service domain disclosures, screenshots text, and release documentation.
+
+2026-05-06 - version 0.9.36
+* Fixed - Prepared the WordPress.org release candidate after clean-install activation and transaction smoke testing.
+
+2026-04-11 - version 0.9.35
+* Fixed - Fix some issues (Remove plugin update class , readme.txt, vendor folder)
+
+2026-04-09 - version 0.9.34
+* Fixed - Updated the plugin packaging flow so release zip files exclude development-only files, unwanted metadata, and unnecessary vendor artifacts.
+* Fixed - Expanded the readme external-services section with clearer disclosures for WalletConnect/Reown, RPC providers, remote JSON metadata endpoints, and blockchain explorer links.
+* Fixed - Replaced the remaining non-prefixed runtime constants and the legacy recovery shortcode with plugin-specific names, and updated related runtime/admin references.
+* Fixed - Added direct-access guards for the remaining PHP entry points, including generated asset PHP files used by the block build.
+
+2026-03-31 - version 0.9.33
+* Security - Hardened AJAX/admin request handling with stricter unslash/validation flows and defensive order checks in transaction confirmation paths.
+* Security - Improved SQL safety in legacy transaction persistence by switching to prepared placeholders for table identifiers and IDs, with documented direct-query exceptions.
+* Fixed - Replaced discouraged functions (`strip_tags`, `parse_url`) with WordPress alternatives and added missing translators comments for placeholder strings.
+* Fixed - Renamed non-prefixed global functions to `laqira_payments_*` equivalents and updated bootstrap/runtime call sites accordingly.
+* Fixed - Added/updated direct-access guards and aligned uninstall table-drop handling with safer `$wpdb->prepare()` usage.
+* Chore - Updated readme metadata/tags.
+
+
+2026-02-01 - version 0.9.32 
+* Fixed: Fix some language strings.
+* Fixed: Optimize webpack bundle.
+
+2026-01-30 - version 0.9.31
+* Changed - Updated plugin display name to Laqira Payments for WooCommerce.
+* Changed - Updated plugin slug  to laqira-payments.
+* Fixed - Restored the settings view by renaming the admin templates to the `laqira-payments-…` filenames expected by `AdminController`.
+* Fixed - Deferred the activation log until `init` so textdomain loading happens at the correct point and avoids `_load_textdomain_just_in_time` warnings.
+* Fixed - Prevented SQL syntax errors in the legacy AJAX confirmations by inlining the sanitized table name before preparing the `SELECT COUNT(1)` queries.
+
+2026-01-26 - version 0.9.30
+* Security - Added nonce enforcement for order recovery confirmations.
+* Security - Restricted admin-only confirmations to users with WooCommerce management capabilities.
+* Fixed - Guarded template entry points against direct access.
+* Fixed - Switched the gateway icon to a bundled local asset.
+* Fixed - Added missing rel="noopener noreferrer" on external links opened in new tabs.
+* Fixed - Updated web3p/web3.php to 0.3.2.
+* Fixed - Updated bundled Semantic UI assets to 2.5.0.
+* Changed - Updated plugin display name to Laqira Payments for WooCommerce.
+
+2026-01-19 - version 0.9.29
+* Fixed: Removed dynamic translation usage for non-literal strings to comply with WordPress i18n standards.
+* Fixed: Removed custom plugin update mechanism to meet WordPress.org repository guidelines.
+* Fixed: Improved settings registration by adding sanitize callbacks for all registered options.
+* Fixed: Ensured support for array and nested option values during sanitization.
+* Fixed: Removed discouraged manual textdomain loading when using WordPress.org language packs.
+* Fixed: General code cleanup and compliance improvements for WordPress.org review.
 
 2026-01-05 - version 0.9.28
 * Added support for additional blockchain networks: zkSync
@@ -19,7 +82,7 @@
 * Changed - update test environments
 
 2025-10-06 - version 0.9.23
-* Security - route all admin exchange-rate sanitization through `laqirapay_filter_input` to avoid null inputs and PHPCS/QA warnings.
+* Security - route all admin exchange-rate sanitization through `laqira_payments_filter_input` to avoid null inputs and PHPCS/QA warnings.
 * Security - harden request-method, option-group, and nonce normalization before validation to prevent deprecated sanitize warnings.
 
 2025-10-06 - version 0.9.22
@@ -65,13 +128,13 @@
 * Enhanced - run PHPCS tests
 
 2025-09-25 - version 0.9.14
-* Security - Harden input handling and escaping for LaqiraPay:
+* Security - Harden input handling and escaping for LaqiraPayments:
                 - sanitize nonce, cookie, and payload handling throughout the legacy AJAX controller and tighten SQL logging queries
                 - ensure helper utilities and logger routines sanitize server data, cookies, and drop-table logic
                 - escape checkout, admin notices, transaction meta output, and enforce a strict ORDER BY whitelist while wiring in the WordPress Coding Standards package
 * Fixed - Improve CLI input handling and sanitization fallbacks:
                 - add bootstrap fallbacks for wp_kses helpers to mimic WordPress sanitization during tests
-                - add a laqirapay_filter_input helper and use it across legacy AJAX handlers so superglobal data is read when filter_input is unavailable
+                - add a laqira_payments_filter_input helper and use it across legacy AJAX handlers so superglobal data is read when filter_input is unavailable
 * Changed - Allow scripts in confirmation markup
 
 2025-09-24 - version 0.9.13
@@ -103,7 +166,7 @@
 
 2025-09-23 - version 0.9.10
 * Fixed - Guard WooCommerce cart reset when session unavailable:
-            - ensure cart resets only run for pending LaqiraPay orders and when a WooCommerce cart/session is available
+            - ensure cart resets only run for pending LaqiraPayments orders and when a WooCommerce cart/session is available
             - add defensive logging so skipped cart resets record their reason without throwing fatals
 
 2025-09-23 - version 0.9.9
@@ -115,7 +178,7 @@
             - extend unit coverage for the new null paths to ensure no HTTP calls occur when CIDs are unavailable
 * Fixed - Localize settings script data:
             - expose the stored tables language option to the admin settings script via wp_localize_script
-            - guard the dropdown initialization in laqirapay-settings.js so it only runs when localized data is available
+            - guard the dropdown initialization in laqira-payments-settings.js so it only runs when localized data is available
 
 2025-09-23 - version 0.9.8
 * Changed - raise the minimum supported PHP version to 8.1 and update project documentation
@@ -164,7 +227,7 @@
 * Security - Refactor create access token/verify jwt & verify header methods
 * Security - Refactor Reactjs and remove Bearer header, use self browser cookie
 * Refactor - Modularized WooCommerce gateway registration via separate init file
-* Refactor - Moved WC_laqirapay class to dedicated file with no side effects
+* Refactor - Moved legacy gateway block integration to a dedicated file with no side effects
 * Refactor - Registered WooCommerce Blocks integration in isolated block init file
 * Internal - Improved plugin load order safety for WooCommerce compatibility
 * Internal - Ensured Composer and dependencies load only when needed
@@ -253,4 +316,4 @@
 * Changed - New repository
 
 2024-11-17 - version 0.6.2
-* Changed - Change plugin name to LaqiraPay from WooLaqiraPay
+* Changed - Change plugin name to LaqiraPayments from WooLaqiraPayments

@@ -1,6 +1,10 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+?>
 
-/**
+<?php /**
  * Provide a public-facing view for the plugin
  *
  * This file is used to markup the public-facing aspects of the plugin.
@@ -8,8 +12,8 @@
  * @link       https://laqira.io
  * @since      0.1.0
  *
- * @package    LaqiraPay
- * @subpackage LaqiraPay/app/Http/Views/public
+ * @package    LaqiraPayments
+ * @subpackage LaqiraPayments/app/Http/Views/public
  */
 ?>
 

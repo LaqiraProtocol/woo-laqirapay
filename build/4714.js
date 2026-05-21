@@ -1,4 +1,4 @@
-"use strict";(self.webpackChunklaqirapay=self.webpackChunklaqirapay||[]).push([[4714],{4714(a,l,e){e.r(l),e.d(l,{walletPlaceholderSvg:()=>v});const v=e(2618).JW`
+"use strict";(self.webpackChunklaqira_payments=self.webpackChunklaqira_payments||[]).push([[4714],{4714(a,l,e){e.r(l),e.d(l,{walletPlaceholderSvg:()=>v});const v=e(2618).JW`
   <svg fill="none" viewBox="0 0 48 44">
     <path
       style="fill: var(--wui-color-bg-300);"

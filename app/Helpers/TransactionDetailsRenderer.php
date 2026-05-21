@@ -1,6 +1,12 @@
 <?php
 
-namespace LaqiraPay\Helpers;
+namespace LaqiraPayments\Helpers;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
 
 /**
  * Helper methods for rendering transaction detail tables and email fields
@@ -20,17 +26,17 @@ class TransactionDetailsRenderer {
 		$rows = array(
 			array(
 				'key'   => 'TokenName',
-				'label' => esc_html__( 'Token Name', 'laqirapay' ),
+				'label' => esc_html__( 'Token Name', 'laqira-payments' ),
 				'value' => self::sanitizeText( $order->get_meta( 'TokenName' ) ),
 			),
 			array(
 				'key'   => 'exchange_rate',
-				'label' => esc_html__( 'Exchange Rate', 'laqirapay' ),
+				'label' => esc_html__( 'Exchange Rate', 'laqira-payments' ),
 				'value' => self::sanitizeText( $order->get_meta( 'exchange_rate' ) ),
 			),
 			array(
 				'key'   => 'TokenAmount',
-				'label' => esc_html__( 'Token Amount', 'laqirapay' ),
+				'label' => esc_html__( 'Token Amount', 'laqira-payments' ),
 				'value' => self::sanitizeText( $order->get_meta( 'TokenAmount' ) ),
 			),
 		);
@@ -38,7 +44,7 @@ class TransactionDetailsRenderer {
 		$txHash = (string) $order->get_meta( 'tx_hash' );
 		$rows[] = array(
 			'key'   => 'tx_hash',
-			'label' => esc_html__( 'Transaction Hash', 'laqirapay' ),
+			'label' => esc_html__( 'Transaction Hash', 'laqira-payments' ),
 			'value' => self::sanitizeText( $txHash ),
 			'url'   => self::buildExplorerUrl( $order->get_meta( 'network_explorer' ), $txHash ),
 		);

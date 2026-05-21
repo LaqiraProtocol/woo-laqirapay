@@ -1,10 +1,16 @@
 <?php
 
-namespace LaqiraPay\Jobs;
+namespace LaqiraPayments\Jobs;
 
-use LaqiraPay\Services\ContractService;
-use LaqiraPay\Services\BlockchainService;
-use LaqiraPay\Domain\Services\LaqiraLogger;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+
+
+use LaqiraPayments\Services\ContractService;
+use LaqiraPayments\Services\BlockchainService;
+use LaqiraPayments\Domain\Services\LaqiraLogger;
 
 /**
  * Cron job to refresh Web3 related caches.
@@ -30,7 +36,7 @@ class Web3CacheCron {
 
 		try {
 			// Ensure fresh CID and related data are cached.
-			delete_transient( 'laqirapay_cid_cached' );
+			delete_transient( 'laqira_payments_cid_cached' );
 			$cid = $this->contractService->getCid();
 			if ( $cid ) {
 				$this->blockchainService->getRemoteJsonCid( $cid );

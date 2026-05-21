@@ -1,9 +1,14 @@
 <?php
-/**
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+?>
+
+<?php /**
  * Exchange rate settings section description.
  *
- * @package LaqiraPay
+ * @package LaqiraPayments
  */
 
 ?>
-<p><?php esc_html_e( 'Set the exchange rate used to convert LaqiraPay payments into your store currency.', 'laqirapay' ); ?></p>
+<p><?php esc_html_e( 'Set the exchange rate used to convert LaqiraPayments payments into your store currency.', 'laqira-payments' ); ?></p>

@@ -1,7 +1,7 @@
 jQuery(function($) {
     var $hashInput = $('#tx-hash-input');
     var $loadingIndicator = $('#loading-indicator');
-    var $resultsContainer = $('#laqirapay-confirmation-table');
+    var $resultsContainer = $('#laqira-payments-confirmation-table');
 
     function escapeHtml(value) {
         return $('<div>').text(value || '').html();
@@ -23,7 +23,7 @@ jQuery(function($) {
         if (payload.confirmation && payload.confirmation.markup) {
             var $markup = $(payload.confirmation.markup);
             $resultsContainer.append($markup);
-            $(document).trigger('laqirapay:confirmation-ready', [ payload.confirmation, $markup ]);
+            $(document).trigger('laqira-payments:confirmation-ready', [ payload.confirmation, $markup ]);
         }
     }
 

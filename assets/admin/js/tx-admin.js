@@ -1,4 +1,9 @@
 jQuery(function($) {
+    var messages = typeof laqiraTxAdmin !== 'undefined' ? laqiraTxAdmin : {
+        genericError: 'Unable to confirm the order. Please try again.',
+        successMessage: 'Order confirmation completed successfully.'
+    };
+
     function escapeHtml(value) {
         return $('<div>').text(value || '').html();
     }
@@ -37,15 +42,28 @@ jQuery(function($) {
     function handleConfirmation(config, $markup) {
         var $button = $markup.find('#do-confirm-button');
         var $loading = $markup.find('#loading-indicator-bottom');
-        var $feedback = $markup.find('#laqirapay-after-confirmation-action');
+        var $feedback = $markup.find('#laqira-payments-after-confirmation-action');
+        var ajaxUrl = config.ajax_url ||
+            (typeof laqiraTxView !== 'undefined' && laqiraTxView.ajax_url ? laqiraTxView.ajax_url : '') ||
+            (typeof ajaxurl !== 'undefined' ? ajaxurl : '');
+
+        if (!$button.length) {
+            return;
+        }
 
         $loading.hide();
 
-        $button.off('click.laqirapay').on('click.laqirapay', function() {
+        $button.off('click.laqira-payments').on('click.laqira-payments', function() {
             var requestData = buildPayload(config, $markup);
 
             if (!requestData.action) {
-                $feedback.html('<p class="error">' + escapeHtml(laqiraTxAdmin.genericError) + '</p>');
+                $feedback.html('<p class="error">' + escapeHtml(messages.genericError) + '</p>');
+                return;
+            }
+
+            if (!ajaxUrl) {
+                $loading.hide();
+                $feedback.html('<p class="error">' + escapeHtml(messages.genericError) + '</p>');
                 return;
             }
 
@@ -53,7 +71,7 @@ jQuery(function($) {
             $feedback.empty();
 
             $.ajax({
-                url: laqiraTxView.ajax_url,
+                url: ajaxUrl,
                 type: 'POST',
                 dataType: 'json',
                 data: requestData,
@@ -80,22 +98,35 @@ jQuery(function($) {
                             return;
                         }
 
-                        $feedback.html('<p class="updated">' + escapeHtml(laqiraTxAdmin.successMessage) + '</p>');
+                        $feedback.html('<p class="updated">' + escapeHtml(messages.successMessage) + '</p>');
                         return;
                     }
 
-                    var errorMessage = (response && response.data && (response.data.message || response.data.error)) || laqiraTxAdmin.genericError;
+                    var errorMessage = (response && response.data && (response.data.message || response.data.error)) || messages.genericError;
                     $feedback.html('<p class="error">' + escapeHtml(errorMessage) + '</p>');
                 },
                 error: function() {
                     $loading.hide();
-                    $feedback.html('<p class="error">' + escapeHtml(laqiraTxAdmin.genericError) + '</p>');
+                    $feedback.html('<p class="error">' + escapeHtml(messages.genericError) + '</p>');
                 }
             });
         });
     }
 
-    $(document).on('laqirapay:confirmation-ready', function(event, config, $markup) {
+    $('.laqira-payments-confirmation-actions').each(function() {
+        var $markup = $(this);
+        var action = $markup.data('laqira-payments-action');
+
+        if (!action) {
+            action = $markup.find('#tx_hash_input').length
+                ? 'laqira_payments_do_confim_tx_hash_for_faild_transaction'
+                : 'laqira_payments_do_confim_tx_hash';
+        }
+
+        handleConfirmation({ action: action }, $markup);
+    });
+
+    $(document).on('laqira-payments:confirmation-ready', function(event, config, $markup) {
         if (!config || !config.markup) {
             return;
         }
@@ -104,7 +135,7 @@ jQuery(function($) {
 
         if (!$renderedMarkup || !$renderedMarkup.length) {
             $renderedMarkup = $(config.markup);
-            $('#laqirapay-confirmation-table').append($renderedMarkup);
+            $('#laqira-payments-confirmation-table').append($renderedMarkup);
         }
 
         handleConfirmation(config, $renderedMarkup);
